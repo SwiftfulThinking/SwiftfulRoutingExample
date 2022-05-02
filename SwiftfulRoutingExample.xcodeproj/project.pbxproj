@@ -11,7 +11,19 @@
 		028A896C281F9228004E3DA4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028A896B281F9228004E3DA4 /* ContentView.swift */; };
 		028A896E281F922B004E3DA4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 028A896D281F922B004E3DA4 /* Assets.xcassets */; };
 		028A8971281F922B004E3DA4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 028A8970281F922B004E3DA4 /* Preview Assets.xcassets */; };
+		028A8979281F9250004E3DA4 /* SwiftfulRouting in Frameworks */ = {isa = PBXBuildFile; productRef = 028A8978281F9250004E3DA4 /* SwiftfulRouting */; };
+		028A8981281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028A8980281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		028A8984281F92AA004E3DA4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 028A895E281F9228004E3DA4 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 028A8965281F9228004E3DA4;
+			remoteInfo = SwiftfulRoutingExample;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		028A8966281F9228004E3DA4 /* SwiftfulRoutingExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftfulRoutingExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -19,10 +31,20 @@
 		028A896B281F9228004E3DA4 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		028A896D281F922B004E3DA4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		028A8970281F922B004E3DA4 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		028A897E281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftfulRoutingExampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		028A8980281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftfulRoutingExampleUITests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		028A8963281F9228004E3DA4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				028A8979281F9250004E3DA4 /* SwiftfulRouting in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		028A897B281F92AA004E3DA4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -36,6 +58,7 @@
 			isa = PBXGroup;
 			children = (
 				028A8968281F9228004E3DA4 /* SwiftfulRoutingExample */,
+				028A897F281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests */,
 				028A8967281F9228004E3DA4 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -44,6 +67,7 @@
 			isa = PBXGroup;
 			children = (
 				028A8966281F9228004E3DA4 /* SwiftfulRoutingExample.app */,
+				028A897E281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -67,6 +91,14 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		028A897F281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests */ = {
+			isa = PBXGroup;
+			children = (
+				028A8980281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.swift */,
+			);
+			path = SwiftfulRoutingExampleUITests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -83,9 +115,30 @@
 			dependencies = (
 			);
 			name = SwiftfulRoutingExample;
+			packageProductDependencies = (
+				028A8978281F9250004E3DA4 /* SwiftfulRouting */,
+			);
 			productName = SwiftfulRoutingExample;
 			productReference = 028A8966281F9228004E3DA4 /* SwiftfulRoutingExample.app */;
 			productType = "com.apple.product-type.application";
+		};
+		028A897D281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 028A8986281F92AA004E3DA4 /* Build configuration list for PBXNativeTarget "SwiftfulRoutingExampleUITests" */;
+			buildPhases = (
+				028A897A281F92AA004E3DA4 /* Sources */,
+				028A897B281F92AA004E3DA4 /* Frameworks */,
+				028A897C281F92AA004E3DA4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				028A8985281F92AA004E3DA4 /* PBXTargetDependency */,
+			);
+			name = SwiftfulRoutingExampleUITests;
+			productName = SwiftfulRoutingExampleUITests;
+			productReference = 028A897E281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
@@ -100,6 +153,10 @@
 					028A8965281F9228004E3DA4 = {
 						CreatedOnToolsVersion = 13.2.1;
 					};
+					028A897D281F92AA004E3DA4 = {
+						CreatedOnToolsVersion = 13.2.1;
+						TestTargetID = 028A8965281F9228004E3DA4;
+					};
 				};
 			};
 			buildConfigurationList = 028A8961281F9228004E3DA4 /* Build configuration list for PBXProject "SwiftfulRoutingExample" */;
@@ -111,11 +168,15 @@
 				Base,
 			);
 			mainGroup = 028A895D281F9228004E3DA4;
+			packageReferences = (
+				028A8977281F9250004E3DA4 /* XCRemoteSwiftPackageReference "SwiftfulRouting" */,
+			);
 			productRefGroup = 028A8967281F9228004E3DA4 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				028A8965281F9228004E3DA4 /* SwiftfulRoutingExample */,
+				028A897D281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -127,6 +188,13 @@
 			files = (
 				028A8971281F922B004E3DA4 /* Preview Assets.xcassets in Resources */,
 				028A896E281F922B004E3DA4 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		028A897C281F92AA004E3DA4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -142,7 +210,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		028A897A281F92AA004E3DA4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				028A8981281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		028A8985281F92AA004E3DA4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 028A8965281F9228004E3DA4 /* SwiftfulRoutingExample */;
+			targetProxy = 028A8984281F92AA004E3DA4 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		028A8972281F922B004E3DA4 /* Debug */ = {
@@ -319,6 +403,40 @@
 			};
 			name = Release;
 		};
+		028A8987281F92AA004E3DA4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z735PM5XVD;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nicksarno.SwiftfulRoutingExampleUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = SwiftfulRoutingExample;
+			};
+			name = Debug;
+		};
+		028A8988281F92AA004E3DA4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z735PM5XVD;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nicksarno.SwiftfulRoutingExampleUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = SwiftfulRoutingExample;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -340,7 +458,35 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		028A8986281F92AA004E3DA4 /* Build configuration list for PBXNativeTarget "SwiftfulRoutingExampleUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				028A8987281F92AA004E3DA4 /* Debug */,
+				028A8988281F92AA004E3DA4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		028A8977281F9250004E3DA4 /* XCRemoteSwiftPackageReference "SwiftfulRouting" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftfulThinking/SwiftfulRouting.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		028A8978281F9250004E3DA4 /* SwiftfulRouting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 028A8977281F9250004E3DA4 /* XCRemoteSwiftPackageReference "SwiftfulRouting" */;
+			productName = SwiftfulRouting;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 028A895E281F9228004E3DA4 /* Project object */;
 }
