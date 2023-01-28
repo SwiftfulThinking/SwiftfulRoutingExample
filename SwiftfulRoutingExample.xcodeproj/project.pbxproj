@@ -474,7 +474,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SwiftfulThinking/SwiftfulRouting.git";
 			requirement = {
-				branch = main;
+				branch = V2;
 				kind = branch;
 			};
 		};

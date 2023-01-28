@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "swiftfulrouting",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SwiftfulThinking/SwiftfulRouting.git",
+      "state" : {
+        "branch" : "V2",
+        "revision" : "538a5e0a498aadc2c166d3b90c20fb60ba49cfaa"
+      }
+    }
+  ],
+  "version" : 2
+}
