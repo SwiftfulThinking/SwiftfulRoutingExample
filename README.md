@@ -2,7 +2,7 @@
 
 SwiftfulRouting is a native, declarative framework for programmatic navigation (routing) in SwiftUI applications, fully decoupled from the View.
 
-**Sample project:** https://github.com/SwiftfulThinking/SwiftfulRouting
+**Framework:** https://github.com/SwiftfulThinking/SwiftfulRouting
 
 ## Overview
 
