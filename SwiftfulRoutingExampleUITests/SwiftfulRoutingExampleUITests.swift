@@ -7,7 +7,12 @@
 
 import XCTest
 
-// Note: Tests will fail if the navBarTitle is hidden.
+// Notes:
+// Tests will fail if the navBarTitle is hidden.
+// Tests should be run on multiple OS (iOS 17, 16, 15, 14).
+// iOS 16 & above uses NavigationStack
+// iOS 15 & below uses NavigationView
+
 class SwiftfulRoutingExampleUITests: XCTestCase {
 
     let app = XCUIApplication()
@@ -20,29 +25,33 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
     override func tearDownWithError() throws {
     }
     
-    private func tapElement(name: String) {
-        let tablesQuery = XCUIApplication().tables
-        let element = tablesQuery.cells[name].children(matching: .other).element(boundBy: 0).children(matching: .other).element
-        element.tap()
+    private func tapElement(name: String, previousButtons: [String]) {
+        let collectionViewsQuery = XCUIApplication().collectionViews
+        let allButtonsWithThisName = collectionViewsQuery.buttons.matching(identifier: name)
+        
+        // For some reason, the way the UI lays out...
+        // If pattern is sheet -> fullScreenCover -> x ,
+        // then the 3rd screen needs to find the allElementsBoundByIndex.first instead of .last
+        let matching = [["Sheet", "FullScreenCover"]]
+        let lookForFirstElement = matching.contains(previousButtons.safeLast(2))
+        let lastButton = lookForFirstElement ?
+            allButtonsWithThisName.allElementsBoundByIndex.first :
+            allButtonsWithThisName.allElementsBoundByIndex.last
+        
+        guard let lastButton else {
+            XCTFail("Cannot find button named: \(name).")
+            return
+        }
+
+        lastButton.tap()
         sleep(1)
     }
     
     private func tapElements(names: [String]) {
+        var previousButtons: [String] = []
         for name in names {
-            tapElement(name: name)
-        }
-    }
-    
-    private func tapButton(name: String) {
-        let tablesQuery = XCUIApplication().tables
-        let element = tablesQuery.buttons[name]
-        element.tap()
-        sleep(1)
-    }
-    
-    private func tapButtons(names: [String]) {
-        for name in names {
-            tapButton(name: name)
+            tapElement(name: name, previousButtons: previousButtons)
+            previousButtons.append(name)
         }
     }
     
@@ -50,7 +59,15 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         let navBar = app.navigationBars[name]
         XCTAssertTrue(navBar.exists)
     }
+    
+    private func dismissScreens(previousButtons: [String]) {
+        for _ in 0..<previousButtons.count {
+            tapElement(name: "Dismiss", previousButtons: previousButtons)
+        }
+    }
         
+    // The below tests are:
+    
     // Push Push Push
     // Push Push Sheet
     // Push Push FullScreenCover
@@ -87,129 +104,180 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
     // FullScreenCover FullScreenCover Sheet
     // FullScreenCover FullScreenCover FullScreenCover
     
+    // PushStack, PushStack, PushStack
+    // PushStack, Sheet, FullScreenCover
+    // Sheet, FullScreenCover, PushStack
+    
+    // TODO:
+    // More PushStack variations
+    // Super tests with random buttons
+    
     func test_segues_push_push_push() {
         let names = ["Push", "Push", "Push"]
         tapElements(names: names)
         assertNavigationBarExists(name: "#\(names.count)")
+        dismissScreens(previousButtons: names)
+        assertNavigationBarExists(name: "#0")
     }
         
     func test_segues_push_push_sheet() {
         let names = ["Push", "Push", "Sheet"]
         tapElements(names: names)
         assertNavigationBarExists(name: "#\(names.count)")
+        dismissScreens(previousButtons: names)
+        assertNavigationBarExists(name: "#0")
     }
     
     func test_segues_push_push_fullScreenCover() {
         let names = ["Push", "Push", "FullScreenCover"]
         tapElements(names: names)
         assertNavigationBarExists(name: "#\(names.count)")
+        dismissScreens(previousButtons: names)
+        assertNavigationBarExists(name: "#0")
     }
     
     func test_segues_push_sheet_push() {
         let names = ["Push", "Sheet", "Push"]
         tapElements(names: names)
         assertNavigationBarExists(name: "#\(names.count)")
+        dismissScreens(previousButtons: names)
+        assertNavigationBarExists(name: "#0")
     }
     
     func test_segues_push_sheet_sheet() {
         let names = ["Push", "Sheet", "Sheet"]
         tapElements(names: names)
         assertNavigationBarExists(name: "#\(names.count)")
+        dismissScreens(previousButtons: names)
+        assertNavigationBarExists(name: "#0")
     }
     
     func test_segues_push_sheet_fullScreenCover() {
         let names = ["Push", "Sheet", "FullScreenCover"]
         tapElements(names: names)
         assertNavigationBarExists(name: "#\(names.count)")
+        dismissScreens(previousButtons: names)
+        assertNavigationBarExists(name: "#0")
     }
     
     func test_segues_push_fullScreenCover_push() {
         let names = ["Push", "FullScreenCover", "Push"]
         tapElements(names: names)
         assertNavigationBarExists(name: "#\(names.count)")
+        dismissScreens(previousButtons: names)
+        assertNavigationBarExists(name: "#0")
     }
     
     func test_segues_push_fullScreenCover_sheet() {
         let names = ["Push", "FullScreenCover", "Sheet"]
         tapElements(names: names)
         assertNavigationBarExists(name: "#\(names.count)")
+        dismissScreens(previousButtons: names)
+        assertNavigationBarExists(name: "#0")
     }
     
     func test_segues_push_fullScreenCover_fullScreenCover() {
         let names = ["Push", "FullScreenCover", "FullScreenCover"]
         tapElements(names: names)
         assertNavigationBarExists(name: "#\(names.count)")
+        dismissScreens(previousButtons: names)
+        assertNavigationBarExists(name: "#0")
     }
 
     func test_segues_sheet_push_push() {
         let names = ["Sheet", "Push", "Push"]
         tapElements(names: names)
         assertNavigationBarExists(name: "#\(names.count)")
+        dismissScreens(previousButtons: names)
+        assertNavigationBarExists(name: "#0")
     }
     
     func test_segues_sheet_push_sheet() {
         let names = ["Sheet", "Push", "Sheet"]
         tapElements(names: names)
         assertNavigationBarExists(name: "#\(names.count)")
+        dismissScreens(previousButtons: names)
+        assertNavigationBarExists(name: "#0")
     }
     
     func test_segues_sheet_push_fullScreenCover() {
         let names = ["Sheet", "Push", "FullScreenCover"]
         tapElements(names: names)
         assertNavigationBarExists(name: "#\(names.count)")
+        dismissScreens(previousButtons: names)
+        assertNavigationBarExists(name: "#0")
     }
     
     func test_segues_sheet_sheet_push() {
         let names = ["Sheet", "Sheet", "Push"]
         tapElements(names: names)
         assertNavigationBarExists(name: "#\(names.count)")
+        dismissScreens(previousButtons: names)
+        assertNavigationBarExists(name: "#0")
     }
     
     func test_segues_sheet_sheet_sheet() {
         let names = ["Sheet", "Sheet", "Sheet"]
         tapElements(names: names)
         assertNavigationBarExists(name: "#\(names.count)")
+        dismissScreens(previousButtons: names)
+        assertNavigationBarExists(name: "#0")
     }
     
     func test_segues_sheet_sheet_fullScreenCover() {
         let names = ["Sheet", "Sheet", "FullScreenCover"]
         tapElements(names: names)
         assertNavigationBarExists(name: "#\(names.count)")
+        dismissScreens(previousButtons: names)
+        assertNavigationBarExists(name: "#0")
     }
     
     func test_segues_sheet_fullScreenCover_push() {
         let names = ["Sheet", "FullScreenCover", "Push"]
         tapElements(names: names)
         assertNavigationBarExists(name: "#\(names.count)")
+        dismissScreens(previousButtons: names)
+        assertNavigationBarExists(name: "#0")
     }
     
     func test_segues_sheet_fullScreenCover_sheet() {
         let names = ["Sheet", "FullScreenCover", "Sheet"]
         tapElements(names: names)
         assertNavigationBarExists(name: "#\(names.count)")
+        dismissScreens(previousButtons: names)
+        assertNavigationBarExists(name: "#0")
     }
     
     func test_segues_sheet_fullScreenCover_fullScreenCover() {
         let names = ["Sheet", "FullScreenCover", "FullScreenCover"]
         tapElements(names: names)
         assertNavigationBarExists(name: "#\(names.count)")
+        dismissScreens(previousButtons: names)
+        assertNavigationBarExists(name: "#0")
     }
     
     func test_segues_fullScreenCover_push_push() {
         let names = ["FullScreenCover", "Push", "Push"]
         tapElements(names: names)
         assertNavigationBarExists(name: "#\(names.count)")
+        dismissScreens(previousButtons: names)
+        assertNavigationBarExists(name: "#0")
     }
     
     func test_segues_fullScreenCover_push_sheet() {
         let names = ["FullScreenCover", "Push", "Sheet"]
         tapElements(names: names)
         assertNavigationBarExists(name: "#\(names.count)")
+        dismissScreens(previousButtons: names)
+        assertNavigationBarExists(name: "#0")
     }
     
     func test_segues_fullScreenCover_push_fullScreenCover() {
         let names = ["FullScreenCover", "Push", "FullScreenCover"]
         tapElements(names: names)
+        assertNavigationBarExists(name: "#\(names.count)")
+        dismissScreens(previousButtons: names)
+        assertNavigationBarExists(name: "#0")
     }
 
     // Note: this test fails for some reason, but succeeds when manually tested.
@@ -218,43 +286,96 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         tapElements(names: names)
         
         // Start: For some reason, this makes the test pass
-        let tablesQuery = XCUIApplication().tables
-        let element = tablesQuery.cells["Sheet"].children(matching: .other).element(boundBy: 0).children(matching: .other).element
-        element.swipeDown()
-        element.tap()
+//        let tablesQuery = XCUIApplication().tables
+//        let element = tablesQuery.cells["Sheet"].children(matching: .other).element(boundBy: 0).children(matching: .other).element
+//        element.swipeDown()
+//        element.tap()
         // End
         
         assertNavigationBarExists(name: "#\(names.count)")
+        dismissScreens(previousButtons: names)
+        assertNavigationBarExists(name: "#0")
     }
     
     func test_segues_fullScreenCover_sheet_sheet() {
         let names = ["FullScreenCover", "Sheet", "Sheet"]
         tapElements(names: names)
         assertNavigationBarExists(name: "#\(names.count)")
+        dismissScreens(previousButtons: names)
+        assertNavigationBarExists(name: "#0")
     }
     
     func test_segues_fullScreenCover_sheet_fullScreenCover() {
         let names = ["FullScreenCover", "Sheet", "FullScreenCover"]
         tapElements(names: names)
         assertNavigationBarExists(name: "#\(names.count)")
+        dismissScreens(previousButtons: names)
+        assertNavigationBarExists(name: "#0")
     }
     
     func test_segues_fullScreenCover_fullScreenCover_push() {
         let names = ["FullScreenCover", "FullScreenCover", "Push"]
         tapElements(names: names)
         assertNavigationBarExists(name: "#\(names.count)")
+        dismissScreens(previousButtons: names)
+        assertNavigationBarExists(name: "#0")
     }
     
     func test_segues_fullScreenCover_fullScreenCover_sheet() {
         let names = ["FullScreenCover", "FullScreenCover", "Sheet"]
         tapElements(names: names)
         assertNavigationBarExists(name: "#\(names.count)")
+        dismissScreens(previousButtons: names)
+        assertNavigationBarExists(name: "#0")
     }
     
     func test_segues_fullScreenCover_fullScreenCover_fullScreenCover() {
         let names = ["FullScreenCover", "FullScreenCover", "FullScreenCover"]
         tapElements(names: names)
         assertNavigationBarExists(name: "#\(names.count)")
+        dismissScreens(previousButtons: names)
+        assertNavigationBarExists(name: "#0")
     }
     
+    func test_segues_pushStack_pushStack_pushStack() {
+        if #available(iOS 16, *) {
+            let names = ["Push Stack (3x)", "Push Stack (3x)", "Push Stack (3x)"]
+            tapElements(names: names)
+            assertNavigationBarExists(name: "#\(names.count * 3)")
+            tapElements(names: ["Pop to root"])
+            assertNavigationBarExists(name: "#0")
+        }
+    }
+
+    func test_segues_pushStack_sheet_fullScreenCover() {
+        if #available(iOS 16, *) {
+            let names = ["Push Stack (3x)", "Sheet", "FullScreenCover"]
+            tapElements(names: names)
+            assertNavigationBarExists(name: "#5")
+            dismissScreens(previousButtons: ["Sheet", "FullScreenCover"])
+            tapElements(names: ["Pop to root"])
+            assertNavigationBarExists(name: "#0")
+        }
+    }
+    
+    func test_segues_sheet_fullScreenCover_pushStack() {
+        if #available(iOS 16, *) {
+            // Note: works manually, but test may fail on iOS 16.0?
+            let names = ["Sheet", "FullScreenCover", "Push Stack (3x)"]
+            tapElements(names: names)
+            assertNavigationBarExists(name: "#5")
+            tapElements(names: ["Pop to root"])
+            assertNavigationBarExists(name: "#2")
+            dismissScreens(previousButtons: ["Sheet", "FullScreenCover"])
+            assertNavigationBarExists(name: "#0")
+        }
+    }
+}
+
+extension Array {
+    func safeLast(_ count: Int) -> Array<Element> {
+        let validCount = Swift.max(0, Swift.min(count, self.count))
+        let startIndex = self.count - validCount
+        return Array(self[startIndex..<self.endIndex])
+    }
 }
