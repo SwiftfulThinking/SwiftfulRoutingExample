@@ -47,6 +47,13 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         sleep(1)
     }
     
+    private func tapBackButton(count: Int) {
+        let navBar = app.navigationBars["#\(count)"]
+        let button = navBar.buttons["#\(count - 1)"]
+        button.tap()
+        sleep(1)
+    }
+    
     private func tapElements(names: [String]) {
         var previousButtons: [String] = []
         for name in names {
@@ -111,6 +118,23 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
     // TODO:
     // More PushStack variations
     // Super tests with random buttons
+    
+    func test_push_back_push_back_push_back() {
+        let names = ["Push"]
+        tapElements(names: names)
+        assertNavigationBarExists(name: "#\(names.count)")
+        tapBackButton(count: names.count)
+
+        tapElements(names: names)
+        assertNavigationBarExists(name: "#\(names.count)")
+        tapBackButton(count: names.count)
+
+        tapElements(names: names)
+        assertNavigationBarExists(name: "#\(names.count)")
+        tapBackButton(count: names.count)
+
+        assertNavigationBarExists(name: "#0")
+    }
     
     func test_segues_push_push_push() {
         let names = ["Push", "Push", "Push"]
