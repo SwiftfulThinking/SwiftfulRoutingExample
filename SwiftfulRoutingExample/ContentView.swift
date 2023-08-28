@@ -139,6 +139,12 @@ extension MyView {
                     router.popToRoot()
                 }
             }
+            
+            Button("Safari") {
+                router.showSafari {
+                    URL(string: "https://www.google.com")!
+                }
+            }
         } header: {
             Text("Segues")
         }
