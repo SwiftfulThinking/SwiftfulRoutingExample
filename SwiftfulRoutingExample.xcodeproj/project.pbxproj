@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		021CF2D22A9CDB4500BFB255 /* PopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 021CF2D12A9CDB4500BFB255 /* PopoverView.swift */; };
 		028A896A281F9228004E3DA4 /* SwiftfulRoutingExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028A8969281F9228004E3DA4 /* SwiftfulRoutingExampleApp.swift */; };
 		028A896C281F9228004E3DA4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028A896B281F9228004E3DA4 /* ContentView.swift */; };
 		028A896E281F922B004E3DA4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 028A896D281F922B004E3DA4 /* Assets.xcassets */; };
@@ -40,6 +41,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		021CF2D12A9CDB4500BFB255 /* PopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverView.swift; sourceTree = "<group>"; };
 		028A8966281F9228004E3DA4 /* SwiftfulRoutingExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftfulRoutingExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		028A8969281F9228004E3DA4 /* SwiftfulRoutingExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftfulRoutingExampleApp.swift; sourceTree = "<group>"; };
 		028A896B281F9228004E3DA4 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -107,6 +109,7 @@
 				02CFF1042986F59800E6ABCC /* Info.plist */,
 				028A8969281F9228004E3DA4 /* SwiftfulRoutingExampleApp.swift */,
 				028A896B281F9228004E3DA4 /* ContentView.swift */,
+				021CF2D12A9CDB4500BFB255 /* PopoverView.swift */,
 				02CFF0DF2986B2A700E6ABCC /* MVVM (View Routing) */,
 				02CFF0E62986B6E100E6ABCC /* MVVM (ViewModel Routing) */,
 				02CFF0F52986BEBB00E6ABCC /* MVVM (ViewModel Routing + Delegate) */,
@@ -305,6 +308,7 @@
 				02CFF0FD2986BFE200E6ABCC /* BasicViewModelDelegate.swift in Sources */,
 				028A896A281F9228004E3DA4 /* SwiftfulRoutingExampleApp.swift in Sources */,
 				02CFF0F42986BE2F00E6ABCC /* HomePresenter.swift in Sources */,
+				021CF2D22A9CDB4500BFB255 /* PopoverView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
