@@ -161,6 +161,15 @@ extension MyView {
                 }, buttonsiOS13: alertButtonsiOS13)
             }
             
+            if #available(iOS 15, *) {
+                Button("Alert2") {
+                    router.showAlert(.alert, title: "Title goes here", subtitle: nil, alert: {
+                        alertButtonsiOS15
+                    })
+                }
+            }
+
+            
             Button("Basic Alert") {
                 router.showBasicAlert(text: "Title goes here")
             }
