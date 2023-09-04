@@ -24,6 +24,7 @@ struct MyView: View {
     
     var body: some View {
         List {
+            screenStackSection
             segueSection
             alertSection
             modalSection
@@ -72,24 +73,25 @@ extension MyView {
             }
             
             if #available(iOS 16, *) {
-                let screen1 = { router in
-                    MyView(router: router, count: count + 1)
-                }
-                let screen2 = { router in
-                    MyView(router: router, count: count + 2)
-                }
-                let screen3 = { router in
-                    MyView(router: router, count: count + 3)
-                }
                 Button("Push Stack (3x)") {
-                    router.pushScreens(destinations: [screen1, screen2, screen3])
+                    let screen1 = { router in
+                        MyView(router: router, count: count + 1)
+                    }
+                    let screen2 = { router in
+                        MyView(router: router, count: count + 2)
+                    }
+                    let screen3 = { router in
+                        MyView(router: router, count: count + 3)
+                    }
+
+                    router.pushScreenStack(destinations: [screen1, screen2, screen3])
                 }
             }
 
             Button("Sheet") {
-                router.showScreen(.sheet) { router in
+                router.showScreen(AnyRoute(.sheet, destination: { router in
                     MyView(router: router, count: count + 1)
-                }
+                }))
             }
             
             if #available(iOS 16, *) {
@@ -129,17 +131,7 @@ extension MyView {
                     }
                 }
             }
-            
-            Button("Dismiss") {
-                router.dismissScreen()
-            }
-            
-            if #available(iOS 16, *) {
-                Button("Pop to root") {
-                    router.popToRoot()
-                }
-            }
-            
+                        
             Button("Safari") {
                 router.showSafari {
                     URL(string: "https://www.google.com")!
@@ -148,6 +140,75 @@ extension MyView {
         } header: {
             Text("Segues")
         }
+    }
+    
+    // MARK: SCREEN STACK SECTION
+    
+    private func dismissAction(_ number: Int) {
+        print("DISMISS: \(number)")
+    }
+    
+    @MainActor
+    private var screenStackSection: some View {
+        Section {
+            Button("Show Screen") {
+                let screen1 = { router in
+                    MyView(router: router, count: 11111)
+                }
+                router.showScreen(AnyRoute(.fullScreenCover, destination: screen1))
+            }
+            
+            Button("Show Screens") {
+                let screen1 = { router in
+                    MyView(router: router, count: 369)
+                }
+                let screen2 = { router in
+                    MyView(router: router, count: 444)
+                }
+                let screen3 = { router in
+                    MyView(router: router, count: 1000000)
+                }
+                let screen4 = { router in
+                    MyView(router: router, count: 123)
+                }
+                
+                router.showScreens([
+                    AnyRoute(.fullScreenCover, destination: screen1),
+                    AnyRoute(.push, destination: screen2),
+                    AnyRoute(.push, destination: screen3),
+                    AnyRoute(.push, destination: screen4),
+                ])
+            }
+            
+            Button("Next Screen") {
+                do {
+                    try router.showNextScreen()
+                } catch {
+                    router.showBasicAlert(text: "No next screen set.")
+                }
+            }
+            
+            Button("Dismiss") {
+                router.dismissScreen()
+            }
+            
+            if #available(iOS 16, *) {
+                Button("Dismiss Screen Stack") {
+                    router.dismissScreenStack()
+                }
+            }
+            
+            Button("Dismiss Environment") {
+                router.dismissEnvironment()
+            }
+            
+            Button("Next Screen or Dismiss Environment") {
+                router.showNextScreenOrDismissEnvironment()
+            }
+        } header: {
+            Text("Screen Stack")
+        }
+
     }
     
     // MARK: ALERT SECTION
