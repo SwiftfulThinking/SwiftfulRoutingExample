@@ -366,7 +366,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
             let names = ["Push Stack (3x)", "Push Stack (3x)", "Push Stack (3x)"]
             tapElements(names: names)
             assertNavigationBarExists(name: "#\(names.count * 3)")
-            tapElements(names: ["Pop to root"])
+            tapElements(names: ["Dismiss Screen Stack"])
             assertNavigationBarExists(name: "#0")
         }
     }
@@ -377,18 +377,18 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
             tapElements(names: names)
             assertNavigationBarExists(name: "#5")
             dismissScreens(previousButtons: ["Sheet", "FullScreenCover"])
-            tapElements(names: ["Pop to root"])
+            tapElements(names: ["Dismiss Screen Stack"])
             assertNavigationBarExists(name: "#0")
         }
     }
     
     func test_segues_sheet_fullScreenCover_pushStack() {
+        // WARNING: works manually, but test fails on iOS 16.0+?
         if #available(iOS 16, *) {
-            // Note: works manually, but test may fail on iOS 16.0?
             let names = ["Sheet", "FullScreenCover", "Push Stack (3x)"]
             tapElements(names: names)
             assertNavigationBarExists(name: "#5")
-            tapElements(names: ["Pop to root"])
+            tapElements(names: ["Dismiss Screen Stack"])
             assertNavigationBarExists(name: "#2")
             dismissScreens(previousButtons: ["Sheet", "FullScreenCover"])
             assertNavigationBarExists(name: "#0")
