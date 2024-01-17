@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SwiftfulThinking/SwiftfulRouting.git",
       "state" : {
-        "revision" : "7de396aab29a0e7b545532bb0b2319a5b24d54bf",
-        "version" : "5.0.0"
+        "revision" : "f32b6fb9178d2074a10b0612a77437e6dea1f47c",
+        "version" : "5.1.0"
       }
     }
   ],

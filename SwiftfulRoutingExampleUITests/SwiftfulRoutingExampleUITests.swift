@@ -52,6 +52,8 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         let button = navBar.buttons["#\(count - 1)"]
         button.tap()
         sleep(1)
+        
+        assertOnDismissExecuted(name: "#\(count - 1)", count: count)
     }
     
     private func tapElements(names: [String]) {
@@ -67,10 +69,33 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         XCTAssertTrue(navBar.exists)
     }
     
+    private func assertNavigationBarDoesntExist(name: String) {
+        let navBar = app.navigationBars[name]
+        XCTAssertTrue(!navBar.exists)
+    }
+    
     private func dismissScreens(previousButtons: [String]) {
-        for _ in 0..<previousButtons.count {
+        for (index, _) in previousButtons.enumerated() {
             tapElement(name: "Dismiss", previousButtons: previousButtons)
+            
+//            let newScreenNumber = (previousButtons.count - index)
+//            assertOnDismissExecuted(name: "#\(newScreenNumber - 1)", count: newScreenNumber)
         }
+    }
+    
+    
+    
+    private func assertOnDismissExecuted(name: String, count: Int) {
+        let navBar = app.navigationBars[name]
+        XCTAssertTrue(navBar.exists)
+        
+        let staticText = navBar.staticTexts["last_dismiss"]
+
+        // Check if the staticText is present
+        XCTAssert(staticText.exists)
+
+        // Now assert that the text of the staticText is "A"
+        XCTAssertEqual(staticText.label, "#\(count)")
     }
         
     // The below tests are:
@@ -134,14 +159,16 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         tapBackButton(count: names.count)
 
         assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
     }
-    
+        
     func test_segues_push_push_push() {
         let names = ["Push", "Push", "Push"]
         tapElements(names: names)
         assertNavigationBarExists(name: "#\(names.count)")
         dismissScreens(previousButtons: names)
         assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
     }
         
     func test_segues_push_push_sheet() {
@@ -150,6 +177,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         assertNavigationBarExists(name: "#\(names.count)")
         dismissScreens(previousButtons: names)
         assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
     }
     
     func test_segues_push_push_fullScreenCover() {
@@ -158,6 +186,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         assertNavigationBarExists(name: "#\(names.count)")
         dismissScreens(previousButtons: names)
         assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
     }
     
     func test_segues_push_sheet_push() {
@@ -166,6 +195,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         assertNavigationBarExists(name: "#\(names.count)")
         dismissScreens(previousButtons: names)
         assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
     }
     
     func test_segues_push_sheet_sheet() {
@@ -174,6 +204,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         assertNavigationBarExists(name: "#\(names.count)")
         dismissScreens(previousButtons: names)
         assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
     }
     
     func test_segues_push_sheet_fullScreenCover() {
@@ -182,6 +213,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         assertNavigationBarExists(name: "#\(names.count)")
         dismissScreens(previousButtons: names)
         assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
     }
     
     func test_segues_push_fullScreenCover_push() {
@@ -190,6 +222,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         assertNavigationBarExists(name: "#\(names.count)")
         dismissScreens(previousButtons: names)
         assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
     }
     
     func test_segues_push_fullScreenCover_sheet() {
@@ -198,6 +231,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         assertNavigationBarExists(name: "#\(names.count)")
         dismissScreens(previousButtons: names)
         assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
     }
     
     func test_segues_push_fullScreenCover_fullScreenCover() {
@@ -206,6 +240,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         assertNavigationBarExists(name: "#\(names.count)")
         dismissScreens(previousButtons: names)
         assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
     }
 
     func test_segues_sheet_push_push() {
@@ -214,6 +249,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         assertNavigationBarExists(name: "#\(names.count)")
         dismissScreens(previousButtons: names)
         assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
     }
     
     func test_segues_sheet_push_sheet() {
@@ -222,6 +258,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         assertNavigationBarExists(name: "#\(names.count)")
         dismissScreens(previousButtons: names)
         assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
     }
     
     func test_segues_sheet_push_fullScreenCover() {
@@ -230,6 +267,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         assertNavigationBarExists(name: "#\(names.count)")
         dismissScreens(previousButtons: names)
         assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
     }
     
     func test_segues_sheet_sheet_push() {
@@ -238,6 +276,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         assertNavigationBarExists(name: "#\(names.count)")
         dismissScreens(previousButtons: names)
         assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
     }
     
     func test_segues_sheet_sheet_sheet() {
@@ -246,6 +285,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         assertNavigationBarExists(name: "#\(names.count)")
         dismissScreens(previousButtons: names)
         assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
     }
     
     func test_segues_sheet_sheet_fullScreenCover() {
@@ -254,6 +294,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         assertNavigationBarExists(name: "#\(names.count)")
         dismissScreens(previousButtons: names)
         assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
     }
     
     func test_segues_sheet_fullScreenCover_push() {
@@ -262,6 +303,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         assertNavigationBarExists(name: "#\(names.count)")
         dismissScreens(previousButtons: names)
         assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
     }
     
     func test_segues_sheet_fullScreenCover_sheet() {
@@ -270,6 +312,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         assertNavigationBarExists(name: "#\(names.count)")
         dismissScreens(previousButtons: names)
         assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
     }
     
     func test_segues_sheet_fullScreenCover_fullScreenCover() {
@@ -278,6 +321,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         assertNavigationBarExists(name: "#\(names.count)")
         dismissScreens(previousButtons: names)
         assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
     }
     
     func test_segues_fullScreenCover_push_push() {
@@ -286,6 +330,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         assertNavigationBarExists(name: "#\(names.count)")
         dismissScreens(previousButtons: names)
         assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
     }
     
     func test_segues_fullScreenCover_push_sheet() {
@@ -294,6 +339,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         assertNavigationBarExists(name: "#\(names.count)")
         dismissScreens(previousButtons: names)
         assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
     }
     
     func test_segues_fullScreenCover_push_fullScreenCover() {
@@ -302,6 +348,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         assertNavigationBarExists(name: "#\(names.count)")
         dismissScreens(previousButtons: names)
         assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
     }
 
     // Note: this test fails for some reason, but succeeds when manually tested.
@@ -319,6 +366,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         assertNavigationBarExists(name: "#\(names.count)")
         dismissScreens(previousButtons: names)
         assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
     }
     
     func test_segues_fullScreenCover_sheet_sheet() {
@@ -327,6 +375,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         assertNavigationBarExists(name: "#\(names.count)")
         dismissScreens(previousButtons: names)
         assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
     }
     
     func test_segues_fullScreenCover_sheet_fullScreenCover() {
@@ -335,6 +384,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         assertNavigationBarExists(name: "#\(names.count)")
         dismissScreens(previousButtons: names)
         assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
     }
     
     func test_segues_fullScreenCover_fullScreenCover_push() {
@@ -343,6 +393,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         assertNavigationBarExists(name: "#\(names.count)")
         dismissScreens(previousButtons: names)
         assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
     }
     
     func test_segues_fullScreenCover_fullScreenCover_sheet() {
@@ -351,6 +402,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         assertNavigationBarExists(name: "#\(names.count)")
         dismissScreens(previousButtons: names)
         assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
     }
     
     func test_segues_fullScreenCover_fullScreenCover_fullScreenCover() {
@@ -359,6 +411,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
         assertNavigationBarExists(name: "#\(names.count)")
         dismissScreens(previousButtons: names)
         assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
     }
     
     func test_segues_pushStack_pushStack_pushStack() {
@@ -368,6 +421,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
             assertNavigationBarExists(name: "#\(names.count * 3)")
             tapElements(names: ["Dismiss Screen Stack"])
             assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
         }
     }
 
@@ -379,6 +433,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
             dismissScreens(previousButtons: ["Sheet", "FullScreenCover"])
             tapElements(names: ["Dismiss Screen Stack"])
             assertNavigationBarExists(name: "#0")
+        assertNavigationBarDoesntExist(name: "#\(names.count)")
         }
     }
     
@@ -392,6 +447,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
             assertNavigationBarExists(name: "#2")
             dismissScreens(previousButtons: ["Sheet", "FullScreenCover"])
             assertNavigationBarExists(name: "#0")
+            assertNavigationBarDoesntExist(name: "#\(names.count)")
         }
     }
 }
