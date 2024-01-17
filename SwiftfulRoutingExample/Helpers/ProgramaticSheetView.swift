@@ -51,7 +51,8 @@ struct ProgramaticSheetView_Previews: PreviewProvider {
                     router.showResizableSheet(
                         sheetDetents: Set(detents),
                         selection: $selection,
-                        showDragIndicator: true) { router in
+                        showDragIndicator: true
+                    ) { router in
                             ProgramaticSheetView(router: router, count: 1, detents: detents, selection: $selection)
                         }
                 }
