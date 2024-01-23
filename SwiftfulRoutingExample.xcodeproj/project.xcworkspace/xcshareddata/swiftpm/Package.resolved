@@ -5,8 +5,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SwiftfulThinking/SwiftfulRouting.git",
       "state" : {
-        "revision" : "f32b6fb9178d2074a10b0612a77437e6dea1f47c",
-        "version" : "5.1.0"
+        "branch" : "modules_2",
+        "revision" : "ad37ab2b094e6bffc3c24c91781f9a6dd4e39763"
+      }
+    },
+    {
+      "identity" : "swiftfului",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SwiftfulThinking/SwiftfulUI.git",
+      "state" : {
+        "revision" : "761ed0907c22d0534879f707d68d6dbb8cc21d9f",
+        "version" : "1.1.0"
       }
     }
   ],

@@ -65,7 +65,7 @@ struct ExampleView: View {
 @available(iOS 14, *)
 struct ExampleView_Previews: PreviewProvider {
     static var previews: some View {
-        RouterView { router in
+        RouterView { (router, lastModuleId) in
             ExampleView(
                 router: router,
                 viewModel: ExampleViewModel(service: DataService())

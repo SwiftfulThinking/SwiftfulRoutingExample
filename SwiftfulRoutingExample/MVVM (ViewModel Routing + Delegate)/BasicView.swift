@@ -43,7 +43,7 @@ struct BasicView_Previews: PreviewProvider {
     static let delegate = BasicViewModelDelegate_Production(service: DataService())
     
     static var previews: some View {
-        RouterView { router in
+        RouterView { (router, lastModuleId) in
             BasicView(viewModel: BasicViewModel(
                 router: router,
                 delegate: delegate))

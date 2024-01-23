@@ -42,7 +42,7 @@ struct HomeView_Previews: PreviewProvider {
     static let interactor = HomeInteractor_Production(service: DataService())
     
     static var previews: some View {
-        RouterView { router in
+        RouterView { (router, lastModuleId) in
             HomeView(presenter: HomePresenter(
                 router: HomeRouter_Production(router: router),
                 interactor: interactor))

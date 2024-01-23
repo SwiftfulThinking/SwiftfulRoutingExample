@@ -46,7 +46,7 @@ struct ProgramaticSheetView_Previews: PreviewProvider {
         @State private var selection: PresentationDetentTransformable = .medium
         
         var body: some View {
-            RouterView { router in
+            RouterView { (router, lastModuleId) in
                 Button("Show sheet") {
                     router.showResizableSheet(
                         sheetDetents: Set(detents),

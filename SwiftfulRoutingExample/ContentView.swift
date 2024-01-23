@@ -9,9 +9,38 @@ import SwiftUI
 import SwiftfulRouting
 
 struct ContentView: View {
+    
+    @State private var showScreen: Bool = false
+    
     var body: some View {
-        RouterView(addNavigationView: true) { router in
-            MyView(router: router, count: 0)
+        ZStack {
+            Color.red.ignoresSafeArea()
+            
+            RouterView(addNavigationView: true) { (router, lastModuleId) in
+                if lastModuleId == "home" {
+                    MyView(router: router, count: 0)
+                } else {
+                    WelcomeView()
+                }
+            }
+        }
+    }
+}
+
+struct WelcomeView: View {
+    
+    @Environment(\.router) var router
+
+    var body: some View {
+        ZStack {
+            Color.blue.ignoresSafeArea()
+            
+            Button("Sign In") {
+                router.transitionModule(id: "home", .trailing) { router in
+                    MyView(router: router, count: 0)
+                }
+            }
+            .foregroundColor(.white)
         }
     }
 }
@@ -28,15 +57,21 @@ struct MyView: View {
     
     var body: some View {
         List {
+            modulesSection
             screenStackSection
             segueSection
             alertSection
+            transitionSection
+                .onAppear {
+                    print("APPEAR!!!")
+                }
             modalSection
             
             if #available(iOS 14, *) {
-                modulesSection
+                architectureSection
             }
         }
+//        .navigationBarHidden(true)
         .navigationModifers(title: "#\(count)")
         .toolbar(content: {
             ToolbarItem(placement: .topBarTrailing, content: {
@@ -44,6 +79,7 @@ struct MyView: View {
                     .accessibilityIdentifier("last_dismiss")
             })
         })
+        .id(count)
     }
     
     private func dismissAction(_ number: Int) {
@@ -333,6 +369,24 @@ extension MyView {
     private var modalSection: some View {
         Section {
             Button("Basic") {
+//                router.showModal(
+//                    transition: .move(edge: .bottom),
+//                    animation: .spring(),
+//                    alignment: .center,
+//                    backgroundColor: .red,
+//                    ignoreSafeArea: true,
+//                    destination: {
+//                        Text("Sample")
+//                            .frame(width: 275, height: 450)
+//                            .background(Color.blue)
+//                            .cornerRadius(10)
+//                            .onTapGesture {
+//                                router.dismissModal()
+//                            }
+//                        
+//                    }
+//                )
+                
                 router.showBasicModal {
                     Text("Sample")
                         .frame(width: 275, height: 450)
@@ -346,9 +400,9 @@ extension MyView {
             
             Button("Opacity") {
                 router.showModal(
-                    transition: .opacity,
-                    backgroundColor: Color.black.opacity(0.001),
-                    useDeviceBounds: false) {
+                    transition: AnyTransition.opacity.animation(.easeInOut),
+                    backgroundColor: nil,
+                    ignoreSafeArea: false) {
                     Text("Sample")
                         .frame(width: 275, height: 450)
                         .background(Color.blue)
@@ -358,40 +412,42 @@ extension MyView {
                         }
                 }
             }
-            
-            Button("Opacity w/ background color & blur") {
-                router.showModal(
-                    transition: .opacity,
-                    backgroundColor: Color.black.opacity(0.3),
-                    backgroundEffect: BackgroundEffect(
-                        effect: UIBlurEffect(style: .systemMaterialDark),
-                        opacity: 0.85)
-                ) {
-                    Text("Sample")
-                        .frame(width: 275, height: 450)
-                        .background(Color.blue)
-                        .cornerRadius(10)
-                        .onTapGesture {
-                            router.dismissModal()
-                        }
-                }
-            }
-            
+//            
+////            Button("Opacity w/ background color & blur") {
+////                router.showModal(
+////                    transition: .opacity,
+////                    backgroundColor: Color.black.opacity(0.3)
+//////                    ,
+//////                    backgroundEffect: BackgroundEffect(
+//////                        effect: UIBlurEffect(style: .systemMaterialDark),
+//////                        opacity: 0.85)
+//////                )
+////                {
+////                    Text("Sample")
+////                        .frame(width: 275, height: 450)
+////                        .background(Color.blue)
+////                        .cornerRadius(10)
+////                        .onTapGesture {
+////                            router.dismissModal()
+////                        }
+////                }
+////            }
+//            
             Button("Top") {
-                router.showModal(transition: .move(edge: .top), animation: .easeInOut, alignment: .top, backgroundColor: Color.black.opacity(0.001), useDeviceBounds: true) {
+                router.showModal(id: "top1", transition: .move(edge: .top), animation: .easeInOut, alignment: .top, backgroundColor: nil, ignoreSafeArea: true) {
                     Text("Sample")
                         .frame(maxWidth: .infinity)
                         .frame(height: 70, alignment: .bottom)
                         .padding()
                         .background(Color.blue)
                         .onTapGesture {
-                            router.dismissModal()
+                            router.dismissModal(id: "top1")
                         }
                 }
             }
             
             Button("Top 2") {
-                router.showModal(transition: .move(edge: .top), animation: .easeInOut, alignment: .top, backgroundColor: Color.black.opacity(0.001), useDeviceBounds: false) {
+                router.showModal(transition: .move(edge: .top), animation: .easeInOut, alignment: .top, backgroundColor: nil, ignoreSafeArea: false) {
                     Text("Sample")
                         .frame(maxWidth: .infinity)
                         .padding()
@@ -405,7 +461,7 @@ extension MyView {
             }
             
             Button("Bottom") {
-                router.showModal(transition: .move(edge: .bottom), animation: .easeInOut, alignment: .bottom, backgroundColor: Color.black.opacity(0.35), useDeviceBounds: true) {
+                router.showModal(id: "bottom", transition: .move(edge: .bottom), animation: .easeInOut, alignment: .bottom, backgroundColor: nil, ignoreSafeArea: true) {
                     Text("Sample")
                         .frame(maxWidth: .infinity)
                         .frame(height: 350)
@@ -414,11 +470,13 @@ extension MyView {
                         .onTapGesture {
                             router.dismissModal()
                         }
+//                        .frame(maxHeight: .infinity, alignment: .bottom)
+//                        .edgesIgnoringSafeArea(.all)
                 }
             }
             
             Button("Bottom 2") {
-                router.showModal(transition: .move(edge: .bottom), animation: .spring(), alignment: .center, backgroundColor: Color.black.opacity(0.35), useDeviceBounds: false) {
+                router.showModal(transition: .move(edge: .bottom), animation: .spring(), alignment: .center, backgroundColor: Color.black.opacity(0.35), ignoreSafeArea: false) {
                     Text("Sample")
                         .frame(width: 275, height: 450)
                         .background(Color.blue)
@@ -430,19 +488,19 @@ extension MyView {
             }
             
             Button("Leading") {
-                router.showModal(transition: .move(edge: .leading), animation: .easeInOut, alignment: .leading, backgroundColor: Color.black.opacity(0.35), useDeviceBounds: true) {
+                router.showModal(transition: .move(edge: .leading), animation: .easeInOut, alignment: .leading, backgroundColor: Color.black.opacity(0.35), ignoreSafeArea: true) {
                     Text("Sample")
                         .frame(maxHeight: .infinity)
                         .frame(width: 200)
                         .background(Color.blue)
                         .onTapGesture {
-                            router.dismissModal()
+                            router.dismissAllModals()
                         }
                 }
             }
             
             Button("Trailing") {
-                router.showModal(transition: .move(edge: .trailing), animation: .easeInOut, alignment: .leading, backgroundColor: Color.black.opacity(0.001)) {
+                router.showModal(transition: .move(edge: .trailing), animation: .easeInOut, alignment: .leading, backgroundColor: nil) {
                     Text("Sample")
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .background(Color.blue)
@@ -454,7 +512,7 @@ extension MyView {
             }
 
             Button("Scale") {
-                router.showModal(transition: .scale, backgroundColor: Color.black.opacity(0.001), useDeviceBounds: false) {
+                router.showModal(transition: .scale, backgroundColor: nil, ignoreSafeArea: false) {
                     Text("Sample")
                         .frame(width: 275, height: 450)
                         .background(Color.blue)
@@ -471,7 +529,7 @@ extension MyView {
     
     @available(iOS 14, *)
     @MainActor
-    private var modulesSection: some View {
+    private var architectureSection: some View {
         Section {
             Button("MVVM w/ routing in View\n+ data service") {
                 router.showScreen(.push) { router in
@@ -515,6 +573,83 @@ extension MyView {
         }
     }
 
+    // MARK: TRANSITIONS
+    
+    @MainActor
+    private var transitionSection: some View {
+        Section {
+            Button("Trailing") {
+                router.transitionScreen(.trailing) { router in
+                    MyView(router: router, count: count + 1)
+                }
+            }
+            Button("Trailing Cover") {
+                router.transitionScreen(.trailingCover) { router in
+                    MyView(router: router, count: count + 1)
+                }
+            }
+            Button("Bottom") {
+                router.transitionScreen(.bottom) { router in
+                    MyView(router: router, count: count + 1)
+                }
+            }
+            
+            Button("Dismiss Transition") {
+                router.dismissTransition()
+            }
+            
+            Button("Dismiss All Transitions") {
+                router.dismissAllTransitions()
+            }
+        } header: {
+            Text("Transitions")
+        }
+    }
+    
+    // MARK: MODULES
+    
+    @MainActor
+    private var modulesSection: some View {
+        Section {
+            Button("Trailing") {
+                router.transitionModule(id: "trailing", .trailing) { router in
+                    MyView(router: router, count: 0)
+                }
+            }
+            Button("Trailing Cover") {
+                router.transitionModule(id: "trailing_cover", .trailingCover) { router in
+                    MyView(router: router, count: 0)
+                }
+            }
+            Button("Bottom") {
+                router.transitionModule(id: "bottom", .bottom) { router in
+                    MyView(router: router, count: 0)
+                }
+            }
+            
+            Button("Dismiss Module") {
+                router.dismissModule()
+            }
+            
+            Button("Dismiss All Modules") {
+                router.dismissAllModules()
+            }
+            .onAppear {
+                // Need "identity" transition or "none"
+                //router.transitionModule(<#T##option: TransitionOption##TransitionOption#>, destination: <#T##(AnyRouter) -> View#>)
+            }
+            
+            
+            Button("Sign Out") {
+                router.transitionModule(id: "welcome", .leadingCover) { router in
+                    WelcomeView()
+                }
+            }
+
+        } header: {
+            Text("Modules")
+        }
+    }
+    
     
 }
-
