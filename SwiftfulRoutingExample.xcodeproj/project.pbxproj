@@ -455,7 +455,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"SwiftfulRoutingExample/Preview Content\"";
-				DEVELOPMENT_TEAM = Z735PM5XVD;
+				DEVELOPMENT_TEAM = 9JN8RSJMX3;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SwiftfulRoutingExample/Info.plist;
@@ -485,7 +485,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"SwiftfulRoutingExample/Preview Content\"";
-				DEVELOPMENT_TEAM = Z735PM5XVD;
+				DEVELOPMENT_TEAM = 9JN8RSJMX3;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SwiftfulRoutingExample/Info.plist;

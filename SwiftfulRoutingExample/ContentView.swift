@@ -28,9 +28,9 @@ struct MyView: View {
     
     var body: some View {
         List {
-            screenStackSection
-            segueSection
-            alertSection
+//            screenStackSection
+//            segueSection
+//            alertSection
             modalSection
             
             if #available(iOS 14, *) {
@@ -332,15 +332,9 @@ extension MyView {
     @MainActor
     private var modalSection: some View {
         Section {
-            Button("Basic") {
+            Button("Basic w/ Environment Dismiss") {
                 router.showBasicModal {
-                    Text("Sample")
-                        .frame(width: 275, height: 450)
-                        .background(Color.blue)
-                        .cornerRadius(10)
-                        .onTapGesture {
-                            router.dismissModal()
-                        }
+                    SomeSampleModal()
                 }
             }
             
@@ -348,7 +342,7 @@ extension MyView {
                 router.showModal(
                     transition: .opacity,
                     backgroundColor: Color.black.opacity(0.001),
-                    useDeviceBounds: false) {
+                    ignoreSafeArea: false) {
                     Text("Sample")
                         .frame(width: 275, height: 450)
                         .background(Color.blue)
@@ -362,10 +356,7 @@ extension MyView {
             Button("Opacity w/ background color & blur") {
                 router.showModal(
                     transition: .opacity,
-                    backgroundColor: Color.black.opacity(0.3),
-                    backgroundEffect: BackgroundEffect(
-                        effect: UIBlurEffect(style: .systemMaterialDark),
-                        opacity: 0.85)
+                    backgroundColor: Color.black.opacity(0.3)
                 ) {
                     Text("Sample")
                         .frame(width: 275, height: 450)
@@ -378,7 +369,7 @@ extension MyView {
             }
             
             Button("Top") {
-                router.showModal(transition: .move(edge: .top), animation: .easeInOut, alignment: .top, backgroundColor: Color.black.opacity(0.001), useDeviceBounds: true) {
+                router.showModal(transition: .move(edge: .top), animation: .easeInOut, alignment: .top, backgroundColor: Color.black.opacity(0.001), ignoreSafeArea: true) {
                     Text("Sample")
                         .frame(maxWidth: .infinity)
                         .frame(height: 70, alignment: .bottom)
@@ -391,7 +382,7 @@ extension MyView {
             }
             
             Button("Top 2") {
-                router.showModal(transition: .move(edge: .top), animation: .easeInOut, alignment: .top, backgroundColor: Color.black.opacity(0.001), useDeviceBounds: false) {
+                router.showModal(transition: .move(edge: .top), animation: .easeInOut, alignment: .top, backgroundColor: Color.black.opacity(0.001), ignoreSafeArea: false) {
                     Text("Sample")
                         .frame(maxWidth: .infinity)
                         .padding()
@@ -405,7 +396,7 @@ extension MyView {
             }
             
             Button("Bottom") {
-                router.showModal(transition: .move(edge: .bottom), animation: .easeInOut, alignment: .bottom, backgroundColor: Color.black.opacity(0.35), useDeviceBounds: true) {
+                router.showModal(transition: .move(edge: .bottom), animation: .easeInOut, alignment: .bottom, backgroundColor: Color.black.opacity(0.35), ignoreSafeArea: true) {
                     Text("Sample")
                         .frame(maxWidth: .infinity)
                         .frame(height: 350)
@@ -418,7 +409,7 @@ extension MyView {
             }
             
             Button("Bottom 2") {
-                router.showModal(transition: .move(edge: .bottom), animation: .spring(), alignment: .center, backgroundColor: Color.black.opacity(0.35), useDeviceBounds: false) {
+                router.showModal(transition: .move(edge: .bottom), animation: .spring(), alignment: .center, backgroundColor: Color.black.opacity(0.35), ignoreSafeArea: false) {
                     Text("Sample")
                         .frame(width: 275, height: 450)
                         .background(Color.blue)
@@ -430,7 +421,7 @@ extension MyView {
             }
             
             Button("Leading") {
-                router.showModal(transition: .move(edge: .leading), animation: .easeInOut, alignment: .leading, backgroundColor: Color.black.opacity(0.35), useDeviceBounds: true) {
+                router.showModal(transition: .move(edge: .leading), animation: .easeInOut, alignment: .leading, backgroundColor: Color.black.opacity(0.35), ignoreSafeArea: true) {
                     Text("Sample")
                         .frame(maxHeight: .infinity)
                         .frame(width: 200)
@@ -454,7 +445,7 @@ extension MyView {
             }
 
             Button("Scale") {
-                router.showModal(transition: .scale, backgroundColor: Color.black.opacity(0.001), useDeviceBounds: false) {
+                router.showModal(transition: .scale, backgroundColor: Color.black.opacity(0.001), ignoreSafeArea: false) {
                     Text("Sample")
                         .frame(width: 275, height: 450)
                         .background(Color.blue)
@@ -518,3 +509,18 @@ extension MyView {
     
 }
 
+
+struct SomeSampleModal: View {
+    
+    @Environment(\.router) var router
+    
+    var body: some View {
+        Text("Sample")
+            .frame(width: 275, height: 450)
+            .background(Color.blue)
+            .cornerRadius(10)
+            .onTapGesture {
+                router.dismissModal()
+            }
+    }
+}
