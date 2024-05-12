@@ -28,9 +28,9 @@ struct MyView: View {
     
     var body: some View {
         List {
-//            screenStackSection
-//            segueSection
-//            alertSection
+            screenStackSection
+            segueSection
+            alertSection
             modalSection
             
             if #available(iOS 14, *) {
@@ -338,9 +338,45 @@ extension MyView {
                 }
             }
             
+            Button("Modal w/ 2 Layers") {
+                router.showModal(
+                    transition: AnyTransition.opacity.animation(.easeInOut),
+                    backgroundColor: Color.blue.opacity(0.7),
+                    ignoreSafeArea: false
+                ) {
+                    Text("Sample")
+                        .frame(width: 275, height: 450)
+                        .background(Color.blue)
+                        .cornerRadius(10)
+                        .offset(x: -100)
+                        .onTapGesture {
+                            router.dismissModal()
+                        }
+                }
+                
+                // Note: the background of this modal should be above the background of previous modal
+                router.showModal(
+                    transition: AnyTransition.opacity.animation(.easeInOut),
+                    backgroundColor: Color.red.opacity(0.7),
+                    ignoreSafeArea: false
+                ) {
+                    Text("Sample")
+                        .frame(width: 275, height: 450)
+                        .background(Color.red)
+                        .cornerRadius(10)
+                        .offset(x: 100)
+                        .onTapGesture {
+                            router.dismissModal()
+                        }
+                        .onAppear {
+                            
+                        }
+                }
+            }
+            
             Button("Opacity") {
                 router.showModal(
-                    transition: .opacity,
+                    transition: AnyTransition.opacity.animation(.easeInOut),
                     backgroundColor: Color.black.opacity(0.001),
                     ignoreSafeArea: false) {
                     Text("Sample")
@@ -445,7 +481,7 @@ extension MyView {
             }
 
             Button("Scale") {
-                router.showModal(transition: .scale, backgroundColor: Color.black.opacity(0.001), ignoreSafeArea: false) {
+                router.showModal(transition: AnyTransition.scale.animation(.bouncy), backgroundColor: Color.black.opacity(0.001), ignoreSafeArea: false) {
                     Text("Sample")
                         .frame(width: 275, height: 450)
                         .background(Color.blue)
