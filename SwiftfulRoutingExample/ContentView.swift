@@ -404,6 +404,22 @@ extension MyView {
                 }
             }
             
+            Button("Opacity disable background tap") {
+                router.showModal(
+                    transition: .opacity,
+                    backgroundColor: Color.black.opacity(0.9),
+                    dismissOnBackgroundTap: false
+                ) {
+                    Text("Sample")
+                        .frame(width: 275, height: 450)
+                        .background(Color.blue)
+                        .cornerRadius(10)
+                        .onTapGesture {
+                            router.dismissModal()
+                        }
+                }
+            }
+            
             Button("Top") {
                 router.showModal(transition: .move(edge: .top), animation: .easeInOut, alignment: .top, backgroundColor: Color.black.opacity(0.001), ignoreSafeArea: true) {
                     Text("Sample")
