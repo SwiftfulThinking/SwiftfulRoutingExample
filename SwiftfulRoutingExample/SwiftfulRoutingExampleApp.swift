@@ -21,7 +21,8 @@ struct SwiftfulRoutingExampleApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+//            ContentView()
+            ContentTransitionView()
         }
     }
 }
