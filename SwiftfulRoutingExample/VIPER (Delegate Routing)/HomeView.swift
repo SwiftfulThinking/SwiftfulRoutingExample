@@ -35,7 +35,7 @@ struct HomeView: View {
     }
 }
 
-import SwiftfulRouting
+//import SwiftfulRouting
 
 @available(iOS 14, *)
 struct HomeView_Previews: PreviewProvider {

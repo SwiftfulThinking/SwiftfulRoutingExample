@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SwiftfulRouting
+//import SwiftfulRouting
 
 @MainActor
 final class SampleViewModel: ObservableObject {

@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import SwiftfulRouting
+//import SwiftfulRouting
 
 struct ContentView: View {
     var body: some View {

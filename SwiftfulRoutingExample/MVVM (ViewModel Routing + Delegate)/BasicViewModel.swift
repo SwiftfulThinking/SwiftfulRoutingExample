@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import SwiftfulRouting
+//import SwiftfulRouting
 
 // This is the same as SampleViewModel, except data flows through a delegate to decouple ViewModel from DataService
 

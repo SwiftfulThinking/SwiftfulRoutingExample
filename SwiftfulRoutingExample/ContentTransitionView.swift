@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import SwiftfulRouting
+//import SwiftfulRouting
 
 // TransitionSupportViewBuilder will be integrated into RouterView in a future release
 // Currently available as a separate component

@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import SwiftfulRouting
+//import SwiftfulRouting
 
 @main
 struct SwiftfulRoutingExampleApp: App {
@@ -21,8 +21,8 @@ struct SwiftfulRoutingExampleApp: App {
 
     var body: some Scene {
         WindowGroup {
-//            ContentView()
-            ContentTransitionView()
+            ContentView()
+//            ContentTransitionView()
         }
     }
 }

@@ -35,7 +35,7 @@ struct BasicView: View {
     }
 }
 
-import SwiftfulRouting
+//import SwiftfulRouting
 
 @available(iOS 14, *)
 struct BasicView_Previews: PreviewProvider {

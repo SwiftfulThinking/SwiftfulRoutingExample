@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import SwiftfulRouting
+//import SwiftfulRouting
 
 @available(iOS 14, *)
 struct ExampleView: View {

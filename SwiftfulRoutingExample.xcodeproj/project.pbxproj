@@ -8,11 +8,39 @@
 
 /* Begin PBXBuildFile section */
 		021CF2D22A9CDB4500BFB255 /* PopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 021CF2D12A9CDB4500BFB255 /* PopoverView.swift */; };
+		028740752D29BF4000C2C3E1 /* SheetViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028740722D29BF4000C2C3E1 /* SheetViewModifier.swift */; };
+		028740762D29BF4000C2C3E1 /* TransitionSupportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028740552D29BF4000C2C3E1 /* TransitionSupportView.swift */; };
+		028740772D29BF4000C2C3E1 /* AnyRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028740632D29BF4000C2C3E1 /* AnyRoute.swift */; };
+		028740782D29BF4000C2C3E1 /* OnFirstAppearModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028740712D29BF4000C2C3E1 /* OnFirstAppearModifier.swift */; };
+		028740792D29BF4000C2C3E1 /* AnyRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028740582D29BF4000C2C3E1 /* AnyRouter.swift */; };
+		0287407A2D29BF4000C2C3E1 /* AlertViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0287406B2D29BF4000C2C3E1 /* AlertViewModifier.swift */; };
+		0287407B2D29BF4000C2C3E1 /* View+EXT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0287405F2D29BF4000C2C3E1 /* View+EXT.swift */; };
+		0287407C2D29BF4000C2C3E1 /* Binding+EXT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0287405D2D29BF4000C2C3E1 /* Binding+EXT.swift */; };
+		0287407D2D29BF4000C2C3E1 /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028740592D29BF4000C2C3E1 /* Router.swift */; };
+		0287407E2D29BF4000C2C3E1 /* AnyDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028740622D29BF4000C2C3E1 /* AnyDestination.swift */; };
+		0287407F2D29BF4000C2C3E1 /* ModalViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0287406E2D29BF4000C2C3E1 /* ModalViewModifier.swift */; };
+		028740802D29BF4000C2C3E1 /* VisualEffectViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028740562D29BF4000C2C3E1 /* VisualEffectViewRepresentable.swift */; };
+		028740812D29BF4000C2C3E1 /* FullScreenCoverViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0287406D2D29BF4000C2C3E1 /* FullScreenCoverViewModifier.swift */; };
+		028740822D29BF4000C2C3E1 /* AnyAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028740612D29BF4000C2C3E1 /* AnyAlert.swift */; };
+		028740832D29BF4000C2C3E1 /* SegueOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028740672D29BF4000C2C3E1 /* SegueOption.swift */; };
+		028740842D29BF4000C2C3E1 /* OnChangeOfPresentationModeViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028740702D29BF4000C2C3E1 /* OnChangeOfPresentationModeViewModifier.swift */; };
+		028740852D29BF4000C2C3E1 /* Set+EXT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0287405E2D29BF4000C2C3E1 /* Set+EXT.swift */; };
+		028740862D29BF4000C2C3E1 /* Array+EXT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0287405C2D29BF4000C2C3E1 /* Array+EXT.swift */; };
+		028740872D29BF4000C2C3E1 /* ModalSupportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028740522D29BF4000C2C3E1 /* ModalSupportView.swift */; };
+		028740882D29BF4000C2C3E1 /* RouterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0287405A2D29BF4000C2C3E1 /* RouterView.swift */; };
+		028740892D29BF4000C2C3E1 /* NavigationLinkViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0287406F2D29BF4000C2C3E1 /* NavigationLinkViewModifier.swift */; };
+		0287408A2D29BF4000C2C3E1 /* ConfirmationDialogViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0287406C2D29BF4000C2C3E1 /* ConfirmationDialogViewModifier.swift */; };
+		0287408B2D29BF4000C2C3E1 /* NavigationViewIfNeeded.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028740532D29BF4000C2C3E1 /* NavigationViewIfNeeded.swift */; };
+		0287408C2D29BF4000C2C3E1 /* DialogOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028740652D29BF4000C2C3E1 /* DialogOption.swift */; };
+		0287408D2D29BF4000C2C3E1 /* ModalConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028740662D29BF4000C2C3E1 /* ModalConfiguration.swift */; };
+		0287408E2D29BF4000C2C3E1 /* SwipeBackSupportContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028740542D29BF4000C2C3E1 /* SwipeBackSupportContainer.swift */; };
+		0287408F2D29BF4000C2C3E1 /* UrlOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028740692D29BF4000C2C3E1 /* UrlOption.swift */; };
+		028740902D29BF4000C2C3E1 /* SheetConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028740682D29BF4000C2C3E1 /* SheetConfiguration.swift */; };
+		028740932D29BF6E00C2C3E1 /* SwiftfulRecursiveUI in Frameworks */ = {isa = PBXBuildFile; productRef = 028740922D29BF6E00C2C3E1 /* SwiftfulRecursiveUI */; };
 		028A896A281F9228004E3DA4 /* SwiftfulRoutingExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028A8969281F9228004E3DA4 /* SwiftfulRoutingExampleApp.swift */; };
 		028A896C281F9228004E3DA4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028A896B281F9228004E3DA4 /* ContentView.swift */; };
 		028A896E281F922B004E3DA4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 028A896D281F922B004E3DA4 /* Assets.xcassets */; };
 		028A8971281F922B004E3DA4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 028A8970281F922B004E3DA4 /* Preview Assets.xcassets */; };
-		028A8979281F9250004E3DA4 /* SwiftfulRouting in Frameworks */ = {isa = PBXBuildFile; productRef = 028A8978281F9250004E3DA4 /* SwiftfulRouting */; };
 		028A8981281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028A8980281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.swift */; };
 		02CFF0E12986B2D900E6ABCC /* ExampleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFF0E02986B2D900E6ABCC /* ExampleView.swift */; };
 		02CFF0E32986B66F00E6ABCC /* DataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFF0E22986B66F00E6ABCC /* DataService.swift */; };
@@ -43,6 +71,34 @@
 
 /* Begin PBXFileReference section */
 		021CF2D12A9CDB4500BFB255 /* PopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverView.swift; sourceTree = "<group>"; };
+		028740522D29BF4000C2C3E1 /* ModalSupportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalSupportView.swift; sourceTree = "<group>"; };
+		028740532D29BF4000C2C3E1 /* NavigationViewIfNeeded.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationViewIfNeeded.swift; sourceTree = "<group>"; };
+		028740542D29BF4000C2C3E1 /* SwipeBackSupportContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeBackSupportContainer.swift; sourceTree = "<group>"; };
+		028740552D29BF4000C2C3E1 /* TransitionSupportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionSupportView.swift; sourceTree = "<group>"; };
+		028740562D29BF4000C2C3E1 /* VisualEffectViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffectViewRepresentable.swift; sourceTree = "<group>"; };
+		028740582D29BF4000C2C3E1 /* AnyRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyRouter.swift; sourceTree = "<group>"; };
+		028740592D29BF4000C2C3E1 /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
+		0287405A2D29BF4000C2C3E1 /* RouterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterView.swift; sourceTree = "<group>"; };
+		0287405C2D29BF4000C2C3E1 /* Array+EXT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+EXT.swift"; sourceTree = "<group>"; };
+		0287405D2D29BF4000C2C3E1 /* Binding+EXT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Binding+EXT.swift"; sourceTree = "<group>"; };
+		0287405E2D29BF4000C2C3E1 /* Set+EXT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Set+EXT.swift"; sourceTree = "<group>"; };
+		0287405F2D29BF4000C2C3E1 /* View+EXT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+EXT.swift"; sourceTree = "<group>"; };
+		028740612D29BF4000C2C3E1 /* AnyAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyAlert.swift; sourceTree = "<group>"; };
+		028740622D29BF4000C2C3E1 /* AnyDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyDestination.swift; sourceTree = "<group>"; };
+		028740632D29BF4000C2C3E1 /* AnyRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyRoute.swift; sourceTree = "<group>"; };
+		028740652D29BF4000C2C3E1 /* DialogOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DialogOption.swift; sourceTree = "<group>"; };
+		028740662D29BF4000C2C3E1 /* ModalConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalConfiguration.swift; sourceTree = "<group>"; };
+		028740672D29BF4000C2C3E1 /* SegueOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegueOption.swift; sourceTree = "<group>"; };
+		028740682D29BF4000C2C3E1 /* SheetConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetConfiguration.swift; sourceTree = "<group>"; };
+		028740692D29BF4000C2C3E1 /* UrlOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UrlOption.swift; sourceTree = "<group>"; };
+		0287406B2D29BF4000C2C3E1 /* AlertViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertViewModifier.swift; sourceTree = "<group>"; };
+		0287406C2D29BF4000C2C3E1 /* ConfirmationDialogViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmationDialogViewModifier.swift; sourceTree = "<group>"; };
+		0287406D2D29BF4000C2C3E1 /* FullScreenCoverViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenCoverViewModifier.swift; sourceTree = "<group>"; };
+		0287406E2D29BF4000C2C3E1 /* ModalViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalViewModifier.swift; sourceTree = "<group>"; };
+		0287406F2D29BF4000C2C3E1 /* NavigationLinkViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationLinkViewModifier.swift; sourceTree = "<group>"; };
+		028740702D29BF4000C2C3E1 /* OnChangeOfPresentationModeViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnChangeOfPresentationModeViewModifier.swift; sourceTree = "<group>"; };
+		028740712D29BF4000C2C3E1 /* OnFirstAppearModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnFirstAppearModifier.swift; sourceTree = "<group>"; };
+		028740722D29BF4000C2C3E1 /* SheetViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheetViewModifier.swift; sourceTree = "<group>"; };
 		028A8966281F9228004E3DA4 /* SwiftfulRoutingExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftfulRoutingExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		028A8969281F9228004E3DA4 /* SwiftfulRoutingExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftfulRoutingExampleApp.swift; sourceTree = "<group>"; };
 		028A896B281F9228004E3DA4 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -73,7 +129,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				028A8979281F9250004E3DA4 /* SwiftfulRouting in Frameworks */,
+				028740932D29BF6E00C2C3E1 /* SwiftfulRecursiveUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,6 +143,89 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		028740572D29BF4000C2C3E1 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				028740522D29BF4000C2C3E1 /* ModalSupportView.swift */,
+				028740532D29BF4000C2C3E1 /* NavigationViewIfNeeded.swift */,
+				028740542D29BF4000C2C3E1 /* SwipeBackSupportContainer.swift */,
+				028740552D29BF4000C2C3E1 /* TransitionSupportView.swift */,
+				028740562D29BF4000C2C3E1 /* VisualEffectViewRepresentable.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		0287405B2D29BF4000C2C3E1 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				028740582D29BF4000C2C3E1 /* AnyRouter.swift */,
+				028740592D29BF4000C2C3E1 /* Router.swift */,
+				0287405A2D29BF4000C2C3E1 /* RouterView.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		028740602D29BF4000C2C3E1 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				0287405C2D29BF4000C2C3E1 /* Array+EXT.swift */,
+				0287405D2D29BF4000C2C3E1 /* Binding+EXT.swift */,
+				0287405E2D29BF4000C2C3E1 /* Set+EXT.swift */,
+				0287405F2D29BF4000C2C3E1 /* View+EXT.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		028740642D29BF4000C2C3E1 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				028740612D29BF4000C2C3E1 /* AnyAlert.swift */,
+				028740622D29BF4000C2C3E1 /* AnyDestination.swift */,
+				028740632D29BF4000C2C3E1 /* AnyRoute.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		0287406A2D29BF4000C2C3E1 /* Options */ = {
+			isa = PBXGroup;
+			children = (
+				028740652D29BF4000C2C3E1 /* DialogOption.swift */,
+				028740662D29BF4000C2C3E1 /* ModalConfiguration.swift */,
+				028740672D29BF4000C2C3E1 /* SegueOption.swift */,
+				028740682D29BF4000C2C3E1 /* SheetConfiguration.swift */,
+				028740692D29BF4000C2C3E1 /* UrlOption.swift */,
+			);
+			path = Options;
+			sourceTree = "<group>";
+		};
+		028740732D29BF4000C2C3E1 /* ViewModifiers */ = {
+			isa = PBXGroup;
+			children = (
+				0287406B2D29BF4000C2C3E1 /* AlertViewModifier.swift */,
+				0287406C2D29BF4000C2C3E1 /* ConfirmationDialogViewModifier.swift */,
+				0287406D2D29BF4000C2C3E1 /* FullScreenCoverViewModifier.swift */,
+				0287406E2D29BF4000C2C3E1 /* ModalViewModifier.swift */,
+				0287406F2D29BF4000C2C3E1 /* NavigationLinkViewModifier.swift */,
+				028740702D29BF4000C2C3E1 /* OnChangeOfPresentationModeViewModifier.swift */,
+				028740712D29BF4000C2C3E1 /* OnFirstAppearModifier.swift */,
+				028740722D29BF4000C2C3E1 /* SheetViewModifier.swift */,
+			);
+			path = ViewModifiers;
+			sourceTree = "<group>";
+		};
+		028740742D29BF4000C2C3E1 /* SwiftfulRouting */ = {
+			isa = PBXGroup;
+			children = (
+				028740572D29BF4000C2C3E1 /* Components */,
+				0287405B2D29BF4000C2C3E1 /* Core */,
+				028740602D29BF4000C2C3E1 /* Extensions */,
+				028740642D29BF4000C2C3E1 /* Models */,
+				0287406A2D29BF4000C2C3E1 /* Options */,
+				028740732D29BF4000C2C3E1 /* ViewModifiers */,
+			);
+			path = SwiftfulRouting;
+			sourceTree = "<group>";
+		};
 		028A895D281F9228004E3DA4 = {
 			isa = PBXGroup;
 			children = (
@@ -113,6 +252,7 @@
 				028A896B281F9228004E3DA4 /* ContentView.swift */,
 				D1A7AEB92C778380006AF666 /* ContentTransitionView.swift */,
 				021CF2D12A9CDB4500BFB255 /* PopoverView.swift */,
+				028740742D29BF4000C2C3E1 /* SwiftfulRouting */,
 				02CFF0DF2986B2A700E6ABCC /* MVVM (View Routing) */,
 				02CFF0E62986B6E100E6ABCC /* MVVM (ViewModel Routing) */,
 				02CFF0F52986BEBB00E6ABCC /* MVVM (ViewModel Routing + Delegate) */,
@@ -206,7 +346,7 @@
 			);
 			name = SwiftfulRoutingExample;
 			packageProductDependencies = (
-				028A8978281F9250004E3DA4 /* SwiftfulRouting */,
+				028740922D29BF6E00C2C3E1 /* SwiftfulRecursiveUI */,
 			);
 			productName = SwiftfulRoutingExample;
 			productReference = 028A8966281F9228004E3DA4 /* SwiftfulRoutingExample.app */;
@@ -259,7 +399,7 @@
 			);
 			mainGroup = 028A895D281F9228004E3DA4;
 			packageReferences = (
-				028A8977281F9250004E3DA4 /* XCRemoteSwiftPackageReference "SwiftfulRouting" */,
+				028740912D29BF6E00C2C3E1 /* XCRemoteSwiftPackageReference "SwiftfulRecursiveUI" */,
 			);
 			productRefGroup = 028A8967281F9228004E3DA4 /* Products */;
 			projectDirPath = "";
@@ -303,6 +443,34 @@
 				02CFF0F72986BEE400E6ABCC /* BasicView.swift in Sources */,
 				02CFF0F22986BDFC00E6ABCC /* HomeView.swift in Sources */,
 				02CFF0ED2986BAEE00E6ABCC /* MyNextView.swift in Sources */,
+				028740752D29BF4000C2C3E1 /* SheetViewModifier.swift in Sources */,
+				028740762D29BF4000C2C3E1 /* TransitionSupportView.swift in Sources */,
+				028740772D29BF4000C2C3E1 /* AnyRoute.swift in Sources */,
+				028740782D29BF4000C2C3E1 /* OnFirstAppearModifier.swift in Sources */,
+				028740792D29BF4000C2C3E1 /* AnyRouter.swift in Sources */,
+				0287407A2D29BF4000C2C3E1 /* AlertViewModifier.swift in Sources */,
+				0287407B2D29BF4000C2C3E1 /* View+EXT.swift in Sources */,
+				0287407C2D29BF4000C2C3E1 /* Binding+EXT.swift in Sources */,
+				0287407D2D29BF4000C2C3E1 /* Router.swift in Sources */,
+				0287407E2D29BF4000C2C3E1 /* AnyDestination.swift in Sources */,
+				0287407F2D29BF4000C2C3E1 /* ModalViewModifier.swift in Sources */,
+				028740802D29BF4000C2C3E1 /* VisualEffectViewRepresentable.swift in Sources */,
+				028740812D29BF4000C2C3E1 /* FullScreenCoverViewModifier.swift in Sources */,
+				028740822D29BF4000C2C3E1 /* AnyAlert.swift in Sources */,
+				028740832D29BF4000C2C3E1 /* SegueOption.swift in Sources */,
+				028740842D29BF4000C2C3E1 /* OnChangeOfPresentationModeViewModifier.swift in Sources */,
+				028740852D29BF4000C2C3E1 /* Set+EXT.swift in Sources */,
+				028740862D29BF4000C2C3E1 /* Array+EXT.swift in Sources */,
+				028740872D29BF4000C2C3E1 /* ModalSupportView.swift in Sources */,
+				028740882D29BF4000C2C3E1 /* RouterView.swift in Sources */,
+				028740892D29BF4000C2C3E1 /* NavigationLinkViewModifier.swift in Sources */,
+				0287408A2D29BF4000C2C3E1 /* ConfirmationDialogViewModifier.swift in Sources */,
+				0287408B2D29BF4000C2C3E1 /* NavigationViewIfNeeded.swift in Sources */,
+				0287408C2D29BF4000C2C3E1 /* DialogOption.swift in Sources */,
+				0287408D2D29BF4000C2C3E1 /* ModalConfiguration.swift in Sources */,
+				0287408E2D29BF4000C2C3E1 /* SwipeBackSupportContainer.swift in Sources */,
+				0287408F2D29BF4000C2C3E1 /* UrlOption.swift in Sources */,
+				028740902D29BF4000C2C3E1 /* SheetConfiguration.swift in Sources */,
 				02CFF0EA2986BA1000E6ABCC /* SampleViewModel.swift in Sources */,
 				02CFF1012986C29900E6ABCC /* HomeRouter.swift in Sources */,
 				02CFF0E32986B66F00E6ABCC /* DataService.swift in Sources */,
@@ -578,21 +746,21 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		028A8977281F9250004E3DA4 /* XCRemoteSwiftPackageReference "SwiftfulRouting" */ = {
+		028740912D29BF6E00C2C3E1 /* XCRemoteSwiftPackageReference "SwiftfulRecursiveUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SwiftfulThinking/SwiftfulRouting.git";
+			repositoryURL = "https://github.com/SwiftfulThinking/SwiftfulRecursiveUI.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.0;
+				minimumVersion = 1.0.2;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		028A8978281F9250004E3DA4 /* SwiftfulRouting */ = {
+		028740922D29BF6E00C2C3E1 /* SwiftfulRecursiveUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 028A8977281F9250004E3DA4 /* XCRemoteSwiftPackageReference "SwiftfulRouting" */;
-			productName = SwiftfulRouting;
+			package = 028740912D29BF6E00C2C3E1 /* XCRemoteSwiftPackageReference "SwiftfulRecursiveUI" */;
+			productName = SwiftfulRecursiveUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
