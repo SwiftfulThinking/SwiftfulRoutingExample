@@ -24,7 +24,7 @@ struct RouterView<Content: View>: View {
 
 @MainActor
 protocol Router {
-    func showScreen<T>(@ViewBuilder destination: @escaping (Router) -> T) where T: View
+    func showScreen<T>(id: String, @ViewBuilder destination: @escaping (Router) -> T) where T: View
     func dismissScreen()
     func dismissScreens(to routerId: String)
 }
@@ -35,12 +35,11 @@ final class RouterViewModel {
     
     var screens: [AnyDestination] = []
     
-    func showScreen<T>(destination: @escaping (any Router) -> T) where T : View {
-        let routeId = UUID().uuidString
+    func showScreen<T>(id: String, destination: @escaping (any Router) -> T) where T : View {
         let destination = AnyDestination(
-            id: routeId,
+            id: id,
             RouterViewInternal(
-                routerId: routeId,
+                routerId: id,
                 addNavigationStack: false,
                 content: destination),
             onDismiss: nil
@@ -54,6 +53,14 @@ final class RouterViewModel {
             return
         }
         screens = Array(screens.prefix(index))
+    }
+    
+    func dismissScreens(to routeId: String) {
+        guard let index = screens.firstIndex(where: { $0.id == routeId }) else {
+            print("Route ID not found: \(routeId)")
+            return
+        }
+        screens = Array(screens.prefix(index + 1))
     }
 }
 
@@ -71,8 +78,8 @@ struct RouterViewInternal<Content: View>: View, Router {
         }
     }
     
-    func showScreen<T>(destination: @escaping (any Router) -> T) where T : View {
-        viewModel.showScreen(destination: destination)
+    func showScreen<T>(id: String, destination: @escaping (any Router) -> T) where T : View {
+        viewModel.showScreen(id: id, destination: destination)
     }
     
     func dismissScreen() {
@@ -80,7 +87,7 @@ struct RouterViewInternal<Content: View>: View, Router {
     }
     
     func dismissScreens(to routerId: String) {
-        viewModel.dismissScreen(routeId: routerId)
+        viewModel.dismissScreens(to: routerId)
     }
 }
 
@@ -88,13 +95,13 @@ struct RoutingTest: View {
     var body: some View {
         RouterView { router in
             Button("Click me") {
-                router.showScreen { router2 in
+                router.showScreen(id: "screen_2") { router2 in
                     Button("Click me 2") {
-                        router2.showScreen { router3 in
+                        router2.showScreen(id: "screen_3") { router3 in
                             Button("Click me 3") {
-                                router3.showScreen { router4 in
+                                router3.showScreen(id: "screen_4") { router4 in
                                     Button("Click me 4") {
-//                                        router4.dismissScreens(to: <#T##String#>)
+                                        router4.dismissScreens(to: "screen_2")
                                     }
                                 }
                             }
