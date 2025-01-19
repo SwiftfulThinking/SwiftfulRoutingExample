@@ -12,8 +12,8 @@
 		028A896C281F9228004E3DA4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028A896B281F9228004E3DA4 /* ContentView.swift */; };
 		028A896E281F922B004E3DA4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 028A896D281F922B004E3DA4 /* Assets.xcassets */; };
 		028A8971281F922B004E3DA4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 028A8970281F922B004E3DA4 /* Preview Assets.xcassets */; };
-		028A8979281F9250004E3DA4 /* SwiftfulRouting in Frameworks */ = {isa = PBXBuildFile; productRef = 028A8978281F9250004E3DA4 /* SwiftfulRouting */; };
 		028A8981281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028A8980281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.swift */; };
+		02ADB6A92D3D766400F15EBD /* RoutingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02ADB6A82D3D766400F15EBD /* RoutingTest.swift */; };
 		02CFF0E12986B2D900E6ABCC /* ExampleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFF0E02986B2D900E6ABCC /* ExampleView.swift */; };
 		02CFF0E32986B66F00E6ABCC /* DataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFF0E22986B66F00E6ABCC /* DataService.swift */; };
 		02CFF0E52986B68300E6ABCC /* ExampleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFF0E42986B68300E6ABCC /* ExampleViewModel.swift */; };
@@ -50,6 +50,7 @@
 		028A8970281F922B004E3DA4 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		028A897E281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftfulRoutingExampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		028A8980281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftfulRoutingExampleUITests.swift; sourceTree = "<group>"; };
+		02ADB6A82D3D766400F15EBD /* RoutingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutingTest.swift; sourceTree = "<group>"; };
 		02CFF0E02986B2D900E6ABCC /* ExampleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleView.swift; sourceTree = "<group>"; };
 		02CFF0E22986B66F00E6ABCC /* DataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
 		02CFF0E42986B68300E6ABCC /* ExampleViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleViewModel.swift; sourceTree = "<group>"; };
@@ -73,7 +74,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				028A8979281F9250004E3DA4 /* SwiftfulRouting in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -113,6 +113,7 @@
 				028A896B281F9228004E3DA4 /* ContentView.swift */,
 				D1A7AEB92C778380006AF666 /* ContentTransitionView.swift */,
 				021CF2D12A9CDB4500BFB255 /* PopoverView.swift */,
+				02ADB6A72D3D763000F15EBD /* Routing */,
 				02CFF0DF2986B2A700E6ABCC /* MVVM (View Routing) */,
 				02CFF0E62986B6E100E6ABCC /* MVVM (ViewModel Routing) */,
 				02CFF0F52986BEBB00E6ABCC /* MVVM (ViewModel Routing + Delegate) */,
@@ -138,6 +139,14 @@
 				028A8980281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.swift */,
 			);
 			path = SwiftfulRoutingExampleUITests;
+			sourceTree = "<group>";
+		};
+		02ADB6A72D3D763000F15EBD /* Routing */ = {
+			isa = PBXGroup;
+			children = (
+				02ADB6A82D3D766400F15EBD /* RoutingTest.swift */,
+			);
+			path = Routing;
 			sourceTree = "<group>";
 		};
 		02CFF0DF2986B2A700E6ABCC /* MVVM (View Routing) */ = {
@@ -206,7 +215,6 @@
 			);
 			name = SwiftfulRoutingExample;
 			packageProductDependencies = (
-				028A8978281F9250004E3DA4 /* SwiftfulRouting */,
 			);
 			productName = SwiftfulRoutingExample;
 			productReference = 028A8966281F9228004E3DA4 /* SwiftfulRoutingExample.app */;
@@ -259,7 +267,6 @@
 			);
 			mainGroup = 028A895D281F9228004E3DA4;
 			packageReferences = (
-				028A8977281F9250004E3DA4 /* XCRemoteSwiftPackageReference "SwiftfulRouting" */,
 			);
 			productRefGroup = 028A8967281F9228004E3DA4 /* Products */;
 			projectDirPath = "";
@@ -312,6 +319,7 @@
 				02CFF0FD2986BFE200E6ABCC /* BasicViewModelDelegate.swift in Sources */,
 				028A896A281F9228004E3DA4 /* SwiftfulRoutingExampleApp.swift in Sources */,
 				02CFF0F42986BE2F00E6ABCC /* HomePresenter.swift in Sources */,
+				02ADB6A92D3D766400F15EBD /* RoutingTest.swift in Sources */,
 				021CF2D22A9CDB4500BFB255 /* PopoverView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -467,7 +475,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -497,7 +505,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -576,25 +584,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		028A8977281F9250004E3DA4 /* XCRemoteSwiftPackageReference "SwiftfulRouting" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SwiftfulThinking/SwiftfulRouting.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		028A8978281F9250004E3DA4 /* SwiftfulRouting */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 028A8977281F9250004E3DA4 /* XCRemoteSwiftPackageReference "SwiftfulRouting" */;
-			productName = SwiftfulRouting;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 028A895E281F9228004E3DA4 /* Project object */;
 }
