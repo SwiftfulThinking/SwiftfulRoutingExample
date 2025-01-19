@@ -24,7 +24,7 @@ struct RouterView<Content: View>: View {
 
 @MainActor
 protocol Router {
-    func showScreen<T>(id: String, @ViewBuilder destination: @escaping (Router) -> T) where T: View
+    func showScreen<T>(segue: SegueOption, id: String, @ViewBuilder destination: @escaping (Router) -> T) where T: View
     func dismissScreen()
     func dismissScreens(to routerId: String)
 }
@@ -33,9 +33,9 @@ protocol Router {
 @Observable
 final class RouterViewModel {
     
-    var screens: [AnyDestination] = []
+    var screens: [[AnyDestination]] = [[]]
     
-    func showScreen<T>(id: String, destination: @escaping (any Router) -> T) where T : View {
+    func showScreen<T>(segue: SegueOption, id: String, destination: @escaping (any Router) -> T) where T : View {
         let destination = AnyDestination(
             id: id,
             RouterViewInternal(
@@ -44,23 +44,43 @@ final class RouterViewModel {
                 content: destination),
             onDismiss: nil
         )
-        screens.append(destination)
+        
+        switch segue {
+        case .push:
+            if screens.isEmpty {
+                screens.append([destination])
+            } else {
+                screens[screens.count - 1].append(destination)
+            }
+        case .sheet:
+            break
+        }
     }
     
     func dismissScreen(routeId: String) {
-        guard let index = screens.firstIndex(where: { $0.id == routeId }) else {
-            print("Route ID not found: \(routeId)")
-            return
+        for (outerIndex, innerArray) in screens.enumerated() {
+            if let innerIndex = innerArray.firstIndex(where: { $0.id == routeId }) {
+                // Remove all arrays after the current outerIndex
+                screens = Array(screens.prefix(outerIndex + 1))
+                
+                // Trim the inner array to include only elements up to and including the matched destination
+                screens[outerIndex] = Array(innerArray.prefix(innerIndex))
+                return
+            }
         }
-        screens = Array(screens.prefix(index))
     }
     
     func dismissScreens(to routeId: String) {
-        guard let index = screens.firstIndex(where: { $0.id == routeId }) else {
-            print("Route ID not found: \(routeId)")
-            return
+        for (outerIndex, innerArray) in screens.enumerated() {
+            if let innerIndex = innerArray.firstIndex(where: { $0.id == routeId }) {
+                // Remove all arrays after the current outerIndex
+                screens = Array(screens.prefix(outerIndex + 1))
+                
+                // Trim the inner array to include only elements up to and including the matched destination
+                screens[outerIndex] = Array(innerArray.prefix(innerIndex + 1))
+                return
+            }
         }
-        screens = Array(screens.prefix(index + 1))
     }
 }
 
@@ -78,8 +98,8 @@ struct RouterViewInternal<Content: View>: View, Router {
         }
     }
     
-    func showScreen<T>(id: String, destination: @escaping (any Router) -> T) where T : View {
-        viewModel.showScreen(id: id, destination: destination)
+    func showScreen<T>(segue: SegueOption, id: String, destination: @escaping (any Router) -> T) where T : View {
+        viewModel.showScreen(segue: segue, id: id, destination: destination)
     }
     
     func dismissScreen() {
@@ -95,11 +115,11 @@ struct RoutingTest: View {
     var body: some View {
         RouterView { router in
             Button("Click me") {
-                router.showScreen(id: "screen_2") { router2 in
+                router.showScreen(segue: .push, id: "screen_2") { router2 in
                     Button("Click me 2") {
-                        router2.showScreen(id: "screen_3") { router3 in
+                        router2.showScreen(segue: .push, id: "screen_3") { router3 in
                             Button("Click me 3") {
-                                router3.showScreen(id: "screen_4") { router4 in
+                                router3.showScreen(segue: .push, id: "screen_4") { router4 in
                                     Button("Click me 4") {
                                         router4.dismissScreens(to: "screen_2")
                                     }
@@ -141,7 +161,6 @@ struct AnyDestination: Identifiable, Hashable {
     
 }
 
-
 struct NavigationStackIfNeeded<Content:View>: View {
     
     @Bindable var viewModel: RouterViewModel
@@ -150,7 +169,7 @@ struct NavigationStackIfNeeded<Content:View>: View {
     
     @ViewBuilder var body: some View {
         if addNavigationStack {
-            NavigationStack(path: $viewModel.screens) {
+            NavigationStack(path: $viewModel.screens.last!) {
                 content
             }
         } else {
@@ -180,4 +199,14 @@ extension View {
     func navigationDestinationIfNeeded(addNavigationDestination: Bool) -> some View {
         modifier(NavigationDestinationViewModifier(addNavigationDestination: addNavigationDestination))
     }
+}
+
+public enum SegueOption: Equatable {
+    case push, sheet // , fullScreenCover
+    
+//    @available(iOS 14.0, *)
+//    case
+//    
+//    @available(iOS 16.0, *)
+//    case sheetDetents
 }
