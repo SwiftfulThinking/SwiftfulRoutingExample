@@ -29,11 +29,20 @@ protocol Router {
     func dismissScreens(to routerId: String)
 }
 
+struct AnyDestinationStack {
+    var segue: SegueOption
+    var screens: [AnyDestination]
+    
+    func dismiss(index: Int) -> AnyDestinationStack {
+        AnyDestinationStack(segue: segue, screens: Array(screens.prefix(index)))
+    }
+}
+
 @MainActor
 @Observable
 final class RouterViewModel {
     
-    var screens: [[AnyDestination]] = [[]]
+    var screens: [AnyDestinationStack] = [AnyDestinationStack(segue: .push, screens: [])]
     
     func showScreen<T>(segue: SegueOption, id: String, destination: @escaping (any Router) -> T) where T : View {
         let destination = AnyDestination(
@@ -47,11 +56,7 @@ final class RouterViewModel {
         
         switch segue {
         case .push:
-            if screens.isEmpty {
-                screens.append([destination])
-            } else {
-                screens[screens.count - 1].append(destination)
-            }
+            screens[screens.count - 1].screens.append(destination)
         case .sheet:
             break
         }
@@ -59,12 +64,12 @@ final class RouterViewModel {
     
     func dismissScreen(routeId: String) {
         for (outerIndex, innerArray) in screens.enumerated() {
-            if let innerIndex = innerArray.firstIndex(where: { $0.id == routeId }) {
+            if let innerIndex = innerArray.screens.firstIndex(where: { $0.id == routeId }) {
                 // Remove all arrays after the current outerIndex
                 screens = Array(screens.prefix(outerIndex + 1))
                 
                 // Trim the inner array to include only elements up to and including the matched destination
-                screens[outerIndex] = Array(innerArray.prefix(innerIndex))
+                screens[outerIndex] = innerArray.dismiss(index: innerIndex)
                 return
             }
         }
@@ -72,12 +77,12 @@ final class RouterViewModel {
     
     func dismissScreens(to routeId: String) {
         for (outerIndex, innerArray) in screens.enumerated() {
-            if let innerIndex = innerArray.firstIndex(where: { $0.id == routeId }) {
+            if let innerIndex = innerArray.screens.firstIndex(where: { $0.id == routeId }) {
                 // Remove all arrays after the current outerIndex
                 screens = Array(screens.prefix(outerIndex + 1))
                 
                 // Trim the inner array to include only elements up to and including the matched destination
-                screens[outerIndex] = Array(innerArray.prefix(innerIndex + 1))
+                screens[outerIndex] = innerArray.dismiss(index: innerIndex + 1)
                 return
             }
         }
@@ -121,6 +126,7 @@ struct RoutingTest: View {
                             Button("Click me 3") {
                                 router3.showScreen(segue: .push, id: "screen_4") { router4 in
                                     Button("Click me 4") {
+//                                        router3.dismissScreen()
                                         router4.dismissScreens(to: "screen_2")
                                     }
                                 }
@@ -169,7 +175,7 @@ struct NavigationStackIfNeeded<Content:View>: View {
     
     @ViewBuilder var body: some View {
         if addNavigationStack {
-            NavigationStack(path: $viewModel.screens.last!) {
+            NavigationStack(path: $viewModel.screens.last!.screens) {
                 content
             }
         } else {
@@ -210,3 +216,28 @@ public enum SegueOption: Equatable {
 //    @available(iOS 16.0, *)
 //    case sheetDetents
 }
+
+//struct SheetViewModifier: ViewModifier {
+//    
+//    let option: SegueOption
+//    let screens: Binding<[AnyDestination]>
+//    let sheetDetents: Set<PresentationDetentTransformable>
+//    @Binding var sheetSelection: PresentationDetentTransformable
+//    let sheetSelectionEnabled: Bool
+//    let showDragIndicator: Bool
+//    let onDismiss: (() -> Void)?
+//
+//    func body(content: Content) -> some View {
+//        content
+//            .sheet(item: Binding(if: option, is: .sheet, value: Binding(toLastElementIn: screens)), onDismiss: onDismiss) { destination in
+//                if let view = screens.wrappedValue.last?.destination {
+//                    view
+//                        .presentationDetentsIfNeeded(
+//                            sheetDetents: sheetDetents,
+//                            sheetSelection: $sheetSelection,
+//                            sheetSelectionEnabled: sheetSelectionEnabled,
+//                            showDragIndicator: showDragIndicator)
+//                }
+//            }
+//    }
+//}
