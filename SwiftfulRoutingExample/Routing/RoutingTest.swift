@@ -8,13 +8,15 @@
 import SwiftUI
 
 struct RouterView<Content: View>: View {
-    var content: (Router) -> Content
     @State private var viewModel: RouterViewModel = RouterViewModel()
+    var content: (Router) -> Content
+    var logger: Bool = false
 
     var body: some View {
         RouterViewInternal(
             routerId: RouterViewModel.rootId,
             addNavigationStack: true,
+            logger: logger,
             content: content
         )
         .environment(viewModel)
@@ -42,74 +44,73 @@ struct AnyDestinationStack: Equatable {
 final class RouterViewModel {
     static let rootId = "root"
 
-    var screens: [AnyDestinationStack] = [AnyDestinationStack(segue: .push, screens: [])]
+    var activeScreenStacks: [AnyDestinationStack] = [AnyDestinationStack(segue: .push, screens: [])]
     
     func insertRootView(view: AnyDestination) {
-        screens.insert(AnyDestinationStack(segue: .sheet, screens: [view]), at: 0)
+        activeScreenStacks.insert(AnyDestinationStack(segue: .sheet, screens: [view]), at: 0)
     }
     
     func showScreen<T>(segue: SegueOption, id: String, routerId: String, destination: @escaping (any Router) -> T) where T : View {
+        
+        // Wrap injected destination within another RouterViewInternal
         let destination = AnyDestination(
             id: id,
             RouterViewInternal(
                 routerId: id,
                 addNavigationStack: segue != .push,
-                content: destination),
+                content: destination
+            ),
             onDismiss: nil
         )
         
-        let index = screens.firstIndex { stack in
+        // Get the index of the currentStack this is being called from
+        guard let index = activeScreenStacks.lastIndex(where: { stack in
             return stack.screens.contains(where: { $0.id == routerId })
-        }
-        guard let index else {
-            print("routerId index not found!")
+        }) else {
             return
         }
 
-        let item = screens[index]
-
+        let currentStack = activeScreenStacks[index]
+        
         
         switch segue {
         case .push:
-            // Look for routerId, if it's in a .push stack, append to that
+            // If pushing to the next screen,
+            //  If currentStack is already .push, append to it
+            //  Otherwise, currentStack is therefore sheet/fullScreenCover and there should be a push stack (index +1)
             // Otherwise, find the next .push stack and append to that
 
-            if item.segue == .push {
-                screens[index].screens.append(destination)
-            } else {
-                screens[index + 1].screens.append(destination) // tbd
-            }
-        case .sheet, .fullScreenCover:
-            // Look for routerId, if it's in a .push stack, append after that
-            // Otherwise, find the next .push stack and append to that
+            let appendingIndex: Int = currentStack.segue == .push ? (index) : (index + 1)
             
+            activeScreenStacks[appendingIndex].screens.append(destination)
+        case .sheet, .fullScreenCover:
+            // If showing sheet or fullScreenCover,
+            //  If currentStack is .push, add newStack next (index + 1)
+            //  If currentStack is sheet or fullScreenCover, the next stack already a .push, add newStack after (index + 2)
+            //
+            // When appending a new sheet or fullScreenCover, also append a .push stack for the new NavigationStack to bind to
+            //
+            
+            let newStack = AnyDestinationStack(segue: segue, screens: [destination])
             let blankStack = AnyDestinationStack(segue: .push, screens: [])
-            if item.segue == .push {
-                screens.insert(contentsOf: [
-                    AnyDestinationStack(segue: segue, screens: [destination]),
-                    blankStack
-                ], at: index + 1)
-            } else {
-                screens.insert(contentsOf: [
-                    AnyDestinationStack(segue: segue, screens: [destination]),
-                    blankStack
-                ], at: index + 2) // tbd
-            }
+            let appendingIndex: Int = currentStack.segue == .push ? (index + 1) : (index + 2)
+            
+            activeScreenStacks.insert(contentsOf: [newStack, blankStack], at: appendingIndex)
         }
     }
     
     func dismissScreen(routeId: String) {
-        for (outerIndex, innerArray) in screens.enumerated() {
+        for (outerIndex, innerArray) in activeScreenStacks.enumerated() {
             if let innerIndex = innerArray.screens.firstIndex(where: { $0.id == routeId }) {
                 // Remove all arrays after the current outerIndex
-                screens = Array(screens.prefix(outerIndex + 1))
+                activeScreenStacks = Array(activeScreenStacks.prefix(outerIndex + 1))
                 
                 // Trim the inner array to include only elements up to and including the matched destination
-                screens[outerIndex] = innerArray.dismiss(index: innerIndex)
+                activeScreenStacks[outerIndex] = innerArray.dismiss(index: innerIndex)
                 
                 // There should always be a blank pushable stack for the NavigationStack to bind to
-                if screens.last?.segue != .push {
-                    screens.append(AnyDestinationStack(segue: .push, screens: []))
+                if activeScreenStacks.last?.segue != .push {
+                    activeScreenStacks.append(AnyDestinationStack(segue: .push, screens: []))
                 }
                 return
             }
@@ -117,16 +118,16 @@ final class RouterViewModel {
     }
     
     func dismissScreens(to routeId: String) {
-        for (outerIndex, innerArray) in screens.enumerated() {
+        for (outerIndex, innerArray) in activeScreenStacks.enumerated() {
             if let innerIndex = innerArray.screens.firstIndex(where: { $0.id == routeId }) {
                 // Remove all arrays after the current outerIndex
-                screens = Array(screens.prefix(outerIndex + 1))
+                activeScreenStacks = Array(activeScreenStacks.prefix(outerIndex + 1))
                 
                 // Trim the inner array to include only elements up to and including the matched destination
-                screens[outerIndex] = innerArray.dismiss(index: innerIndex + 1)
+                activeScreenStacks[outerIndex] = innerArray.dismiss(index: innerIndex + 1)
                 
-                if screens.last?.segue != .push {
-                    screens.append(AnyDestinationStack(segue: .push, screens: []))
+                if activeScreenStacks.last?.segue != .push {
+                    activeScreenStacks.append(AnyDestinationStack(segue: .push, screens: []))
                 }
                 return
             }
@@ -146,7 +147,7 @@ struct RouterViewInternal<Content: View>: View, Router {
         content(self)
             // Add NavigationStack if needed
             .ifSatisfiesCondition(addNavigationStack, transform: { content in
-                NavigationStack(path: Binding(stack: viewModel.screens, routerId: routerId)) {
+                NavigationStack(path: Binding(stack: viewModel.activeScreenStacks, routerId: routerId)) {
                     content
                         .navigationDestination(for: AnyDestination.self) { value in
                             value.destination
@@ -156,7 +157,7 @@ struct RouterViewInternal<Content: View>: View, Router {
             // Add Sheet modifier. Add on background to supress OS warnings.
             .background(
                 Text("")
-                    .sheet(item: Binding(stack: viewModel.screens, routerId: routerId, segue: .sheet), onDismiss: nil) { destination in
+                    .sheet(item: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, segue: .sheet), onDismiss: nil) { destination in
                         destination.destination
                     }
             )
@@ -164,7 +165,7 @@ struct RouterViewInternal<Content: View>: View, Router {
             // Add FullScreenCover modifier. Add on background to supress OS warnings.
             .background(
                 Text("")
-                    .fullScreenCover(item: Binding(stack: viewModel.screens, routerId: routerId, segue: .fullScreenCover), onDismiss: nil) { destination in
+                    .fullScreenCover(item: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, segue: .fullScreenCover), onDismiss: nil) { destination in
                         destination.destination
                     }
             )
@@ -180,7 +181,7 @@ struct RouterViewInternal<Content: View>: View, Router {
             // Print screen stack if logging is enabled
             .ifSatisfiesCondition(logger && routerId == RouterViewModel.rootId, transform: { content in
                 content
-                    .onChange(of: viewModel.screens) { oldValue, newValue in
+                    .onChange(of: viewModel.activeScreenStacks) { oldValue, newValue in
                         printScreenStack(newValue)
                     }
             })
@@ -225,7 +226,7 @@ struct RoutingTest: View {
                     Button("Click me 2") {
                         router2.showScreen(segue: .push, id: "screen_3") { router3 in
                             Button("Click me 3") {
-                                router3.showScreen(segue: .fullScreenCover, id: "screen_4") { router4 in
+                                router3.showScreen(segue: .sheet, id: "screen_4") { router4 in
                                     Button("Click me 4") {
 //                                        router4.dismissScreen()
                                         router4.dismissScreens(to: "root")
@@ -278,7 +279,7 @@ struct NavigationStackIfNeeded<Content:View>: View {
     @ViewBuilder var body: some View {
         if addNavigationStack {
             // The routerId would be the .sheet, so bind to the next .push stack after
-            NavigationStack(path: Binding(stack: viewModel.screens, routerId: routerId)) {
+            NavigationStack(path: Binding(stack: viewModel.activeScreenStacks, routerId: routerId)) {
                 content
             }
         } else {
@@ -383,7 +384,7 @@ struct FullScreenCoverViewModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .fullScreenCover(item: Binding(stack: viewModel.screens, routerId: routeId, segue: .fullScreenCover), onDismiss: nil) { destination in
+            .fullScreenCover(item: Binding(stack: viewModel.activeScreenStacks, routerId: routeId, segue: .fullScreenCover), onDismiss: nil) { destination in
                 destination.destination
             }
     }
@@ -406,7 +407,7 @@ struct SheetViewModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .sheet(item: Binding(stack: viewModel.screens, routerId: routeId, segue: .sheet), onDismiss: nil) { destination in
+            .sheet(item: Binding(stack: viewModel.activeScreenStacks, routerId: routeId, segue: .sheet), onDismiss: nil) { destination in
                 destination.destination
             }
     }
