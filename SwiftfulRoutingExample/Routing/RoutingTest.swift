@@ -250,9 +250,9 @@ struct RoutingTest: View {
     var body: some View {
         RouterView { router in
             Button("Click me 1") {
-                router.showScreen(segue: .sheet, id: "screen_2") { router2 in
+                router.showScreen(segue: .fullScreenCover, id: "screen_2") { router2 in
                     Button("Click me 2") {
-                        router2.showScreen(segue: .fullScreenCover, id: "screen_3") { router3 in
+                        router2.showScreen(segue: .sheet, id: "screen_3") { router3 in
                             Button("Click me 3") {
                                 router3.showScreen(segue: .sheet, id: "screen_4") { router4 in
                                     Button("Click me 4") {
@@ -347,14 +347,17 @@ extension Binding where Value == AnyDestination? {
             }
             
             let routerStack = stack[routerStackIndex]
-//            print("router stack: \(routerStack)")
+
             if routerStack.segue == .push, routerStack.screens.last?.id != routerId {
                 return nil
             }
             
-//            // Find the next item (after item) in stack where stack.segue == .sheet
-            let nextSheetStack = stack[(routerStackIndex + 1)...].first(where: { $0.segue == segue })
-//            print("NEXT stack: \(routerStack)")
+            var nextSheetStack: AnyDestinationStack?
+            if routerStack.segue == .push, stack.indices.contains(routerStackIndex + 1) {
+                nextSheetStack = stack[routerStackIndex + 1]
+            } else if stack.indices.contains(routerStackIndex + 2) {
+                nextSheetStack = stack[routerStackIndex + 2]
+            }
 
             if let screen = nextSheetStack?.screens.first {
 //                print("RETURNING TRUE \(segue.rawValue)!!!!! \(routerId) \(stack.count)")
@@ -362,7 +365,6 @@ extension Binding where Value == AnyDestination? {
             }
             
 //            print("RETURNING FALSE \(segue.rawValue)!!!!! \(routerId) \(stack.count)")
-
             return nil
         } set: { newValue in
 //            value.wrappedValue = newValue
