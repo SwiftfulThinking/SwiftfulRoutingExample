@@ -134,103 +134,74 @@ final class RouterViewModel {
     }
 }
 
-// Getting weird behavior only when having BOTH modifiers together.
-// Works when it's 1 or the other perfectly fine.
-// Try a Binding if so that both of these aren't on the same View?
-// Check
-
-// Check observable object?
-// which variation worked but with errors?
-//
-//
-
-/*
- .ifSatisfiesCondition(addNavigationStack, transform: { content in
-     content
-         .ifSatisfiesCondition(getNextStack(segue: .sheet) != nil, transform: { content in
-             content
-                 .modifier(SheetViewModifier(viewModel: viewModel, routeId: routerId))
-         })
-         .ifSatisfiesCondition(getNextStack(segue: .fullScreenCover) != nil, transform: { content in
-             content
-                 .modifier(FullScreenCoverViewModifier(viewModel: viewModel, routeId: routerId))
-         })
- })
- 
- works but no animations (too fast lol)
- 
-
- Look at original solution
- */
-
 struct RouterViewInternal<Content: View>: View, Router {
     
     @Environment(RouterViewModel.self) var viewModel
     var routerId: String
     var addNavigationStack: Bool = false
+    var logger: Bool = false
     var content: (Router) -> Content
-    
-//    @State private var segue: SegueOption = .push
-    
-    private var getStack: AnyDestinationStack? {
-        viewModel.screens.first { stack in
-            return stack.screens.contains(where: { $0.id == routerId })
-        }
-    }
-    
-    private func getNextStack(segue: SegueOption) -> AnyDestinationStack? {
-        let index = viewModel.screens.firstIndex { stack in
-            return stack.screens.contains(where: { $0.id == routerId })
-        }
-        guard let index, viewModel.screens.indices.contains(index + 1) else {
-            return nil
-        }
-//        print("NEXT STACK FOR \(routerId)")
-//        print(viewModel.screens[index + 1])
-        let nextSheetStack = viewModel.screens[(index + 1)...].first(where: { $0.segue == segue })
-
-        return nextSheetStack
-    }
 
     var body: some View {
-        NavigationStackIfNeeded(viewModel: viewModel, addNavigationStack: addNavigationStack, routerId: routerId) {
-            content(self)
-                .navigationDestinationIfNeeded(addNavigationDestination: addNavigationStack)
-                .overlay(
-                    Text("")
-                        .modifier(SheetViewModifier(viewModel: viewModel, routeId: routerId))
-                )
-                .background(
-                    Text("")
-                        .modifier(FullScreenCoverViewModifier(viewModel: viewModel, routeId: routerId))
-                )
-                .ifSatisfiesCondition(routerId == RouterViewModel.rootId, transform: { content in
+        content(self)
+            // Add NavigationStack if needed
+            .ifSatisfiesCondition(addNavigationStack, transform: { content in
+                NavigationStack(path: Binding(stack: viewModel.screens, routerId: routerId)) {
                     content
-                        .onFirstAppear {
-                            viewModel.insertRootView(view: AnyDestination(id: routerId, self, onDismiss: nil))
+                        .navigationDestination(for: AnyDestination.self) { value in
+                            value.destination
                         }
-                })
-        }
-        .ifSatisfiesCondition(routerId == RouterViewModel.rootId, transform: { content in
-            content
-                .onChange(of: viewModel.screens) { oldValue, newValue in
-                    print("PRINTING SCREEN STACK")
-                    
-                    // For each AnyDestinationStack
-                    for (arrayIndex, item) in newValue.enumerated() {
-                        print("stack \(arrayIndex): \(item.segue.rawValue)")
-                        
-                        if item.screens.isEmpty {
-                            print("    no screens")
-                        } else {
-                            for (screenIndex, screen) in item.screens.enumerated() {
-                                print("    screen \(screenIndex): \(screen.id)")
-                            }
-                        }
-                    }
-                    print("\n")
                 }
-        })
+            })
+            // Add Sheet modifier. Add on background to supress OS warnings.
+            .background(
+                Text("")
+                    .sheet(item: Binding(stack: viewModel.screens, routerId: routerId, segue: .sheet), onDismiss: nil) { destination in
+                        destination.destination
+                    }
+            )
+        
+            // Add FullScreenCover modifier. Add on background to supress OS warnings.
+            .background(
+                Text("")
+                    .fullScreenCover(item: Binding(stack: viewModel.screens, routerId: routerId, segue: .fullScreenCover), onDismiss: nil) { destination in
+                        destination.destination
+                    }
+            )
+        
+            // If this is the root router, add "root" stack to the array
+            .ifSatisfiesCondition(routerId == RouterViewModel.rootId, transform: { content in
+                content
+                    .onFirstAppear {
+                        viewModel.insertRootView(view: AnyDestination(id: routerId, self, onDismiss: nil))
+                    }
+            })
+        
+            // Print screen stack if logging is enabled
+            .ifSatisfiesCondition(logger && routerId == RouterViewModel.rootId, transform: { content in
+                content
+                    .onChange(of: viewModel.screens) { oldValue, newValue in
+                        printScreenStack(newValue)
+                    }
+            })
+    }
+    
+    private func printScreenStack(_ newValue: [AnyDestinationStack]) {
+        print("PRINTING SCREEN STACK")
+        
+        // For each AnyDestinationStack
+        for (arrayIndex, item) in newValue.enumerated() {
+            print("stack \(arrayIndex): \(item.segue.rawValue)")
+            
+            if item.screens.isEmpty {
+                print("    no screens")
+            } else {
+                for (screenIndex, screen) in item.screens.enumerated() {
+                    print("    screen \(screenIndex): \(screen.id)")
+                }
+            }
+        }
+        print("\n")
     }
     
     func showScreen<T>(segue: SegueOption, id: String, destination: @escaping (any Router) -> T) where T : View {
@@ -252,9 +223,9 @@ struct RoutingTest: View {
             Button("Click me 1") {
                 router.showScreen(segue: .fullScreenCover, id: "screen_2") { router2 in
                     Button("Click me 2") {
-                        router2.showScreen(segue: .sheet, id: "screen_3") { router3 in
+                        router2.showScreen(segue: .push, id: "screen_3") { router3 in
                             Button("Click me 3") {
-                                router3.showScreen(segue: .sheet, id: "screen_4") { router4 in
+                                router3.showScreen(segue: .fullScreenCover, id: "screen_4") { router4 in
                                     Button("Click me 4") {
 //                                        router4.dismissScreen()
                                         router4.dismissScreens(to: "root")
@@ -359,7 +330,7 @@ extension Binding where Value == AnyDestination? {
                 nextSheetStack = stack[routerStackIndex + 2]
             }
 
-            if let screen = nextSheetStack?.screens.first {
+            if nextSheetStack?.segue == segue, let screen = nextSheetStack?.screens.first {
 //                print("RETURNING TRUE \(segue.rawValue)!!!!! \(routerId) \(stack.count)")
                 return screen
             }
