@@ -196,20 +196,14 @@ struct RouterViewInternal<Content: View>: View, Router {
         NavigationStackIfNeeded(viewModel: viewModel, addNavigationStack: addNavigationStack, routerId: routerId) {
             content(self)
                 .navigationDestinationIfNeeded(addNavigationDestination: addNavigationStack)
-                .modifier(SheetViewModifier(viewModel: viewModel, routeId: routerId))
-                .modifier(FullScreenCoverViewModifier(viewModel: viewModel, routeId: routerId))
-//                .background(
-//                    Text("")
-//                        .sheet(item: Binding(stack: viewModel.screens, routerId: routerId, segue: .sheet), onDismiss: nil) { destination in
-//                            destination.destination
-//                        }
-//                )
-//                .background(
-//                    Text("")
-//                        .fullScreenCover(item: Binding(stack: viewModel.screens, routerId: routerId, segue: .fullScreenCover), onDismiss: nil) { destination in
-//                            destination.destination
-//                        }
-//                )
+                .overlay(
+                    Text("")
+                        .modifier(SheetViewModifier(viewModel: viewModel, routeId: routerId))
+                )
+                .background(
+                    Text("")
+                        .modifier(FullScreenCoverViewModifier(viewModel: viewModel, routeId: routerId))
+                )
                 .ifSatisfiesCondition(routerId == RouterViewModel.rootId, transform: { content in
                     content
                         .onFirstAppear {
@@ -256,11 +250,11 @@ struct RoutingTest: View {
     var body: some View {
         RouterView { router in
             Button("Click me 1") {
-                router.showScreen(segue: .fullScreenCover, id: "screen_2") { router2 in
+                router.showScreen(segue: .sheet, id: "screen_2") { router2 in
                     Button("Click me 2") {
-                        router2.showScreen(segue: .sheet, id: "screen_3") { router3 in
+                        router2.showScreen(segue: .fullScreenCover, id: "screen_3") { router3 in
                             Button("Click me 3") {
-                                router3.showScreen(segue: .fullScreenCover, id: "screen_4") { router4 in
+                                router3.showScreen(segue: .sheet, id: "screen_4") { router4 in
                                     Button("Click me 4") {
 //                                        router4.dismissScreen()
                                         router4.dismissScreens(to: "root")
@@ -363,11 +357,11 @@ extension Binding where Value == AnyDestination? {
 //            print("NEXT stack: \(routerStack)")
 
             if let screen = nextSheetStack?.screens.first {
-//                print("RETURNING TRUE!!!!! \(routerId)")
+//                print("RETURNING TRUE \(segue.rawValue)!!!!! \(routerId) \(stack.count)")
                 return screen
             }
             
-//            print("RETURNING FALSE!!!!! \(routerId)")
+//            print("RETURNING FALSE \(segue.rawValue)!!!!! \(routerId) \(stack.count)")
 
             return nil
         } set: { newValue in
