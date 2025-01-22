@@ -7,6 +7,49 @@
 
 import SwiftUI
 
+/* STACK EXAMPLES:
+ 
+ Basic structure is that every new environment has [.sheet] + [.push]
+
+ 
+ STACK: .fullScreenCover, .push, .push, .push:
+ [
+     [.fullScreenCover]
+     [.push, .push, .push]
+ ]
+ 
+ 
+ STACK .fullScreenCover, .push, .sheet, .push:
+ [
+     [.fullScreenCover]
+     [.push]
+     [.sheet]
+     [.push]
+ ]
+ 
+ STACK .fullScreenCover, .sheet, .push, .sheet:
+ [
+     [.fullScreenCover]
+     []
+     [.sheet]
+     [.push]
+     [.sheet]
+     []
+ ]
+ 
+ STACK .fullScreenCover, .fullScreenCover, .fullScreenCover:
+ [
+     [.fullScreenCover]
+     []                     <- these empty stacks in-between are for .pushes
+     [.fullScreenCover]
+     []
+     [.fullScreenCover]
+     []
+ ]
+ */
+
+
+
 struct RouterView<Content: View>: View {
     @State private var viewModel: RouterViewModel = RouterViewModel()
     var content: (Router) -> Content
@@ -47,7 +90,7 @@ final class RouterViewModel {
     var activeScreenStacks: [AnyDestinationStack] = [AnyDestinationStack(segue: .push, screens: [])]
     
     func insertRootView(view: AnyDestination) {
-        activeScreenStacks.insert(AnyDestinationStack(segue: .sheet, screens: [view]), at: 0)
+        activeScreenStacks.insert(AnyDestinationStack(segue: .fullScreenCover, screens: [view]), at: 0)
     }
     
     func showScreen<T>(segue: SegueOption, id: String, routerId: String, destination: @escaping (any Router) -> T) where T : View {
@@ -99,9 +142,27 @@ final class RouterViewModel {
         }
     }
     
+    // Simplify the first one
+    // Combine both of these
+    // Clean up the logic
+    //
+    // Add other dismiss methods (all, environment, count)
+    
+    // Currently dismisses screen
+    
+    // Change to dismiss only the screen in question
+    
+    // add dismissLastScreen()
+    // add dismissScreens(count: 2)
+    // add dismissScreens(ids: [])
+    // add dismissScreen(id: [])
+    // add dismissScreen()
+
+    
+    
     func dismissScreen(routeId: String) {
         for (outerIndex, innerArray) in activeScreenStacks.enumerated() {
-            if let innerIndex = innerArray.screens.firstIndex(where: { $0.id == routeId }) {
+            if let innerIndex = innerArray.screens.lastIndex(where: { $0.id == routeId }) {
                 // Remove all arrays after the current outerIndex
                 activeScreenStacks = Array(activeScreenStacks.prefix(outerIndex + 1))
                 
@@ -119,7 +180,7 @@ final class RouterViewModel {
     
     func dismissScreens(to routeId: String) {
         for (outerIndex, innerArray) in activeScreenStacks.enumerated() {
-            if let innerIndex = innerArray.screens.firstIndex(where: { $0.id == routeId }) {
+            if let innerIndex = innerArray.screens.lastIndex(where: { $0.id == routeId }) {
                 // Remove all arrays after the current outerIndex
                 activeScreenStacks = Array(activeScreenStacks.prefix(outerIndex + 1))
                 
