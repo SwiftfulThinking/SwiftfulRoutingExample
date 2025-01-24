@@ -19,10 +19,10 @@ import SwiftUI
  ]
  
  
- STACK .fullScreenCover, .push, .sheet, .push:
+ STACK .fullScreenCover, .push, .push, .sheet, .push:
  [
      [.fullScreenCover]
-     [.push]
+     [.push, .push]
      [.sheet]
      [.push]
  ]
@@ -74,11 +74,15 @@ protocol Router {
 }
 
 struct AnyDestinationStack: Equatable {
-    var segue: SegueOption
-    var screens: [AnyDestination]
+    private(set) var segue: SegueOption
+    private(set) var screens: [AnyDestination]
     
-    func dismiss(index: Int) -> AnyDestinationStack {
-        AnyDestinationStack(segue: segue, screens: Array(screens.prefix(index)))
+//    mutating func updating(screens: [AnyDestination]) {
+//        self.screens = screens
+//    }
+    
+    mutating func adding(screen: AnyDestination) {
+        self.screens.append(screen)
     }
 }
 
@@ -125,7 +129,7 @@ final class RouterViewModel {
 
             let appendingIndex: Int = currentStack.segue == .push ? (index) : (index + 1)
             
-            activeScreenStacks[appendingIndex].screens.append(destination)
+            activeScreenStacks[appendingIndex].adding(screen: destination)
         case .sheet, .fullScreenCover:
             // If showing sheet or fullScreenCover,
             //  If currentStack is .push, add newStack next (index + 1)
@@ -159,40 +163,194 @@ final class RouterViewModel {
     // add dismissScreen()
 
     
-    
-    func dismissScreen(routeId: String) {
-        for (outerIndex, innerArray) in activeScreenStacks.enumerated() {
-            if let innerIndex = innerArray.screens.lastIndex(where: { $0.id == routeId }) {
-                // Remove all arrays after the current outerIndex
-                activeScreenStacks = Array(activeScreenStacks.prefix(outerIndex + 1))
-                
-                // Trim the inner array to include only elements up to and including the matched destination
-                activeScreenStacks[outerIndex] = innerArray.dismiss(index: innerIndex)
-                
-                // There should always be a blank pushable stack for the NavigationStack to bind to
-                if activeScreenStacks.last?.segue != .push {
-                    activeScreenStacks.append(AnyDestinationStack(segue: .push, screens: []))
-                }
-                return
-            }
+    // Dismiss push - DONE
+    // Dismiss push, push, push - DONE
+    // Dismiss sheet - DONE
+    // Dismiss sheet, sheet, sheet
+    // Dismiss any combo
+
+    private func removeAllStacksAsNeeded(stacks: [AnyDestinationStack], stackIndex: Int) -> (keep: [AnyDestinationStack], remove: [AnyDestinationStack]) {
+        // Keep stacks up-to and including the current stackIndex
+        // Remove all stacks after current stackIndex
+        
+        // Ensure the index is within bounds
+        guard stackIndex >= 0 && stackIndex < stacks.count else {
+            // If the index is out of bounds, return all stacks as "keep" and none as "remove"
+            return (keep: stacks, remove: [])
+        }
+        
+        let currentStack = stacks[stackIndex]
+        if currentStack.screens.count > 1 {
+            // Do not remove the currentStack
+            
+            let keep = Array(stacks[...stackIndex]) // Includes up to and including the stackIndex
+            let remove = Array(stacks[(stackIndex + 1)...]) // Includes all after stackIndex
+            return (keep, remove)
+        } else {
+            // Remove the currentStack
+            let keep = Array(stacks[..<stackIndex]) // Includes stacks before the current stackIndex
+            let remove = Array(stacks[stackIndex...]) // Includes the current stack and all after it
+            return (keep, remove)
         }
     }
     
-    func dismissScreens(to routeId: String) {
-        for (outerIndex, innerArray) in activeScreenStacks.enumerated() {
-            if let innerIndex = innerArray.screens.lastIndex(where: { $0.id == routeId }) {
-                // Remove all arrays after the current outerIndex
-                activeScreenStacks = Array(activeScreenStacks.prefix(outerIndex + 1))
+    private func removeScreensAsNeeded(stack: AnyDestinationStack, screenIndex: Int) -> (keep: AnyDestinationStack, remove: [AnyDestination]) {
+        // Keep all screens before the current screenIndex
+        // Remove screen at currentIndex and all screens after currentIndex
+        let screens: [AnyDestination] = stack.screens
+        
+        // Ensure the index is within bounds
+        guard screenIndex >= 0 && screenIndex < screens.count else {
+            // If the index is out of bounds, keep all screens and remove none
+            return (keep: stack, remove: [])
+        }
+
+        // Split the screens array into keep and remove parts
+        let keepScreens = Array(screens[..<screenIndex]) // Keep all screens before screenIndex
+        let removeScreens = Array(screens[screenIndex...]) // Remove the current screen and all after it
+
+        // Create a new stack with the remaining screens
+        let keepStack = AnyDestinationStack(segue: stack.segue, screens: keepScreens)
+
+        return (keep: keepStack, remove: removeScreens)
+    }
+
+    func dismissScreen(routeId: String) {
+        for (stackIndex, stack) in activeScreenStacks.enumerated().reversed() {
+            // Check if stack.screens contains the routeId
+            // Loop from last, in case there are multiple screens in the stack with the same routeId (should not happen)
+            if let screenIndex = stack.screens.lastIndex(where: { $0.id == routeId }) {
                 
-                // Trim the inner array to include only elements up to and including the matched destination
-                activeScreenStacks[outerIndex] = innerArray.dismiss(index: innerIndex + 1)
+                print("STACK INDEX IS: \(stackIndex)")
+                print("SCREEN INDEX IS \(screenIndex)")
                 
-                if activeScreenStacks.last?.segue != .push {
-                    activeScreenStacks.append(AnyDestinationStack(segue: .push, screens: []))
+                
+                var (keep, remove) = removeAllStacksAsNeeded(stacks: activeScreenStacks, stackIndex: stackIndex)
+                var screensToDismiss = remove.flatMap({ $0.screens })
+                
+                // If the currentStack is still here, then it was not removed
+                // Now we need to trim current stack as well
+                if keep.indices.contains(stackIndex) {
+                    let currentStack = keep[stackIndex]
+                    let (currentStackUpdated, removeScreens) = removeScreensAsNeeded(stack: currentStack, screenIndex: screenIndex)
+                    
+                    // Update currentStack without current screen
+                    keep[stackIndex] = currentStackUpdated
+                    
+                    // Append more screen to remove
+                    if !removeScreens.isEmpty {
+                        screensToDismiss.insert(contentsOf: removeScreens, at: 0)
+                    }
                 }
+                
+                // There should always be a blank pushable stack for the NavigationStack to bind to
+                if keep.last?.segue != .push {
+                    keep.append(AnyDestinationStack(segue: .push, screens: []))
+                }
+                
+                // Publish update to the view
+                activeScreenStacks = keep
+
+                for screen in screensToDismiss.reversed() {
+                    print("dismissing \(screen.id)")
+                }
+
+                
+                // [.sheet][]
+                // If on root screen, do nothing
+                
+                // [.sheet][.push]
+                // If one push in, there should be no screens to dismiss after
+                //
+                
+                // [.sheet][.push][.sheet]
+
+                
+                
+//                var resultingStacks: [AnyDestinationStack] = activeScreenStacks
+//                var screensToDismiss: [AnyDestination] = []
+//                
+//                // Remove all stacks after the current current stackIndex
+//                if activeScreenStacks.indices.contains(stackIndex + 1) {
+//                    resultingStacks = Array(activeScreenStacks.prefix(stackIndex))
+//                    let stacksToDismiss = Array(activeScreenStacks.suffix(activeScreenStacks.count - (stackIndex + 1)))
+//                    screensToDismiss = stacksToDismiss.reversed().flatMap({ $0.screens.reversed() })
+//                    print("FLAT MAPPED \(screensToDismiss.count)")
+//                    
+//                    for screen in screensToDismiss {
+//                        print("FLAT: \(screen.id)")
+//                    }
+//                }
+//                
+//                // Trim the inner array to include only elements before the matched destination
+//                
+//                var resultingScreens: [AnyDestination] = []
+//                if screenIndex > 0 {
+//                    resultingScreens = Array(stack.screens.prefix(screenIndex))
+//                }
+//                
+//                print(stack.screens.count)
+//                print(screenIndex)
+//                print(stack.screens.count - screenIndex)
+//                let moreScreensToDismiss = Array(stack.screens.suffix(stack.screens.count - screenIndex)).reversed()
+//                screensToDismiss.insert(contentsOf: moreScreensToDismiss, at: 0)
+//                print("MORE SCREENS \(moreScreensToDismiss.count)")
+//                print(moreScreensToDismiss)
+//
+//                var newStack = stack
+//                newStack.updating(screens: resultingScreens)
+//                resultingStacks[stackIndex] = newStack
+//                
+//                print("printing new stack")
+//                print(newStack)
+//
+//                // There should always be a blank pushable stack for the NavigationStack to bind to
+//                if resultingStacks.last?.segue != .push {
+//                    resultingStacks.append(AnyDestinationStack(segue: .push, screens: []))
+//                }
+//                
+//                // Publish update to the view
+//                activeScreenStacks = resultingStacks
+//                
+//                // Dismiss screens
                 return
             }
         }
+        
+        
+//        for (outerIndex, innerArray) in activeScreenStacks.enumerated() {
+//            if let innerIndex = innerArray.screens.lastIndex(where: { $0.id == routeId }) {
+//                // Remove all arrays after the current outerIndex
+//                activeScreenStacks = Array(activeScreenStacks.prefix(outerIndex + 1))
+//                
+//                // Trim the inner array to include only elements up to and including the matched destination
+//                activeScreenStacks[outerIndex] = innerArray.dismiss(index: innerIndex)
+//                
+//                // There should always be a blank pushable stack for the NavigationStack to bind to
+//                if activeScreenStacks.last?.segue != .push {
+//                    activeScreenStacks.append(AnyDestinationStack(segue: .push, screens: []))
+//                }
+//                return
+//            }
+//        }
+    }
+    
+    func dismissScreens(to routeId: String) {
+        print("OK")
+//        for (outerIndex, innerArray) in activeScreenStacks.enumerated() {
+//            if let innerIndex = innerArray.screens.lastIndex(where: { $0.id == routeId }) {
+//                // Remove all arrays after the current outerIndex
+//                activeScreenStacks = Array(activeScreenStacks.prefix(outerIndex + 1))
+//                
+//                // Trim the inner array to include only elements up to and including the matched destination
+//                activeScreenStacks[outerIndex] = innerArray.dismiss(index: innerIndex + 1)
+//                
+//                if activeScreenStacks.last?.segue != .push {
+//                    activeScreenStacks.append(AnyDestinationStack(segue: .push, screens: []))
+//                }
+//                return
+//            }
+//        }
     }
 }
 
@@ -281,16 +439,19 @@ struct RouterViewInternal<Content: View>: View, Router {
 
 struct RoutingTest: View {
     var body: some View {
-        RouterView { router in
+        RouterView(logger: true) { router in
             Button("Click me 1") {
-                router.showScreen(segue: .fullScreenCover, id: "screen_2") { router2 in
+                router.showScreen(segue: .sheet, id: "screen_2") { router2 in
                     Button("Click me 2") {
+//                        router2.dismissScreen()
                         router2.showScreen(segue: .push, id: "screen_3") { router3 in
                             Button("Click me 3") {
-                                router3.showScreen(segue: .sheet, id: "screen_4") { router4 in
+                                router3.showScreen(segue: .fullScreenCover, id: "screen_4") { router4 in
                                     Button("Click me 4") {
+                                        router2.dismissScreen()
 //                                        router4.dismissScreen()
-                                        router4.dismissScreens(to: "root")
+//                                        router4.dismissScreens(to: "root")
+//                                        router4.dismissScreen()
                                     }
                                 }
                             }
