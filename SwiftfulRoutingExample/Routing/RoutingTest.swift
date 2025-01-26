@@ -233,10 +233,6 @@ final class RouterViewModel {
             // Loop from last, in case there are multiple screens in the stack with the same routeId (should not happen)
             if let screenIndex = stack.screens.lastIndex(where: { $0.id == routeId }) {
                 
-                print("STACK INDEX IS: \(stackIndex)")
-                print("SCREEN INDEX IS \(screenIndex)")
-                
-                
                 var (keep, remove) = removeAllStacksAsNeeded(stacks: activeScreenStacks, stackIndex: stackIndex)
                 var screensToDismiss = remove.flatMap({ $0.screens })
                 
@@ -266,6 +262,7 @@ final class RouterViewModel {
                 // Trigger screen onDismiss closures, if available
                 for screen in screensToDismiss.reversed() {
                     screen.onDismiss?()
+                    print("DISMISSING SCREEN \(screen.id)")
                 }
                 
                 // Stop loop
@@ -324,8 +321,8 @@ final class RouterViewModel {
         // Dismiss the .sheet or .fullScreenCover closest to routeId
         
         var didFindScreen: Bool = false
-        for (stackIndex, stack) in activeScreenStacks.enumerated().reversed() {
-            if let screenIndex = stack.screens.lastIndex(where: { $0.id == routeId }) {
+        for stack in activeScreenStacks.reversed() {
+            if stack.screens.contains(where: { $0.id == routeId }) {
                 didFindScreen = true
             }
             
@@ -348,8 +345,8 @@ final class RouterViewModel {
     
     func dismissPushStack(routeId: String) {
         var didFindScreen: Bool = false
-        for (stackIndex, stack) in activeScreenStacks.enumerated().reversed() {
-            if let screenIndex = stack.screens.lastIndex(where: { $0.id == routeId }) {
+        for stack in activeScreenStacks.reversed() {
+            if stack.screens.contains(where: { $0.id == routeId }) {
                 didFindScreen = true
             }
             
@@ -399,7 +396,11 @@ struct RouterViewInternal<Content: View>: View, Router {
             // Add Sheet modifier. Add on background to supress OS warnings.
             .background(
                 Text("")
-                    .sheet(item: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, segue: .sheet), onDismiss: nil) { destination in
+                    .sheet(item: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, segue: .sheet, onDidDismiss: {
+                        // This triggers if the user swipes down to dismiss the screen
+                        // Now we must update activeScreenStacks to match that behavior
+                        viewModel.dismissScreens(to: routerId)
+                    }), onDismiss: nil) { destination in
                         destination.destination
                     }
             )
@@ -407,7 +408,11 @@ struct RouterViewInternal<Content: View>: View, Router {
             // Add FullScreenCover modifier. Add on background to supress OS warnings.
             .background(
                 Text("")
-                    .fullScreenCover(item: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, segue: .fullScreenCover), onDismiss: nil) { destination in
+                    .fullScreenCover(item: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, segue: .fullScreenCover, onDidDismiss: {
+                        // This triggers if the user swipes down to dismiss the screen
+                        // Now we must update activeScreenStacks to match that behavior
+                        viewModel.dismissScreens(to: routerId)
+                    }), onDismiss: nil) { destination in
                         destination.destination
                     }
             )
@@ -500,6 +505,20 @@ struct RouterViewInternal<Content: View>: View, Router {
 
      */
 }
+
+// 1.
+// Manual swipe sheet - binding to sheet - DONE
+// Manual swipe back - onChange of stack -
+//
+// 2.
+// Push screens
+//
+// 3.
+// Enter screen flow
+// Next screen
+//
+// 4.
+// Dismiss single screen? - HOLD
 
 struct RoutingTest: View {
     var body: some View {
@@ -597,7 +616,7 @@ extension Binding where Value == [AnyDestination] {
 
 extension Binding where Value == AnyDestination? {
     
-    init(stack: [AnyDestinationStack], routerId: String, segue: SegueOption) {
+    init(stack: [AnyDestinationStack], routerId: String, segue: SegueOption, onDidDismiss: @escaping () -> Void) {
         self.init {
             let routerStackIndex = stack.firstIndex { subStack in
                 return subStack.screens.contains(where: { $0.id == routerId })
@@ -621,14 +640,14 @@ extension Binding where Value == AnyDestination? {
             }
 
             if nextSheetStack?.segue == segue, let screen = nextSheetStack?.screens.first {
-//                print("RETURNING TRUE \(segue.rawValue)!!!!! \(routerId) \(stack.count)")
                 return screen
             }
             
-//            print("RETURNING FALSE \(segue.rawValue)!!!!! \(routerId) \(stack.count)")
             return nil
         } set: { newValue in
-//            value.wrappedValue = newValue
+            if newValue == nil {
+                onDidDismiss()
+            }
         }
     }
 }
@@ -676,18 +695,18 @@ public enum SegueOption: String, Equatable {
     }
 }
 
-struct FullScreenCoverViewModifier: ViewModifier {
-    
-    @Bindable var viewModel: RouterViewModel
-    var routeId: String
-
-    func body(content: Content) -> some View {
-        content
-            .fullScreenCover(item: Binding(stack: viewModel.activeScreenStacks, routerId: routeId, segue: .fullScreenCover), onDismiss: nil) { destination in
-                destination.destination
-            }
-    }
-}
+//struct FullScreenCoverViewModifier: ViewModifier {
+//    
+//    @Bindable var viewModel: RouterViewModel
+//    var routeId: String
+//
+//    func body(content: Content) -> some View {
+//        content
+//            .fullScreenCover(item: Binding(stack: viewModel.activeScreenStacks, routerId: routeId, segue: .fullScreenCover), onDismiss: nil) { destination in
+//                destination.destination
+//            }
+//    }
+//}
 /*
  ZStack {
      if let loadedDestination {
@@ -699,18 +718,18 @@ struct FullScreenCoverViewModifier: ViewModifier {
  }
  */
 
-struct SheetViewModifier: ViewModifier {
-    
-    @Bindable var viewModel: RouterViewModel
-    var routeId: String
-
-    func body(content: Content) -> some View {
-        content
-            .sheet(item: Binding(stack: viewModel.activeScreenStacks, routerId: routeId, segue: .sheet), onDismiss: nil) { destination in
-                destination.destination
-            }
-    }
-}
+//struct SheetViewModifier: ViewModifier {
+//    
+//    @Bindable var viewModel: RouterViewModel
+//    var routeId: String
+//
+//    func body(content: Content) -> some View {
+//        content
+//            .sheet(item: Binding(stack: viewModel.activeScreenStacks, routerId: routeId, segue: .sheet), onDismiss: nil) { destination in
+//                destination.destination
+//            }
+//    }
+//}
 
 struct OnFirstAppearModifier: ViewModifier {
     let action: @MainActor () -> Void
