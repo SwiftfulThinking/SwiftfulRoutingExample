@@ -344,15 +344,25 @@ final class RouterViewModel {
     }
     
     func dismissPushStack(routeId: String) {
-        var didFindScreen: Bool = false
-        for stack in activeScreenStacks.reversed() {
+        for (stackIndex, stack) in activeScreenStacks.enumerated().reversed() {
             if stack.screens.contains(where: { $0.id == routeId }) {
-                didFindScreen = true
-            }
-            
-            if didFindScreen, stack.segue == .push, let route = stack.screens.first {
-                dismissScreen(routeId: route.id)
-                return
+                
+                // If current stack is .push, dismiss to the first screen in this stack
+                if stack.segue == .push, let route = stack.screens.first {
+                    dismissScreen(routeId: route.id)
+                    return
+                }
+                
+                // If current stack is .sheet or .fullScreenCover, then the .push stack should be the following stack
+                if stack.segue.presentsNewEnvironment {
+                    if activeScreenStacks.indices.contains(stackIndex + 1) {
+                        let nextStack = activeScreenStacks[stackIndex + 1]
+                        if nextStack.segue == .push, let route = nextStack.screens.first {
+                            dismissScreen(routeId: route.id)
+                            return
+                        }
+                    }
+                }
             }
         }
     }
@@ -386,7 +396,15 @@ struct RouterViewInternal<Content: View>: View, Router {
         content(self)
             // Add NavigationStack if needed
             .ifSatisfiesCondition(addNavigationStack, transform: { content in
-                NavigationStack(path: Binding(stack: viewModel.activeScreenStacks, routerId: routerId)) {
+                NavigationStack(path: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, onDidDismiss: { lastRouteRemaining in
+                    if let lastRouteRemaining {
+                        print("dismissing")
+                        viewModel.dismissScreens(to: lastRouteRemaining.id)
+                    } else {
+                        print("DIS STACK")
+                        viewModel.dismissPushStack(routeId: routerId)
+                    }
+                })) {
                     content
                         .navigationDestination(for: AnyDestination.self) { value in
                             value.destination
@@ -508,7 +526,7 @@ struct RouterViewInternal<Content: View>: View, Router {
 
 // 1.
 // Manual swipe sheet - binding to sheet - DONE
-// Manual swipe back - onChange of stack -
+// Manual swipe back - onChange of stack - DONE
 //
 // 2.
 // Push screens
@@ -577,28 +595,28 @@ struct AnyDestination: Identifiable, Hashable {
     
 }
 
-struct NavigationStackIfNeeded<Content:View>: View {
-    
-    @Bindable var viewModel: RouterViewModel
-    let addNavigationStack: Bool
-    var routerId: String
-    @ViewBuilder var content: Content
-    
-    @ViewBuilder var body: some View {
-        if addNavigationStack {
-            // The routerId would be the .sheet, so bind to the next .push stack after
-            NavigationStack(path: Binding(stack: viewModel.activeScreenStacks, routerId: routerId)) {
-                content
-            }
-        } else {
-            content
-        }
-    }
-}
+//struct NavigationStackIfNeeded<Content:View>: View {
+//    
+//    @Bindable var viewModel: RouterViewModel
+//    let addNavigationStack: Bool
+//    var routerId: String
+//    @ViewBuilder var content: Content
+//    
+//    @ViewBuilder var body: some View {
+//        if addNavigationStack {
+//            // The routerId would be the .sheet, so bind to the next .push stack after
+//            NavigationStack(path: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, onDidDismiss: <#T##(AnyDestination?) -> Void##(AnyDestination?) -> Void##(_ lastRouteRemaining: AnyDestination?) -> Void#>)) {
+//                content
+//            }
+//        } else {
+//            content
+//        }
+//    }
+//}
 
 extension Binding where Value == [AnyDestination] {
     
-    init(stack: [AnyDestinationStack], routerId: String) {
+    init(stack: [AnyDestinationStack], routerId: String, onDidDismiss: @escaping (_ lastRouteRemaining: AnyDestination?) -> Void) {
         self.init {
             let index = stack.firstIndex { subStack in
                 return subStack.screens.contains(where: { $0.id == routerId })
@@ -608,7 +626,10 @@ extension Binding where Value == [AnyDestination] {
             }
             return stack[index + 1].screens
         } set: { newValue in
-            //            value.wrappedValue = newValue
+            // User manually swiped back on screen
+            if newValue.count < stack.count {
+                onDidDismiss(newValue.last)
+            }
         }
     }
 }
@@ -645,6 +666,7 @@ extension Binding where Value == AnyDestination? {
             
             return nil
         } set: { newValue in
+            // User manually swiped down on environment
             if newValue == nil {
                 onDidDismiss()
             }
