@@ -71,9 +71,17 @@ protocol Router {
     func showScreen<T>(segue: SegueOption, id: String, @ViewBuilder destination: @escaping (Router) -> T) where T: View
     func dismissScreen()
     func dismissScreen(id: String)
-    func dismissLastScreen()
     func dismissScreens(to: String)
     func dismissScreens(count: Int)
+    
+    func dismissPushStack()
+    func dismissEnvironment()
+    
+    func dismissLastScreen()
+    func dismissLastPushStack()
+    func dismissLastEnvironment()
+
+    func dismissAllScreens()
 }
 
 struct AnyDestinationStack: Equatable {
@@ -312,24 +320,54 @@ final class RouterViewModel {
         print("🚨 There are no screens to dismiss in the active view heirarchy.")
     }
     
-    /// Dismiss the environment for the routeId
     func dismissEnvironment(routeId: String) {
+        // Dismiss the .sheet or .fullScreenCover closest to routeId
         
+        var didFindScreen: Bool = false
+        for (stackIndex, stack) in activeScreenStacks.enumerated().reversed() {
+            if let screenIndex = stack.screens.lastIndex(where: { $0.id == routeId }) {
+                didFindScreen = true
+            }
+            
+            if didFindScreen, stack.segue.presentsNewEnvironment, let route = stack.screens.first {
+                dismissScreen(routeId: route.id)
+                return
+            }
+        }
     }
     
-    /// Dismiss the top-most environment
     func dismissLastEnvironment() {
+        let lastEnvironmentStack = activeScreenStacks.last(where: { $0.segue.presentsNewEnvironment })
+        if let route = lastEnvironmentStack?.screens.first {
+            dismissScreen(routeId: route.id)
+            return
+        }
         
+        print("🚨 There is no dismissable environment in view heirarchy.")
     }
     
-    /// Dismiss the push stack for the routeId
     func dismissPushStack(routeId: String) {
-        
+        var didFindScreen: Bool = false
+        for (stackIndex, stack) in activeScreenStacks.enumerated().reversed() {
+            if let screenIndex = stack.screens.lastIndex(where: { $0.id == routeId }) {
+                didFindScreen = true
+            }
+            
+            if didFindScreen, stack.segue == .push, let route = stack.screens.first {
+                dismissScreen(routeId: route.id)
+                return
+            }
+        }
     }
     
-    /// Dismiss the top-most push stack
     func dismissLastPushStack() {
+        let lastPushStack = activeScreenStacks.last(where: { $0.segue == .push })
+        if let route = lastPushStack?.screens.first {
+            dismissScreen(routeId: route.id)
+            return
+        }
         
+        print("🚨 There is no dismissable push stack in view heirarchy.")
     }
     
     /// Dismiss all screens back to root
@@ -413,11 +451,6 @@ struct RouterViewInternal<Content: View>: View, Router {
         viewModel.showScreen(segue: segue, id: id, routerId: routerId, destination: destination)
     }
     
-    
-    func dismissLastScreen() {
-        viewModel.dismissLastScreen()
-    }
-
     func dismissScreen() {
         viewModel.dismissScreen(routeId: routerId)
     }
@@ -434,18 +467,30 @@ struct RouterViewInternal<Content: View>: View, Router {
         viewModel.dismissScreens(count: count)
     }
     
-    func dismissAllScreens() {
-        
+    func dismissLastScreen() {
+        viewModel.dismissLastScreen()
     }
     
     func dismissEnvironment() {
+        viewModel.dismissEnvironment(routeId: routerId)
+    }
         
+    func dismissLastEnvironment() {
+        viewModel.dismissLastEnvironment()
+    }
+    
+    func dismissLastPushStack() {
+        viewModel.dismissLastPushStack()
     }
     
     func dismissPushStack() {
-        
+        viewModel.dismissPushStack(routeId: routerId)
     }
     
+    func dismissAllScreens() {
+        viewModel.dismissAllScreens()
+    }
+
     /*
      // add dismissLastScreen()
      // add dismissScreens(count: 2)
@@ -465,13 +510,14 @@ struct RoutingTest: View {
 //                        router2.dismissScreen()
                         router2.showScreen(segue: .push, id: "screen_3") { router3 in
                             Button("Click me 3") {
-                                router3.showScreen(segue: .sheet, id: "screen_4") { router4 in
+                                router3.showScreen(segue: .push, id: "screen_4") { router4 in
                                     Button("Click me 4") {
 //                                        router2.dismissScreen()
 //                                        router4.dismissScreen()
 //                                        router2.dismissLastScreen()
 //                                        router4.dismissScreens(to: "screen_2")
-                                        router4.dismissScreens(count: 2)
+//                                        router4.dismissScreens(count: 2)
+                                        router4.dismissPushStack()
                                         //                                        router4.dismissScreen()
                                     }
                                 }
@@ -618,6 +664,16 @@ public enum SegueOption: String, Equatable {
 //    
 //    @available(iOS 16.0, *)
 //    case sheetDetents
+    
+    
+    var presentsNewEnvironment: Bool {
+        switch self {
+        case .push:
+            return false
+        case .sheet, .fullScreenCover:
+            return true
+        }
+    }
 }
 
 struct FullScreenCoverViewModifier: ViewModifier {
