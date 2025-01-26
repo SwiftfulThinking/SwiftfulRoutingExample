@@ -52,8 +52,8 @@ import SwiftUI
 
 struct RouterView<Content: View>: View {
     @State private var viewModel: RouterViewModel = RouterViewModel()
-    var content: (Router) -> Content
     var logger: Bool = false
+    var content: (Router) -> Content
 
     var body: some View {
         RouterViewInternal(
@@ -70,7 +70,10 @@ struct RouterView<Content: View>: View {
 protocol Router {
     func showScreen<T>(segue: SegueOption, id: String, @ViewBuilder destination: @escaping (Router) -> T) where T: View
     func dismissScreen()
-    func dismissScreens(to routerId: String)
+    func dismissScreen(id: String)
+    func dismissLastScreen()
+    func dismissScreens(to: String)
+    func dismissScreens(count: Int)
 }
 
 struct AnyDestinationStack: Equatable {
@@ -215,6 +218,7 @@ final class RouterViewModel {
         return (keep: keepStack, remove: removeScreens)
     }
 
+    /// Dismiss screen at routeId and all screens in front of it. (TBD?)
     func dismissScreen(routeId: String) {
         for (stackIndex, stack) in activeScreenStacks.enumerated().reversed() {
             // Check if stack.screens contains the routeId
@@ -251,107 +255,88 @@ final class RouterViewModel {
                 // Publish update to the view
                 activeScreenStacks = keep
 
+                // Trigger screen onDismiss closures, if available
                 for screen in screensToDismiss.reversed() {
-                    print("dismissing \(screen.id)")
+                    screen.onDismiss?()
                 }
-
                 
-                // [.sheet][]
-                // If on root screen, do nothing
-                
-                // [.sheet][.push]
-                // If one push in, there should be no screens to dismiss after
-                //
-                
-                // [.sheet][.push][.sheet]
-
-                
-                
-//                var resultingStacks: [AnyDestinationStack] = activeScreenStacks
-//                var screensToDismiss: [AnyDestination] = []
-//                
-//                // Remove all stacks after the current current stackIndex
-//                if activeScreenStacks.indices.contains(stackIndex + 1) {
-//                    resultingStacks = Array(activeScreenStacks.prefix(stackIndex))
-//                    let stacksToDismiss = Array(activeScreenStacks.suffix(activeScreenStacks.count - (stackIndex + 1)))
-//                    screensToDismiss = stacksToDismiss.reversed().flatMap({ $0.screens.reversed() })
-//                    print("FLAT MAPPED \(screensToDismiss.count)")
-//                    
-//                    for screen in screensToDismiss {
-//                        print("FLAT: \(screen.id)")
-//                    }
-//                }
-//                
-//                // Trim the inner array to include only elements before the matched destination
-//                
-//                var resultingScreens: [AnyDestination] = []
-//                if screenIndex > 0 {
-//                    resultingScreens = Array(stack.screens.prefix(screenIndex))
-//                }
-//                
-//                print(stack.screens.count)
-//                print(screenIndex)
-//                print(stack.screens.count - screenIndex)
-//                let moreScreensToDismiss = Array(stack.screens.suffix(stack.screens.count - screenIndex)).reversed()
-//                screensToDismiss.insert(contentsOf: moreScreensToDismiss, at: 0)
-//                print("MORE SCREENS \(moreScreensToDismiss.count)")
-//                print(moreScreensToDismiss)
-//
-//                var newStack = stack
-//                newStack.updating(screens: resultingScreens)
-//                resultingStacks[stackIndex] = newStack
-//                
-//                print("printing new stack")
-//                print(newStack)
-//
-//                // There should always be a blank pushable stack for the NavigationStack to bind to
-//                if resultingStacks.last?.segue != .push {
-//                    resultingStacks.append(AnyDestinationStack(segue: .push, screens: []))
-//                }
-//                
-//                // Publish update to the view
-//                activeScreenStacks = resultingStacks
-//                
-//                // Dismiss screens
+                // Stop loop
                 return
             }
         }
         
-        
-//        for (outerIndex, innerArray) in activeScreenStacks.enumerated() {
-//            if let innerIndex = innerArray.screens.lastIndex(where: { $0.id == routeId }) {
-//                // Remove all arrays after the current outerIndex
-//                activeScreenStacks = Array(activeScreenStacks.prefix(outerIndex + 1))
-//                
-//                // Trim the inner array to include only elements up to and including the matched destination
-//                activeScreenStacks[outerIndex] = innerArray.dismiss(index: innerIndex)
-//                
-//                // There should always be a blank pushable stack for the NavigationStack to bind to
-//                if activeScreenStacks.last?.segue != .push {
-//                    activeScreenStacks.append(AnyDestinationStack(segue: .push, screens: []))
-//                }
-//                return
-//            }
-//        }
+        print("🚨 RouteId: \(routeId) not found in active view heirarchy.")
     }
     
     func dismissScreens(to routeId: String) {
-        print("OK")
-//        for (outerIndex, innerArray) in activeScreenStacks.enumerated() {
-//            if let innerIndex = innerArray.screens.lastIndex(where: { $0.id == routeId }) {
-//                // Remove all arrays after the current outerIndex
-//                activeScreenStacks = Array(activeScreenStacks.prefix(outerIndex + 1))
-//                
-//                // Trim the inner array to include only elements up to and including the matched destination
-//                activeScreenStacks[outerIndex] = innerArray.dismiss(index: innerIndex + 1)
-//                
-//                if activeScreenStacks.last?.segue != .push {
-//                    activeScreenStacks.append(AnyDestinationStack(segue: .push, screens: []))
-//                }
-//                return
-//            }
-//        }
+        // The parameter routeId should be the remaining screen after dismissing all screens in front of it
+        // So we call dismissScreen(routeId:) with the next screen's routeId
+        
+        let allScreens = activeScreenStacks.flatMap({ $0.screens })
+        if let screenIndex = allScreens.firstIndex(where: { $0.id == routeId }) {
+            if allScreens.indices.contains(screenIndex + 1) {
+                let nextRoute = allScreens[screenIndex + 1]
+                dismissScreen(routeId: nextRoute.id)
+                return
+            }
+        }
+        
+        print("🚨 Dismiss to routeId: \(routeId) not found in active view heirarchy.")
     }
+    
+    func dismissLastScreen() {
+        // Find the last screen and dismiss it
+        let allScreens = activeScreenStacks.flatMap({ $0.screens })
+        if let lastScreen = allScreens.last {
+            dismissScreen(routeId: lastScreen.id)
+            return
+        }
+        
+        print("🚨 There are no screens to dismiss in the active view heirarchy.")
+    }
+    
+    func dismissScreens(count: Int) {
+        // Find the last screen and dismiss it
+        let allScreensReversed = activeScreenStacks.flatMap({ $0.screens }).reversed()
+        
+        var counter: Int = 0
+        for screen in allScreensReversed {
+            counter += 1
+            
+            if counter == count || screen == allScreensReversed.last {
+                dismissScreen(routeId: screen.id)
+                return
+            }
+        }
+        
+        print("🚨 There are no screens to dismiss in the active view heirarchy.")
+    }
+    
+    /// Dismiss the environment for the routeId
+    func dismissEnvironment(routeId: String) {
+        
+    }
+    
+    /// Dismiss the top-most environment
+    func dismissLastEnvironment() {
+        
+    }
+    
+    /// Dismiss the push stack for the routeId
+    func dismissPushStack(routeId: String) {
+        
+    }
+    
+    /// Dismiss the top-most push stack
+    func dismissLastPushStack() {
+        
+    }
+    
+    /// Dismiss all screens back to root
+    func dismissAllScreens() {
+        dismissScreen(routeId: RouterViewModel.rootId)
+    }
+
 }
 
 struct RouterViewInternal<Content: View>: View, Router {
@@ -428,13 +413,47 @@ struct RouterViewInternal<Content: View>: View, Router {
         viewModel.showScreen(segue: segue, id: id, routerId: routerId, destination: destination)
     }
     
+    
+    func dismissLastScreen() {
+        viewModel.dismissLastScreen()
+    }
+
     func dismissScreen() {
         viewModel.dismissScreen(routeId: routerId)
+    }
+    
+    func dismissScreen(id: String) {
+        viewModel.dismissScreen(routeId: id)
     }
     
     func dismissScreens(to routerId: String) {
         viewModel.dismissScreens(to: routerId)
     }
+    
+    func dismissScreens(count: Int) {
+        viewModel.dismissScreens(count: count)
+    }
+    
+    func dismissAllScreens() {
+        
+    }
+    
+    func dismissEnvironment() {
+        
+    }
+    
+    func dismissPushStack() {
+        
+    }
+    
+    /*
+     // add dismissLastScreen()
+     // add dismissScreens(count: 2)
+     // add dismissScreens(ids: [])
+     // add dismissScreen(id: [])
+     // add dismissScreen()
+
+     */
 }
 
 struct RoutingTest: View {
@@ -446,12 +465,14 @@ struct RoutingTest: View {
 //                        router2.dismissScreen()
                         router2.showScreen(segue: .push, id: "screen_3") { router3 in
                             Button("Click me 3") {
-                                router3.showScreen(segue: .fullScreenCover, id: "screen_4") { router4 in
+                                router3.showScreen(segue: .sheet, id: "screen_4") { router4 in
                                     Button("Click me 4") {
-                                        router2.dismissScreen()
+//                                        router2.dismissScreen()
 //                                        router4.dismissScreen()
-//                                        router4.dismissScreens(to: "root")
-//                                        router4.dismissScreen()
+//                                        router2.dismissLastScreen()
+//                                        router4.dismissScreens(to: "screen_2")
+                                        router4.dismissScreens(count: 2)
+                                        //                                        router4.dismissScreen()
                                     }
                                 }
                             }
