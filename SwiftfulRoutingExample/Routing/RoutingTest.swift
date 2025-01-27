@@ -86,15 +86,15 @@ protocol Router {
 
 struct AnyDestinationStack: Equatable {
     private(set) var segue: SegueOption
-    private(set) var screens: [AnyDestination]
+    var screens: [AnyDestination]
     
 //    mutating func updating(screens: [AnyDestination]) {
 //        self.screens = screens
 //    }
     
-    mutating func adding(screen: AnyDestination) {
-        self.screens.append(screen)
-    }
+//    mutating func adding(screen: AnyDestination) {
+//        self.screens.append(screen)
+//    }
 }
 
 @MainActor
@@ -136,11 +136,11 @@ final class RouterViewModel {
             // If pushing to the next screen,
             //  If currentStack is already .push, append to it
             //  Otherwise, currentStack is therefore sheet/fullScreenCover and there should be a push stack (index +1)
-            // Otherwise, find the next .push stack and append to that
+            //  Otherwise, find the next .push stack and append to that
 
             let appendingIndex: Int = currentStack.segue == .push ? (index) : (index + 1)
             
-            activeScreenStacks[appendingIndex].adding(screen: destination)
+            activeScreenStacks[appendingIndex].screens.append(destination)
         case .sheet, .fullScreenCover:
             // If showing sheet or fullScreenCover,
             //  If currentStack is .push, add newStack next (index + 1)
@@ -398,10 +398,8 @@ struct RouterViewInternal<Content: View>: View, Router {
             .ifSatisfiesCondition(addNavigationStack, transform: { content in
                 NavigationStack(path: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, onDidDismiss: { lastRouteRemaining in
                     if let lastRouteRemaining {
-                        print("dismissing")
                         viewModel.dismissScreens(to: lastRouteRemaining.id)
                     } else {
-                        print("DIS STACK")
                         viewModel.dismissPushStack(routeId: routerId)
                     }
                 })) {
@@ -529,7 +527,7 @@ struct RouterViewInternal<Content: View>: View, Router {
 // Manual swipe back - onChange of stack - DONE
 //
 // 2.
-// Push screens
+// Push screens - 
 //
 // 3.
 // Enter screen flow
