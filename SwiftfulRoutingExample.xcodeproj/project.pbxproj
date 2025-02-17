@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		021CF2D22A9CDB4500BFB255 /* PopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 021CF2D12A9CDB4500BFB255 /* PopoverView.swift */; };
+		027D76642D63C52C00D24A22 /* AnyDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027D76632D63C52C00D24A22 /* AnyDestination.swift */; };
+		027D76662D63C53600D24A22 /* OnFirstAppearModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027D76652D63C53600D24A22 /* OnFirstAppearModifier.swift */; };
+		027D76682D63C54700D24A22 /* SegueOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027D76672D63C54700D24A22 /* SegueOption.swift */; };
+		027D766A2D63C57A00D24A22 /* AnyDestinationStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027D76692D63C57A00D24A22 /* AnyDestinationStack.swift */; };
 		028A896A281F9228004E3DA4 /* SwiftfulRoutingExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028A8969281F9228004E3DA4 /* SwiftfulRoutingExampleApp.swift */; };
 		028A896C281F9228004E3DA4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028A896B281F9228004E3DA4 /* ContentView.swift */; };
 		028A896E281F922B004E3DA4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 028A896D281F922B004E3DA4 /* Assets.xcassets */; };
@@ -43,6 +47,10 @@
 
 /* Begin PBXFileReference section */
 		021CF2D12A9CDB4500BFB255 /* PopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverView.swift; sourceTree = "<group>"; };
+		027D76632D63C52C00D24A22 /* AnyDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyDestination.swift; sourceTree = "<group>"; };
+		027D76652D63C53600D24A22 /* OnFirstAppearModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnFirstAppearModifier.swift; sourceTree = "<group>"; };
+		027D76672D63C54700D24A22 /* SegueOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegueOption.swift; sourceTree = "<group>"; };
+		027D76692D63C57A00D24A22 /* AnyDestinationStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyDestinationStack.swift; sourceTree = "<group>"; };
 		028A8966281F9228004E3DA4 /* SwiftfulRoutingExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftfulRoutingExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		028A8969281F9228004E3DA4 /* SwiftfulRoutingExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftfulRoutingExampleApp.swift; sourceTree = "<group>"; };
 		028A896B281F9228004E3DA4 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -145,6 +153,10 @@
 			isa = PBXGroup;
 			children = (
 				02ADB6A82D3D766400F15EBD /* RoutingTest.swift */,
+				027D76632D63C52C00D24A22 /* AnyDestination.swift */,
+				027D76652D63C53600D24A22 /* OnFirstAppearModifier.swift */,
+				027D76672D63C54700D24A22 /* SegueOption.swift */,
+				027D76692D63C57A00D24A22 /* AnyDestinationStack.swift */,
 			);
 			path = Routing;
 			sourceTree = "<group>";
@@ -306,11 +318,15 @@
 				02CFF0E12986B2D900E6ABCC /* ExampleView.swift in Sources */,
 				02CFF1032986C8D000E6ABCC /* ProgramaticSheetView.swift in Sources */,
 				02CFF0FF2986C20B00E6ABCC /* HomeInteractor.swift in Sources */,
+				027D76662D63C53600D24A22 /* OnFirstAppearModifier.swift in Sources */,
 				028A896C281F9228004E3DA4 /* ContentView.swift in Sources */,
 				02CFF0F72986BEE400E6ABCC /* BasicView.swift in Sources */,
 				02CFF0F22986BDFC00E6ABCC /* HomeView.swift in Sources */,
+				027D766A2D63C57A00D24A22 /* AnyDestinationStack.swift in Sources */,
+				027D76682D63C54700D24A22 /* SegueOption.swift in Sources */,
 				02CFF0ED2986BAEE00E6ABCC /* MyNextView.swift in Sources */,
 				02CFF0EA2986BA1000E6ABCC /* SampleViewModel.swift in Sources */,
+				027D76642D63C52C00D24A22 /* AnyDestination.swift in Sources */,
 				02CFF1012986C29900E6ABCC /* HomeRouter.swift in Sources */,
 				02CFF0E32986B66F00E6ABCC /* DataService.swift in Sources */,
 				D1A7AEBA2C778380006AF666 /* ContentTransitionView.swift in Sources */,

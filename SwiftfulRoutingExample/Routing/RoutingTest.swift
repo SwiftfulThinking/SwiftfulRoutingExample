@@ -84,18 +84,6 @@ protocol Router {
     func dismissAllScreens()
 }
 
-struct AnyDestinationStack: Equatable {
-    private(set) var segue: SegueOption
-    var screens: [AnyDestination]
-    
-//    mutating func updating(screens: [AnyDestination]) {
-//        self.screens = screens
-//    }
-    
-//    mutating func adding(screen: AnyDestination) {
-//        self.screens.append(screen)
-//    }
-}
 
 @MainActor
 @Observable
@@ -106,6 +94,14 @@ final class RouterViewModel {
     
     func insertRootView(view: AnyDestination) {
         activeScreenStacks.insert(AnyDestinationStack(segue: .fullScreenCover, screens: [view]), at: 0)
+    }
+    
+    func showScreens() {
+        
+    }
+    
+    func showScreen() {
+        
     }
     
     func showScreen<T>(segue: SegueOption, id: String, routerId: String, destination: @escaping (any Router) -> T) where T : View {
@@ -533,6 +529,11 @@ struct RoutingTest: View {
     var body: some View {
         RouterView(logger: true) { router in
             Button("Click me 1") {
+//                let route: AnyRoute = AnyRoute(
+//                    
+//                )
+                
+                
                 router.showScreen(segue: .sheet, id: "screen_2") { router2 in
                     Button("Click me 2") {
 //                        router2.dismissScreen()
@@ -560,30 +561,6 @@ struct RoutingTest: View {
 
 #Preview {
     RoutingTest()
-}
-
-import Foundation
-import SwiftUI
-
-struct AnyDestination: Identifiable, Hashable {
-    let id: String
-    let destination: AnyView
-    let onDismiss: (() -> Void)?
-
-    init<T:View>(id: String = UUID().uuidString, _ destination: T, onDismiss: (() -> Void)? = nil) {
-        self.id = id
-        self.destination = AnyView(destination)
-        self.onDismiss = onDismiss
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-    
-    public static func == (lhs: AnyDestination, rhs: AnyDestination) -> Bool {
-        lhs.id == rhs.id
-    }
-    
 }
 
 //struct NavigationStackIfNeeded<Content:View>: View {
@@ -665,48 +642,30 @@ extension Binding where Value == AnyDestination? {
     }
 }
 
-struct NavigationDestinationViewModifier: ViewModifier {
-    
-    var addNavigationDestination: Bool
-
-    func body(content: Content) -> some View {
-        if addNavigationDestination {
-            content
-                .navigationDestination(for: AnyDestination.self) { value in
-                    value.destination
-                }
-        } else {
-            content
-        }
-    }
-}
-
-extension View {
-    
-    func navigationDestinationIfNeeded(addNavigationDestination: Bool) -> some View {
-        modifier(NavigationDestinationViewModifier(addNavigationDestination: addNavigationDestination))
-    }
-}
-
-public enum SegueOption: String, Equatable {
-    case push, sheet, fullScreenCover
-    
-//    @available(iOS 14.0, *)
-//    case
+//struct NavigationDestinationViewModifier: ViewModifier {
 //    
-//    @available(iOS 16.0, *)
-//    case sheetDetents
-    
-    
-    var presentsNewEnvironment: Bool {
-        switch self {
-        case .push:
-            return false
-        case .sheet, .fullScreenCover:
-            return true
-        }
-    }
-}
+//    var addNavigationDestination: Bool
+//
+//    func body(content: Content) -> some View {
+//        if addNavigationDestination {
+//            content
+//                .navigationDestination(for: AnyDestination.self) { value in
+//                    value.destination
+//                }
+//        } else {
+//            content
+//        }
+//    }
+//}
+//
+//extension View {
+//    
+//    func navigationDestinationIfNeeded(addNavigationDestination: Bool) -> some View {
+//        modifier(NavigationDestinationViewModifier(addNavigationDestination: addNavigationDestination))
+//    }
+//}
+
+
 
 //struct FullScreenCoverViewModifier: ViewModifier {
 //    
@@ -744,35 +703,6 @@ public enum SegueOption: String, Equatable {
 //    }
 //}
 
-struct OnFirstAppearModifier: ViewModifier {
-    let action: @MainActor () -> Void
-    @State private var isFirstAppear = true
-    
-    func body(content: Content) -> some View {
-        content
-            .onAppear {
-                if isFirstAppear {
-                    action()
-                    isFirstAppear = false
-                }
-            }
-    }
-}
 
-extension View {
-    func onFirstAppear(perform action: @escaping () -> Void) -> some View {
-        self.modifier(OnFirstAppearModifier(action: action))
-    }
-}
 
-extension View {
-    
-    @ViewBuilder func ifSatisfiesCondition<Content: View>(_ condition: Bool, transform: @escaping (Self) -> Content) -> some View {
-        if condition {
-            transform(self)
-        } else {
-            self
-        }
-    }
-    
-}
+
