@@ -180,9 +180,8 @@ final class RouterViewModel {
     // Dismiss sheet, sheet, sheet
     // Dismiss any combo
 
+    /// Removes all stacks after stackIndex. Keeps stacks up-to and including the stackIndex.
     private func removeAllStacksAsNeeded(stacks: [AnyDestinationStack], stackIndex: Int) -> (keep: [AnyDestinationStack], remove: [AnyDestinationStack]) {
-        // Keep stacks up-to and including the current stackIndex
-        // Remove all stacks after current stackIndex
         
         // Ensure the index is within bounds
         guard stackIndex >= 0 && stackIndex < stacks.count else {
@@ -205,9 +204,8 @@ final class RouterViewModel {
         }
     }
     
+    /// Remove screen at screenIndex and all screens after screenIndex. Keeps all screens before the screenIndex.
     private func removeScreensAsNeeded(stack: AnyDestinationStack, screenIndex: Int) -> (keep: AnyDestinationStack, remove: [AnyDestination]) {
-        // Keep all screens before the current screenIndex
-        // Remove screen at currentIndex and all screens after currentIndex
         let screens: [AnyDestination] = stack.screens
         
         // Ensure the index is within bounds
@@ -226,7 +224,7 @@ final class RouterViewModel {
         return (keep: keepStack, remove: removeScreens)
     }
 
-    /// Dismiss screen at routeId and all screens in front of it. (TBD?)
+    /// Dismiss screen at routeId and all screens in front of it.
     func dismissScreen(routeId: String) {
         for (stackIndex, stack) in activeScreenStacks.enumerated().reversed() {
             // Check if stack.screens contains the routeId
@@ -273,6 +271,7 @@ final class RouterViewModel {
         print("🚨 RouteId: \(routeId) not found in active view heirarchy.")
     }
     
+    /// Dismiss all screens in front of routeId, leaving routeId as the active screen.
     func dismissScreens(to routeId: String) {
         // The parameter routeId should be the remaining screen after dismissing all screens in front of it
         // So we call dismissScreen(routeId:) with the next screen's routeId
@@ -289,8 +288,8 @@ final class RouterViewModel {
         print("🚨 Dismiss to routeId: \(routeId) not found in active view heirarchy.")
     }
     
+    /// Dismiss the last screen presented.
     func dismissLastScreen() {
-        // Find the last screen and dismiss it
         let allScreens = activeScreenStacks.flatMap({ $0.screens })
         if let lastScreen = allScreens.last {
             dismissScreen(routeId: lastScreen.id)
@@ -300,8 +299,8 @@ final class RouterViewModel {
         print("🚨 There are no screens to dismiss in the active view heirarchy.")
     }
     
+    /// Dismiss the last x screens presented.
     func dismissScreens(count: Int) {
-        // Find the last screen and dismiss it
         let allScreensReversed = activeScreenStacks.flatMap({ $0.screens }).reversed()
         
         var counter: Int = 0
@@ -317,9 +316,8 @@ final class RouterViewModel {
         print("🚨 There are no screens to dismiss in the active view heirarchy.")
     }
     
+    /// Dismiss the closest .sheet or .fullScreenCover below the routeId.
     func dismissEnvironment(routeId: String) {
-        // Dismiss the .sheet or .fullScreenCover closest to routeId
-        
         var didFindScreen: Bool = false
         for stack in activeScreenStacks.reversed() {
             if stack.screens.contains(where: { $0.id == routeId }) {
@@ -333,6 +331,7 @@ final class RouterViewModel {
         }
     }
     
+    /// Dismiss the last .sheet or .fullScreenCover presented.
     func dismissLastEnvironment() {
         let lastEnvironmentStack = activeScreenStacks.last(where: { $0.segue.presentsNewEnvironment })
         if let route = lastEnvironmentStack?.screens.first {
@@ -343,6 +342,7 @@ final class RouterViewModel {
         print("🚨 There is no dismissable environment in view heirarchy.")
     }
     
+    /// Dismiss all .push routes on the current NavigationStack, up-to but not including any .sheet or .fullScreenCover.
     func dismissPushStack(routeId: String) {
         for (stackIndex, stack) in activeScreenStacks.enumerated().reversed() {
             if stack.screens.contains(where: { $0.id == routeId }) {
@@ -367,6 +367,7 @@ final class RouterViewModel {
         }
     }
     
+    /// Dismiss all .push routes on the last NavigationStack, up-to but not including any .sheet or .fullScreenCover.
     func dismissLastPushStack() {
         let lastPushStack = activeScreenStacks.last(where: { $0.segue == .push })
         if let route = lastPushStack?.screens.first {
@@ -377,7 +378,7 @@ final class RouterViewModel {
         print("🚨 There is no dismissable push stack in view heirarchy.")
     }
     
-    /// Dismiss all screens back to root
+    /// Dismiss all screens back to root.
     func dismissAllScreens() {
         dismissScreen(routeId: RouterViewModel.rootId)
     }
@@ -511,15 +512,6 @@ struct RouterViewInternal<Content: View>: View, Router {
     func dismissAllScreens() {
         viewModel.dismissAllScreens()
     }
-
-    /*
-     // add dismissLastScreen()
-     // add dismissScreens(count: 2)
-     // add dismissScreens(ids: [])
-     // add dismissScreen(id: [])
-     // add dismissScreen()
-
-     */
 }
 
 // 1.
@@ -527,10 +519,11 @@ struct RouterViewInternal<Content: View>: View, Router {
 // Manual swipe back - onChange of stack - DONE
 //
 // 2.
-// Push screens - 
+// Push screens -
+// Push screens with Sheet? -
 //
 // 3.
-// Enter screen flow
+// Enter screen flow / queue -
 // Next screen
 //
 // 4.
