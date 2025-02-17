@@ -11,12 +11,20 @@ import SwiftUI
 
 struct AnyDestination: Identifiable, Hashable {
     let id: String
-    let destination: AnyView
+    let segue: SegueOption
+    private(set) var destination: AnyView
     let onDismiss: (() -> Void)?
 
-    init<T:View>(id: String = UUID().uuidString, _ destination: T, onDismiss: (() -> Void)? = nil) {
+    init<T:View>(id: String = UUID().uuidString, segue: SegueOption, _ destination: @escaping (any Router) -> T, onDismiss: (() -> Void)? = nil) {
         self.id = id
-        self.destination = AnyView(destination)
+        self.segue = segue
+        self.destination = AnyView(
+            RouterViewInternal(
+                routerId: id,
+                addNavigationStack: segue != .push,
+                content: destination
+            )
+        )
         self.onDismiss = onDismiss
     }
     
@@ -28,4 +36,13 @@ struct AnyDestination: Identifiable, Hashable {
         lhs.id == rhs.id
     }
     
+//    mutating func wrappedInRouterViewInternal() {
+//        destination = AnyView(
+//            RouterViewInternal(
+//                routerId: id,
+//                addNavigationStack: segue != .push,
+//                content: destination
+//            )
+//        )
+//    }
 }

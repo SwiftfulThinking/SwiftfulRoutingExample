@@ -68,6 +68,7 @@ struct RouterView<Content: View>: View {
 
 @MainActor
 protocol Router {
+    func showScreen(destination: AnyDestination)
     func showScreen<T>(segue: SegueOption, id: String, @ViewBuilder destination: @escaping (Router) -> T) where T: View
     func dismissScreen()
     func dismissScreen(id: String)
@@ -100,23 +101,7 @@ final class RouterViewModel {
         
     }
     
-    func showScreen() {
-        
-    }
-    
-    func showScreen<T>(segue: SegueOption, id: String, routerId: String, destination: @escaping (any Router) -> T) where T : View {
-        
-        // Wrap injected destination within another RouterViewInternal
-        let destination = AnyDestination(
-            id: id,
-            RouterViewInternal(
-                routerId: id,
-                addNavigationStack: segue != .push,
-                content: destination
-            ),
-            onDismiss: nil
-        )
-        
+    func showScreen(routerId: String, destination: AnyDestination) {
         // Get the index of the currentStack this is being called from
         guard let index = activeScreenStacks.lastIndex(where: { stack in
             return stack.screens.contains(where: { $0.id == routerId })
@@ -127,7 +112,7 @@ final class RouterViewModel {
         let currentStack = activeScreenStacks[index]
         
         
-        switch segue {
+        switch destination.segue {
         case .push:
             // If pushing to the next screen,
             //  If currentStack is already .push, append to it
@@ -145,7 +130,7 @@ final class RouterViewModel {
             // When appending a new sheet or fullScreenCover, also append a .push stack for the new NavigationStack to bind to
             //
             
-            let newStack = AnyDestinationStack(segue: segue, screens: [destination])
+            let newStack = AnyDestinationStack(segue: destination.segue, screens: [destination])
             let blankStack = AnyDestinationStack(segue: .push, screens: [])
             let appendingIndex: Int = currentStack.segue == .push ? (index + 1) : (index + 2)
             
@@ -434,7 +419,7 @@ struct RouterViewInternal<Content: View>: View, Router {
             .ifSatisfiesCondition(routerId == RouterViewModel.rootId, transform: { content in
                 content
                     .onFirstAppear {
-                        viewModel.insertRootView(view: AnyDestination(id: routerId, self, onDismiss: nil))
+                        viewModel.insertRootView(view: AnyDestination(id: routerId, segue: .fullScreenCover, { _ in self }, onDismiss: nil))
                     }
             })
         
@@ -465,8 +450,13 @@ struct RouterViewInternal<Content: View>: View, Router {
         print("\n")
     }
     
+    func showScreen(destination: AnyDestination) {
+        viewModel.showScreen(routerId: routerId, destination: destination)
+    }
+    
     func showScreen<T>(segue: SegueOption, id: String, destination: @escaping (any Router) -> T) where T : View {
-        viewModel.showScreen(segue: segue, id: id, routerId: routerId, destination: destination)
+        let destination = AnyDestination(id: id, segue: segue, destination, onDismiss: nil)
+        viewModel.showScreen(routerId: routerId, destination: destination)
     }
     
     func dismissScreen() {
@@ -529,33 +519,51 @@ struct RoutingTest: View {
     var body: some View {
         RouterView(logger: true) { router in
             Button("Click me 1") {
-//                let route: AnyRoute = AnyRoute(
-//                    
-//                )
-                
-                
-                router.showScreen(segue: .sheet, id: "screen_2") { router2 in
+                let destination1 = AnyDestination(id: "screen_2", segue: .sheet, { router2 in
                     Button("Click me 2") {
-//                        router2.dismissScreen()
-                        router2.showScreen(segue: .push, id: "screen_3") { router3 in
+                        let destination2 = AnyDestination(id: "screen_3", segue: .push, { router3 in
                             Button("Click me 3") {
-                                router3.showScreen(segue: .push, id: "screen_4") { router4 in
+                                let destination3 = AnyDestination(id: "screen_4", segue: .push, { router4 in
                                     Button("Click me 4") {
-//                                        router2.dismissScreen()
-//                                        router4.dismissScreen()
-//                                        router2.dismissLastScreen()
-//                                        router4.dismissScreens(to: "screen_2")
-//                                        router4.dismissScreens(count: 2)
                                         router4.dismissPushStack()
-                                        //                                        router4.dismissScreen()
                                     }
-                                }
+                                    
+                                }, onDismiss: nil)
+                                
+                                router3.showScreen(destination: destination3)
                             }
-                        }
+                        }, onDismiss: nil)
+                        
+                        router2.showScreen(destination: destination2)
                     }
-                }
+                }, onDismiss: nil)
+                
+                router.showScreen(destination: destination1)
             }
         }
+                
+//                router.showScreen(segue: .sheet, id: "screen_2") { router2 in
+//                    Button("Click me 2") {
+////                        router2.dismissScreen()
+//                        router2.showScreen(segue: .push, id: "screen_3") { router3 in
+//                            Button("Click me 3") {
+//                                router3.showScreen(segue: .push, id: "screen_4") { router4 in
+//                                    Button("Click me 4") {
+////                                        router2.dismissScreen()
+////                                        router4.dismissScreen()
+////                                        router2.dismissLastScreen()
+////                                        router4.dismissScreens(to: "screen_2")
+////                                        router4.dismissScreens(count: 2)
+//                                        router4.dismissPushStack()
+//                                        //                                        router4.dismissScreen()
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 }
 
