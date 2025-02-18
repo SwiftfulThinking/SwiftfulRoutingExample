@@ -271,11 +271,34 @@ final class RouterViewModel {
         print("🚨 RouteId: \(routeId) not found in active view heirarchy.")
     }
     
+    func dismissScreens(toEnvironmentId routeId: String) {
+        print("TRIGGERING2 ON :\(routeId)")
+        print(activeScreenStacks)
+        
+        if let stackIndex = activeScreenStacks.firstIndex(where: { $0.screens.contains(where: { $0.id == routeId }) }) {
+            if activeScreenStacks.indices.contains(stackIndex + 1) {
+                let nextStack = activeScreenStacks[stackIndex + 1]
+                if let lastScreen = nextStack.screens.last {
+                    dismissScreens(to: lastScreen.id)
+                    return
+                }
+            }
+        }
+        
+        // This is NOT a problem if it triggers.
+        // This method is build to support swipe gesture dismiss.
+        // However, if the user is programatically dismissing, the screens would already be dismissed herein, when this gets called anyway.
+        // Therefore, it is OK to fail (it's like a safety mechanism to keep).
+//        print("🚨 Dismiss to routeId: \(routeId) not found in active view heirarchy.")
+    }
+    
     /// Dismiss all screens in front of routeId, leaving routeId as the active screen.
     func dismissScreens(to routeId: String) {
         // The parameter routeId should be the remaining screen after dismissing all screens in front of it
         // So we call dismissScreen(routeId:) with the next screen's routeId
         
+//        print("TRIGGERING ON :\(routeId)")
+//        print(activeScreenStacks)
         let allScreens = activeScreenStacks.flatMap({ $0.screens })
         if let screenIndex = allScreens.firstIndex(where: { $0.id == routeId }) {
             if allScreens.indices.contains(screenIndex + 1) {
@@ -285,7 +308,11 @@ final class RouterViewModel {
             }
         }
         
-        print("🚨 Dismiss to routeId: \(routeId) not found in active view heirarchy.")
+        // This is NOT a problem if it triggers.
+        // This method is build to support swipe gesture dismiss.
+        // However, if the user is programatically dismissing, the screens would already be dismissed herein, when this gets called anyway.
+        // Therefore, it is OK to fail (it's like a safety mechanism to keep).
+//        print("🚨 Dismiss to routeId: \(routeId) not found in active view heirarchy.")
     }
     
     /// Dismiss the last screen presented.
@@ -416,7 +443,7 @@ struct RouterViewInternal<Content: View>: View, Router {
                     .sheet(item: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, segue: .sheet, onDidDismiss: {
                         // This triggers if the user swipes down to dismiss the screen
                         // Now we must update activeScreenStacks to match that behavior
-                        viewModel.dismissScreens(to: routerId)
+                        viewModel.dismissScreens(toEnvironmentId: routerId)
                     }), onDismiss: nil) { destination in
                         destination.destination
                     }
@@ -428,7 +455,7 @@ struct RouterViewInternal<Content: View>: View, Router {
                     .fullScreenCover(item: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, segue: .fullScreenCover, onDidDismiss: {
                         // This triggers if the user swipes down to dismiss the screen
                         // Now we must update activeScreenStacks to match that behavior
-                        viewModel.dismissScreens(to: routerId)
+                        viewModel.dismissScreens(toEnvironmentId: routerId)
                     }), onDismiss: nil) { destination in
                         destination.destination
                     }
@@ -531,36 +558,54 @@ struct RouterViewInternal<Content: View>: View, Router {
 // Push screens - DONE
 // Push screens with Sheet? - DONE
 //
-// 3.
-// Enter screen flow / queue -
-// Next screen
+// 3. Make sure dismiss is working - DONEISH
+// Dismiss working for all segues - DONEISH
 //
-// 4.
+// 4. Write tests for segues -
+// Tests for onDismiss
+//
+// 5.
+// Enter screen flow / queue -
+// Next screen -
+//
+// 6.
 // Dismiss single screen? - HOLD
+
+
+
+// showScreenStyle .append (top of stack) or .insert (exact location) ... insertAfter?
+// If pushed behind, when swipe to dismiss, auto dismissing everything?
 
 struct RoutingTest: View {
     var body: some View {
         RouterView(logger: true) { router in
             Button("Click me 1") {
                 
-                let screen1 = AnyDestination(id: "screen_1", segue: .sheet, { router in
-                    Color.red.ignoresSafeArea()
+                var firstRouter: Router? = nil
+                let screen1 = AnyDestination(id: "screen_1", segue: .push, { router in
+                    firstRouter = router
+                    return Color.red.ignoresSafeArea()
                 }, onDismiss: nil)
 
-                let screen2 = AnyDestination(id: "screen_2", segue: .push, { router in
+                let screen2 = AnyDestination(id: "screen_2", segue: .sheet, { router in
                     Color.blue.ignoresSafeArea()
+                        .onTapGesture {
+                            firstRouter?.showScreen(segue: .push, id: "adsf", destination: { _ in
+                                Color.orange.ignoresSafeArea()
+                            })
+                        }
                 }, onDismiss: nil)
                 
-                let screen3 = AnyDestination(id: "screen_3", segue: .fullScreenCover, { router in
-                    Color.orange.ignoresSafeArea()
-                }, onDismiss: nil)
-                
-                let screen4 = AnyDestination(id: "screen_4", segue: .push, { router in
-                    Color.pink.ignoresSafeArea()
-                }, onDismiss: nil)
+//                let screen3 = AnyDestination(id: "screen_3", segue: .fullScreenCover, { router in
+//                    Color.orange.ignoresSafeArea()
+//                }, onDismiss: nil)
+//                
+//                let screen4 = AnyDestination(id: "screen_4", segue: .push, { router in
+//                    Color.pink.ignoresSafeArea()
+//                }, onDismiss: nil)
 
 
-                router.showScreens(destinations: [screen1, screen2, screen3, screen4])
+                router.showScreens(destinations: [screen1, screen2]) // screen3, screen4
                 
                 
                 
