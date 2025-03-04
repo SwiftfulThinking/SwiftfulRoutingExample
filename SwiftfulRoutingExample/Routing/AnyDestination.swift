@@ -23,7 +23,11 @@ struct AnyDestination: Identifiable, Hashable {
     private(set) var destination: AnyView
     let onDismiss: (() -> Void)?
     
-    init<T:View>(id: String = UUID().uuidString, segue: SegueOption, location: SegueLocation = .insert, _ destination: @escaping (any Router) -> T, onDismiss: (() -> Void)? = nil) {
+//    init<T:View>(id: String = UUID().uuidString, _ segue: SegueOption = .push, location: SegueLocation = .insert, onDismiss: (() -> Void)? = nil, destination: @escaping (AnyRouter) -> T) {
+//        self.init(id: id, segue: segue, location: location, onDismiss: onDismiss, destination: destination)
+//    }
+    
+    init<T:View>(id: String = UUID().uuidString, segue: SegueOption = .push, location: SegueLocation = .insert, onDismiss: (() -> Void)? = nil, destination: @escaping (AnyRouter) -> T) {
         self.id = id
         self.segue = segue
         self.location = location

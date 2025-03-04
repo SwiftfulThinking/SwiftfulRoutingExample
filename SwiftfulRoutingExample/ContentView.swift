@@ -10,10 +10,9 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        Text("HI")
-//        RouterView(addNavigationView: true) { router in
-//            MyView(router: router, count: 0)
-//        }
+        RouterView(addNavigationStack: true) { router in
+            MyView(router: router, count: 0)
+        }
     }
 }
 
@@ -21,7 +20,7 @@ struct MyView: View {
     
     // Pass reference to Router directly or pull from Environment
 //    @Environment(\.router) var router2
-//    let router: AnyRouter
+    let router: AnyRouter
     
     let count: Int
 //    @State private var sheetSelection: PresentationDetentTransformable = .fraction(0.3)
@@ -84,46 +83,42 @@ extension MyView {
     private var segueSection: some View {
         Section {
             Button("Push") {
-//                router.showScreen(.push, onDismiss: {
-//                    dismissAction(count + 1)
-//                }) { router in
-//                    MyView(router: router, count: count + 1)
-//                }
-                
-//                router.showScreen(.push) {
-//                    Text("Another screen")
-//                }
+                router.showScreen(.push, onDismiss: {
+                    dismissAction(count + 1)
+                }) { router in
+                    MyView(router: router, count: count + 1)
+                }
             }
             
-//            if #available(iOS 16, *) {
-//                Button("Push Stack (3x)") {
-//                    let screen1 = PushRoute(onDismiss: {
-//                        dismissAction(count + 1)
-//                    }, destination: { router in
-//                        MyView(router: router, count: count + 1)
-//                    })
-//                    let screen2 = PushRoute(onDismiss: {
-//                        dismissAction(count + 2)
-//                    }, destination: { router in
-//                        MyView(router: router, count: count + 2)
-//                    })
-//                    let screen3 = PushRoute(onDismiss: {
-//                        dismissAction(count + 3)
-//                    }, destination: { router in
-//                        MyView(router: router, count: count + 3)
-//                    })
-//
-//                    router.pushScreenStack(destinations: [screen1, screen2, screen3])
-//                }
-//            }
+            if #available(iOS 16, *) {
+                Button("Push Stack (3x)") {
+                    let screen1 = AnyDestination(onDismiss: {
+                        dismissAction(count + 1)
+                    }, destination: { router in
+                        MyView(router: router, count: count + 1)
+                    })
+                    let screen2 = AnyDestination(onDismiss: {
+                        dismissAction(count + 2)
+                    }, destination: { router in
+                        MyView(router: router, count: count + 2)
+                    })
+                    let screen3 = AnyDestination(onDismiss: {
+                        dismissAction(count + 3)
+                    }, destination: { router in
+                        MyView(router: router, count: count + 3)
+                    })
 
-//            Button("Sheet") {
-//                router2.showScreen(AnyRoute(.sheet, onDismiss: {
-//                    dismissAction(count + 1)
-//                }, destination: { router in
-//                    MyView(router: router, count: count + 1)
-//                }))
-//            }
+                    router.showScreens(destinations: [screen1, screen2, screen3])
+                }
+            }
+
+            Button("Sheet") {
+                router.showScreen(AnyDestination(segue: .sheet, onDismiss: {
+                    dismissAction(count + 1)
+                }, destination: { router in
+                    MyView(router: router, count: count + 1)
+                }))
+            }
             
 //            if #available(iOS 16, *) {
 //                Button("Resizable Sheet") {
@@ -163,15 +158,15 @@ extension MyView {
 //                }
 //            }
 
-//            if #available(iOS 14, *) {
-//                Button("FullScreenCover") {
-//                    router.showScreen(.fullScreenCover, onDismiss: {
-//                        dismissAction(count + 1)
-//                    }) { router in
-//                        MyView(router: router, count: count + 1)
-//                    }
-//                }
-//            }
+            if #available(iOS 14, *) {
+                Button("FullScreenCover") {
+                    router.showScreen(.fullScreenCover, onDismiss: {
+                        dismissAction(count + 1)
+                    }) { router in
+                        MyView(router: router, count: count + 1)
+                    }
+                }
+            }
 //                        
 //            Button("Safari") {
 //                router.showSafari {
@@ -235,19 +230,19 @@ extension MyView {
 //                }
 //            }
 //            
-//            Button("Dismiss") {
-//                router.dismissScreen()
-//            }
-//            
-//            if #available(iOS 16, *) {
-//                Button("Dismiss Screen Stack") {
-//                    router.dismissScreenStack()
-//                }
-//            }
-//            
-//            Button("Dismiss Environment") {
-//                router.dismissEnvironment()
-//            }
+            Button("Dismiss") {
+                router.dismissScreen()
+            }
+            
+            if #available(iOS 16, *) {
+                Button("Dismiss Screen Stack") {
+                    router.dismissPushStack()
+                }
+            }
+            
+            Button("Dismiss Environment") {
+                router.dismissEnvironment()
+            }
 //            
 //            Button("Next Screen or Dismiss Environment") {
 //                router.showNextScreenOrDismissEnvironment()

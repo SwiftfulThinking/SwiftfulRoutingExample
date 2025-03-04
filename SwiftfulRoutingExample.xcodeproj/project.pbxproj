@@ -18,6 +18,7 @@
 		028A8971281F922B004E3DA4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 028A8970281F922B004E3DA4 /* Preview Assets.xcassets */; };
 		028A8981281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028A8980281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.swift */; };
 		02ADB6A92D3D766400F15EBD /* RoutingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02ADB6A82D3D766400F15EBD /* RoutingTest.swift */; };
+		02C671E72D76BDE1001C1A62 /* AnyRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C671E62D76BDE1001C1A62 /* AnyRouter.swift */; };
 		02CFF0E12986B2D900E6ABCC /* ExampleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFF0E02986B2D900E6ABCC /* ExampleView.swift */; };
 		02CFF0E32986B66F00E6ABCC /* DataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFF0E22986B66F00E6ABCC /* DataService.swift */; };
 		02CFF0E52986B68300E6ABCC /* ExampleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFF0E42986B68300E6ABCC /* ExampleViewModel.swift */; };
@@ -59,6 +60,7 @@
 		028A897E281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftfulRoutingExampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		028A8980281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftfulRoutingExampleUITests.swift; sourceTree = "<group>"; };
 		02ADB6A82D3D766400F15EBD /* RoutingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutingTest.swift; sourceTree = "<group>"; };
+		02C671E62D76BDE1001C1A62 /* AnyRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyRouter.swift; sourceTree = "<group>"; };
 		02CFF0E02986B2D900E6ABCC /* ExampleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleView.swift; sourceTree = "<group>"; };
 		02CFF0E22986B66F00E6ABCC /* DataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
 		02CFF0E42986B68300E6ABCC /* ExampleViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleViewModel.swift; sourceTree = "<group>"; };
@@ -153,6 +155,7 @@
 			isa = PBXGroup;
 			children = (
 				02ADB6A82D3D766400F15EBD /* RoutingTest.swift */,
+				02C671E62D76BDE1001C1A62 /* AnyRouter.swift */,
 				027D76632D63C52C00D24A22 /* AnyDestination.swift */,
 				027D76652D63C53600D24A22 /* OnFirstAppearModifier.swift */,
 				027D76672D63C54700D24A22 /* SegueOption.swift */,
@@ -318,6 +321,7 @@
 				02CFF0E12986B2D900E6ABCC /* ExampleView.swift in Sources */,
 				02CFF1032986C8D000E6ABCC /* ProgramaticSheetView.swift in Sources */,
 				02CFF0FF2986C20B00E6ABCC /* HomeInteractor.swift in Sources */,
+				02C671E72D76BDE1001C1A62 /* AnyRouter.swift in Sources */,
 				027D76662D63C53600D24A22 /* OnFirstAppearModifier.swift in Sources */,
 				028A896C281F9228004E3DA4 /* ContentView.swift in Sources */,
 				02CFF0F72986BEE400E6ABCC /* BasicView.swift in Sources */,

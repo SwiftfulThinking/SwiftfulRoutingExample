@@ -52,13 +52,14 @@ import SwiftUI
 
 struct RouterView<Content: View>: View {
     @State private var viewModel: RouterViewModel = RouterViewModel()
+    var addNavigationStack: Bool = true
     var logger: Bool = false
-    var content: (Router) -> Content
+    var content: (AnyRouter) -> Content
 
     var body: some View {
         RouterViewInternal(
             routerId: RouterViewModel.rootId,
-            addNavigationStack: true,
+            addNavigationStack: addNavigationStack,
             logger: logger,
             content: content
         )
@@ -68,12 +69,12 @@ struct RouterView<Content: View>: View {
 
 @MainActor
 protocol Router {
-    func showScreen(destination: AnyDestination)
+//    func showScreen(destination: AnyDestination)
     func showScreens(destinations: [AnyDestination])
-    func showScreen<T>(segue: SegueOption, location: SegueLocation, id: String, @ViewBuilder destination: @escaping (Router) -> T) where T: View
+//    func showScreen<T>(segue: SegueOption, location: SegueLocation, id: String, @ViewBuilder destination: @escaping (Router) -> T) where T: View
     func dismissScreen()
     func dismissScreen(id: String)
-    func dismissScreens(to: String)
+    func dismissScreens(upToScreenId: String)
     func dismissScreens(count: Int)
     
     func dismissPushStack()
@@ -431,10 +432,14 @@ struct RouterViewInternal<Content: View>: View, Router {
     var routerId: String
     var addNavigationStack: Bool = false
     var logger: Bool = false
-    var content: (Router) -> Content
+    var content: (AnyRouter) -> Content
+
+    private var currentRouter: AnyRouter {
+        AnyRouter(object: self)
+    }
 
     var body: some View {
-        content(self)
+        content(currentRouter)
             // Add NavigationStack if needed
             .ifSatisfiesCondition(addNavigationStack, transform: { content in
                 NavigationStack(path: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, onDidDismiss: { lastRouteRemaining in
@@ -478,7 +483,8 @@ struct RouterViewInternal<Content: View>: View, Router {
             .ifSatisfiesCondition(routerId == RouterViewModel.rootId, transform: { content in
                 content
                     .onFirstAppear {
-                        viewModel.insertRootView(view: AnyDestination(id: routerId, segue: .fullScreenCover, { _ in self }, onDismiss: nil))
+                        let view = AnyDestination(id: routerId, segue: .fullScreenCover, location: .insert, onDismiss: nil, destination: { _ in self })
+                        viewModel.insertRootView(view: view)
                     }
             })
         
@@ -518,8 +524,6 @@ struct RouterViewInternal<Content: View>: View, Router {
     }
     
     func showScreen<T>(segue: SegueOption, location: SegueLocation, id: String, destination: @escaping (any Router) -> T) where T : View {
-        let destination = AnyDestination(id: id, segue: segue, location: location, destination, onDismiss: nil)
-        viewModel.showScreens(routerId: routerId, destinations: [destination])
     }
     
     func dismissScreen() {
@@ -530,8 +534,8 @@ struct RouterViewInternal<Content: View>: View, Router {
         viewModel.dismissScreen(routeId: id)
     }
     
-    func dismissScreens(to routerId: String) {
-        viewModel.dismissScreens(to: routerId)
+    func dismissScreens(upToScreenId: String) {
+        viewModel.dismissScreens(to: upToScreenId)
     }
     
     func dismissScreens(count: Int) {
@@ -586,9 +590,9 @@ struct RouterViewInternal<Content: View>: View, Router {
 // dismiss style - .singleScreen ... .allScreensToThisScreen?
 //
 //
-// showScreenStyle .append (top of stack) or .insert (exact location) ... insertAfter?
-// If pushed behind, when swipe to dismiss, auto dismissing everything?
+// showScreenStyle .append (top of stack) or .insert (exact location) ... insertAfter? - DONE
 //
+// 
 // duplicate screen ids
 
 
@@ -600,10 +604,13 @@ struct RouterViewInternal<Content: View>: View, Router {
  - location .insertAfter(x)
  - addToQueue
  - nextScreen
+ 
+ 
  - tests
  - alerts
  - modals
  - transitions
+ - modules
  - tabbars
  
  */
@@ -617,23 +624,23 @@ struct RoutingTest: View {
         RouterView(logger: true) { router in
             Button("Click me 1") {
                 
-                var firstRouter: Router? = nil
-                let screen1 = AnyDestination(id: "screen_1", segue: .push, { router in
+                var firstRouter: AnyRouter? = nil
+                let screen1 = AnyDestination(id: "screen_1", segue: .push, destination: { router in
                     firstRouter = router
                     return Color.red.ignoresSafeArea()
-                }, onDismiss: nil)
+                })
 
-                let screen2 = AnyDestination(id: "screen_2", segue: .sheet, { router in
+                let screen2 = AnyDestination(id: "screen_2", segue: .sheet, destination: { router in
                     Color.blue.ignoresSafeArea()
                         .onTapGesture {
-                            firstRouter?.showScreen(segue: .push, location: .insert, id: "adsf", destination: { _ in
+                            firstRouter?.showScreen(id: "adsf", segue: .push, location: .insert, destination: { _ in
                                 Color.orange.ignoresSafeArea()
                                     .onTapGesture {
                                         router.dismissLastScreen()
                                     }
                             })
                         }
-                }, onDismiss: nil)
+                })
                 
 //                let screen3 = AnyDestination(id: "screen_3", segue: .fullScreenCover, { router in
 //                    Color.orange.ignoresSafeArea()
