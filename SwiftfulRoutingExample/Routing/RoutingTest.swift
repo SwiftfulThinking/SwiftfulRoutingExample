@@ -70,7 +70,7 @@ struct RouterView<Content: View>: View {
 protocol Router {
     func showScreen(destination: AnyDestination)
     func showScreens(destinations: [AnyDestination])
-    func showScreen<T>(segue: SegueOption, id: String, @ViewBuilder destination: @escaping (Router) -> T) where T: View
+    func showScreen<T>(segue: SegueOption, location: SegueLocation, id: String, @ViewBuilder destination: @escaping (Router) -> T) where T: View
     func dismissScreen()
     func dismissScreen(id: String)
     func dismissScreens(to: String)
@@ -121,14 +121,27 @@ final class RouterViewModel {
     
     private func showScreen(routerId: String, destination: AnyDestination) {
         // Get the index of the currentStack this is being called from
-        guard let index = activeScreenStacks.lastIndex(where: { stack in
-            return stack.screens.contains(where: { $0.id == routerId })
-        }) else {
-            print("Error showScreen: NOT FOUND!")
-            return
+        
+        let stackIndex: Int
+        switch destination.location {
+        case .insert:
+            guard let index = activeScreenStacks.lastIndex(where: { stack in
+                return stack.screens.contains(where: { $0.id == routerId })
+            }) else {
+                print("🚨 Error showScreen: NOT FOUND!")
+                return
+            }
+            stackIndex = index
+        case .append:
+            guard let index = activeScreenStacks.indices.last else {
+                print("🚨 Error showScreen: NOT FOUND!")
+                return
+            }
+            stackIndex = index
         }
+        
 
-        let currentStack = activeScreenStacks[index]
+        let currentStack = activeScreenStacks[stackIndex]
         
         
         switch destination.segue {
@@ -138,7 +151,7 @@ final class RouterViewModel {
             //  Otherwise, currentStack is therefore sheet/fullScreenCover and there should be a push stack (index +1)
             //  Otherwise, find the next .push stack and append to that
 
-            let appendingIndex: Int = currentStack.segue == .push ? (index) : (index + 1)
+            let appendingIndex: Int = currentStack.segue == .push ? (stackIndex) : (stackIndex + 1)
             
             activeScreenStacks[appendingIndex].screens.append(destination)
         case .sheet, .fullScreenCover:
@@ -151,7 +164,7 @@ final class RouterViewModel {
             
             let newStack = AnyDestinationStack(segue: destination.segue, screens: [destination])
             let blankStack = AnyDestinationStack(segue: .push, screens: [])
-            let appendingIndex: Int = currentStack.segue == .push ? (index + 1) : (index + 2)
+            let appendingIndex: Int = currentStack.segue == .push ? (stackIndex + 1) : (stackIndex + 2)
             
             activeScreenStacks.insert(contentsOf: [newStack, blankStack], at: appendingIndex)
         }
@@ -272,8 +285,8 @@ final class RouterViewModel {
     }
     
     func dismissScreens(toEnvironmentId routeId: String) {
-        print("TRIGGERING2 ON :\(routeId)")
-        print(activeScreenStacks)
+//        print("TRIGGERING2 ON :\(routeId)")
+//        print(activeScreenStacks)
         
         if let stackIndex = activeScreenStacks.firstIndex(where: { $0.screens.contains(where: { $0.id == routeId }) }) {
             if activeScreenStacks.indices.contains(stackIndex + 1) {
@@ -504,8 +517,8 @@ struct RouterViewInternal<Content: View>: View, Router {
         viewModel.showScreens(routerId: routerId, destinations: [destination])
     }
     
-    func showScreen<T>(segue: SegueOption, id: String, destination: @escaping (any Router) -> T) where T : View {
-        let destination = AnyDestination(id: id, segue: segue, destination, onDismiss: nil)
+    func showScreen<T>(segue: SegueOption, location: SegueLocation, id: String, destination: @escaping (any Router) -> T) where T : View {
+        let destination = AnyDestination(id: id, segue: segue, location: location, destination, onDismiss: nil)
         viewModel.showScreens(routerId: routerId, destinations: [destination])
     }
     
@@ -570,11 +583,34 @@ struct RouterViewInternal<Content: View>: View, Router {
 //
 // 6.
 // Dismiss single screen? - HOLD
-
-
-
+// dismiss style - .singleScreen ... .allScreensToThisScreen?
+//
+//
 // showScreenStyle .append (top of stack) or .insert (exact location) ... insertAfter?
 // If pushed behind, when swipe to dismiss, auto dismissing everything?
+//
+// duplicate screen ids
+
+
+/*
+ 
+ Todo:
+ - dismiss style (.single, .waterfall)
+ - duplicate screen ids? warning?
+ - location .insertAfter(x)
+ - addToQueue
+ - nextScreen
+ - tests
+ - alerts
+ - modals
+ - transitions
+ - tabbars
+ 
+ */
+
+
+
+//
 
 struct RoutingTest: View {
     var body: some View {
@@ -590,8 +626,11 @@ struct RoutingTest: View {
                 let screen2 = AnyDestination(id: "screen_2", segue: .sheet, { router in
                     Color.blue.ignoresSafeArea()
                         .onTapGesture {
-                            firstRouter?.showScreen(segue: .push, id: "adsf", destination: { _ in
+                            firstRouter?.showScreen(segue: .push, location: .insert, id: "adsf", destination: { _ in
                                 Color.orange.ignoresSafeArea()
+                                    .onTapGesture {
+                                        router.dismissLastScreen()
+                                    }
                             })
                         }
                 }, onDismiss: nil)
