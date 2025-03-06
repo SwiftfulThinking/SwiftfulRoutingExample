@@ -21,6 +21,7 @@
 		02C671E72D76BDE1001C1A62 /* AnyRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C671E62D76BDE1001C1A62 /* AnyRouter.swift */; };
 		02C673C72D7800AA001C1A62 /* SegueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C673C62D7800AA001C1A62 /* SegueTests.swift */; };
 		02C673CA2D7803D7001C1A62 /* RecursiveRoutingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C673C92D7803D7001C1A62 /* RecursiveRoutingView.swift */; };
+		02C673CC2D797784001C1A62 /* MultiSegueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C673CB2D797784001C1A62 /* MultiSegueTests.swift */; };
 		02CFF0E12986B2D900E6ABCC /* ExampleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFF0E02986B2D900E6ABCC /* ExampleView.swift */; };
 		02CFF0E32986B66F00E6ABCC /* DataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFF0E22986B66F00E6ABCC /* DataService.swift */; };
 		02CFF0E52986B68300E6ABCC /* ExampleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFF0E42986B68300E6ABCC /* ExampleViewModel.swift */; };
@@ -65,6 +66,7 @@
 		02C671E62D76BDE1001C1A62 /* AnyRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyRouter.swift; sourceTree = "<group>"; };
 		02C673C62D7800AA001C1A62 /* SegueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegueTests.swift; sourceTree = "<group>"; };
 		02C673C92D7803D7001C1A62 /* RecursiveRoutingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecursiveRoutingView.swift; sourceTree = "<group>"; };
+		02C673CB2D797784001C1A62 /* MultiSegueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiSegueTests.swift; sourceTree = "<group>"; };
 		02CFF0E02986B2D900E6ABCC /* ExampleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleView.swift; sourceTree = "<group>"; };
 		02CFF0E22986B66F00E6ABCC /* DataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
 		02CFF0E42986B68300E6ABCC /* ExampleViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleViewModel.swift; sourceTree = "<group>"; };
@@ -174,6 +176,7 @@
 			isa = PBXGroup;
 			children = (
 				02C673C62D7800AA001C1A62 /* SegueTests.swift */,
+				02C673CB2D797784001C1A62 /* MultiSegueTests.swift */,
 			);
 			path = Segues;
 			sourceTree = "<group>";
@@ -364,6 +367,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				028A8981281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.swift in Sources */,
+				02C673CC2D797784001C1A62 /* MultiSegueTests.swift in Sources */,
 				02C673C72D7800AA001C1A62 /* SegueTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

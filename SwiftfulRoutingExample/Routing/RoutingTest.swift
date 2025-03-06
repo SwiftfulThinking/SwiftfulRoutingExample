@@ -106,9 +106,12 @@ final class RouterViewModel {
             var lastSegue: SegueOption? = nil
             
             for destination in destinations {
-                // If there is a .push after a new environment, the OS needs a slight delay before it will animate (idk why)
-                if lastSegue?.presentsNewEnvironment == true && destination.segue == .push {
-                    try? await Task.sleep(for: .seconds(0.55))
+                if lastSegue?.presentsNewEnvironment == true {
+                    // If there is a .push after a new environment, the OS needs a slight delay before it will animate (idk why)
+                    // Also if 2 new environments back to back
+                    if destination.segue == .push || destination.segue.presentsNewEnvironment {
+                        try? await Task.sleep(for: .seconds(0.55))
+                    }
                 }
                 
                 showScreen(routerId: routerIdUpdated, destination: destination)
@@ -599,8 +602,10 @@ struct RouterViewInternal<Content: View>: View, Router {
 /*
  
  Todo:
- - dismiss tests
- - on dismiss tests?
+ - dismiss tests -
+ - on dismiss tests -
+ - insert tests -
+ - 
  
  
  - dismiss style (.single, .waterfall)

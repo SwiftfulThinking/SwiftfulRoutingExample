@@ -27,6 +27,10 @@ struct RecursiveRoutingView: View {
     var isSegueTesting: Bool {
         ProcessInfo.processInfo.arguments.contains("SEGUES")
     }
+    
+    var isMultiSegueTesting: Bool {
+        ProcessInfo.processInfo.arguments.contains("MULTISEGUES")
+    }
         
     var body: some View {
         List {
@@ -37,9 +41,15 @@ struct RecursiveRoutingView: View {
                 if isSegueTesting {
                     segueButtons
                     dismissButtons
+                } else if isMultiSegueTesting {
+                    multiSegueButtons
+                    dismissButtons
+                } else {
+                    Text("Err")
                 }
             } else {
                 segueButtons
+                multiSegueButtons
                 dismissButtons
             }
         }
@@ -63,6 +73,29 @@ struct RecursiveRoutingView: View {
         )
         
         router.showScreen(screen)
+    }
+    
+    private func performMultiSegue(segues: [SegueOption]) {
+        var destinations: [AnyDestination] = []
+        
+        for (index, segue) in segues.enumerated() {
+            let screenNumber = screenNumber + 1 + index
+            let screen = AnyDestination(
+                id: "\(screenNumber)",
+                segue: segue,
+                location: .insert,
+                onDismiss: nil,
+                destination: { router in
+                    RecursiveRoutingView(
+                        router: router,
+                        screenNumber: screenNumber
+                    )
+                }
+            )
+            destinations.append(screen)
+        }
+        
+        router.showScreens(destinations: destinations)
     }
     
 //    private func performMultipleSegues(segue: [SegueOption]) {
@@ -98,6 +131,34 @@ struct RecursiveRoutingView: View {
             performSegue(segue: .fullScreenCover)
         }
         .accessibilityIdentifier("Button_FullScreenCover")
+    }
+    
+    @ViewBuilder
+    var multiSegueButtons: some View {
+        Button("Push 3x") {
+            performMultiSegue(segues: [.push, .push, .push])
+        }
+        .accessibilityIdentifier("Button_Push3x")
+        
+        Button("Sheet 3x") {
+            performMultiSegue(segues: [.sheet, .sheet, .sheet])
+        }
+        .accessibilityIdentifier("Button_Sheet3x")
+
+        Button("Full 3x") {
+            performMultiSegue(segues: [.fullScreenCover, .fullScreenCover, .fullScreenCover])
+        }
+        .accessibilityIdentifier("Button_Full3x")
+
+        Button("Push, Sheet, Full") {
+            performMultiSegue(segues: [.push, .sheet, .fullScreenCover])
+        }
+        .accessibilityIdentifier("Button_PushSheetFull")
+
+        Button("Full, Sheet, Push") {
+            performMultiSegue(segues: [.fullScreenCover, .sheet, .push])
+        }
+        .accessibilityIdentifier("Button_FullSheetPush")
     }
     
     @ViewBuilder

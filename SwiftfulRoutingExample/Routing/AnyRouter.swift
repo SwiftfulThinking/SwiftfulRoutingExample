@@ -35,6 +35,7 @@ struct AnyRouter: Router {
         object.showScreens(destinations: [destination])
     }
     
+    /// Note: AnyDestination.location will be overridden to support this method.
     func showScreens(destinations: [AnyDestination]) {
         object.showScreens(destinations: destinations)
     }
