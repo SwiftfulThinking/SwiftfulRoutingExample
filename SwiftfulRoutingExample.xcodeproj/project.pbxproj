@@ -19,6 +19,8 @@
 		028A8981281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028A8980281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.swift */; };
 		02ADB6A92D3D766400F15EBD /* RoutingTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02ADB6A82D3D766400F15EBD /* RoutingTest.swift */; };
 		02C671E72D76BDE1001C1A62 /* AnyRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C671E62D76BDE1001C1A62 /* AnyRouter.swift */; };
+		02C673C72D7800AA001C1A62 /* SegueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C673C62D7800AA001C1A62 /* SegueTests.swift */; };
+		02C673CA2D7803D7001C1A62 /* RecursiveRoutingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C673C92D7803D7001C1A62 /* RecursiveRoutingView.swift */; };
 		02CFF0E12986B2D900E6ABCC /* ExampleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFF0E02986B2D900E6ABCC /* ExampleView.swift */; };
 		02CFF0E32986B66F00E6ABCC /* DataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFF0E22986B66F00E6ABCC /* DataService.swift */; };
 		02CFF0E52986B68300E6ABCC /* ExampleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFF0E42986B68300E6ABCC /* ExampleViewModel.swift */; };
@@ -61,6 +63,8 @@
 		028A8980281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftfulRoutingExampleUITests.swift; sourceTree = "<group>"; };
 		02ADB6A82D3D766400F15EBD /* RoutingTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutingTest.swift; sourceTree = "<group>"; };
 		02C671E62D76BDE1001C1A62 /* AnyRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyRouter.swift; sourceTree = "<group>"; };
+		02C673C62D7800AA001C1A62 /* SegueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegueTests.swift; sourceTree = "<group>"; };
+		02C673C92D7803D7001C1A62 /* RecursiveRoutingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecursiveRoutingView.swift; sourceTree = "<group>"; };
 		02CFF0E02986B2D900E6ABCC /* ExampleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleView.swift; sourceTree = "<group>"; };
 		02CFF0E22986B66F00E6ABCC /* DataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
 		02CFF0E42986B68300E6ABCC /* ExampleViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleViewModel.swift; sourceTree = "<group>"; };
@@ -121,6 +125,7 @@
 				02CFF1042986F59800E6ABCC /* Info.plist */,
 				028A8969281F9228004E3DA4 /* SwiftfulRoutingExampleApp.swift */,
 				028A896B281F9228004E3DA4 /* ContentView.swift */,
+				02C673C92D7803D7001C1A62 /* RecursiveRoutingView.swift */,
 				D1A7AEB92C778380006AF666 /* ContentTransitionView.swift */,
 				021CF2D12A9CDB4500BFB255 /* PopoverView.swift */,
 				02ADB6A72D3D763000F15EBD /* Routing */,
@@ -147,6 +152,7 @@
 			isa = PBXGroup;
 			children = (
 				028A8980281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.swift */,
+				02C673C32D77FF82001C1A62 /* Segues */,
 			);
 			path = SwiftfulRoutingExampleUITests;
 			sourceTree = "<group>";
@@ -162,6 +168,14 @@
 				027D76692D63C57A00D24A22 /* AnyDestinationStack.swift */,
 			);
 			path = Routing;
+			sourceTree = "<group>";
+		};
+		02C673C32D77FF82001C1A62 /* Segues */ = {
+			isa = PBXGroup;
+			children = (
+				02C673C62D7800AA001C1A62 /* SegueTests.swift */,
+			);
+			path = Segues;
 			sourceTree = "<group>";
 		};
 		02CFF0DF2986B2A700E6ABCC /* MVVM (View Routing) */ = {
@@ -336,6 +350,7 @@
 				D1A7AEBA2C778380006AF666 /* ContentTransitionView.swift in Sources */,
 				02CFF0F92986BEEE00E6ABCC /* BasicViewModel.swift in Sources */,
 				02CFF0E82986B6F200E6ABCC /* SampleView.swift in Sources */,
+				02C673CA2D7803D7001C1A62 /* RecursiveRoutingView.swift in Sources */,
 				02CFF0FD2986BFE200E6ABCC /* BasicViewModelDelegate.swift in Sources */,
 				028A896A281F9228004E3DA4 /* SwiftfulRoutingExampleApp.swift in Sources */,
 				02CFF0F42986BE2F00E6ABCC /* HomePresenter.swift in Sources */,
@@ -349,6 +364,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				028A8981281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.swift in Sources */,
+				02C673C72D7800AA001C1A62 /* SegueTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

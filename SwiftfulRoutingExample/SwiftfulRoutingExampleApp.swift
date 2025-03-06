@@ -18,12 +18,13 @@ struct SwiftfulRoutingExampleApp: App {
         // https://stackoverflow.com/questions/77253122/swiftui-navigationstack-title-loads-inline-instead-of-large-when-sheet-is-pres
         UINavigationBar.appearance().prefersLargeTitles = true
     }
-
+    
     var body: some Scene {
         WindowGroup {
 //            Text("Hi")
 //            RoutingTest()
-            ContentView()
+//            ContentView()
+            ContentView2()
 //            ContentTransitionView()
         }
     }

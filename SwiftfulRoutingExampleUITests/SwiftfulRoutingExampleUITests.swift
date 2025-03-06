@@ -19,6 +19,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
 
     override func setUpWithError() throws {
         continueAfterFailure = true
+        app.launchArguments = ["UI_TESTING", "SEGUES"]
         app.launch()
     }
 
@@ -433,7 +434,7 @@ class SwiftfulRoutingExampleUITests: XCTestCase {
             dismissScreens(previousButtons: ["Sheet", "FullScreenCover"])
             tapElements(names: ["Dismiss Screen Stack"])
             assertNavigationBarExists(name: "#0")
-        assertNavigationBarDoesntExist(name: "#\(names.count)")
+            assertNavigationBarDoesntExist(name: "#\(names.count)")
         }
     }
     
