@@ -292,7 +292,17 @@ struct RecursiveRoutingView: View {
         }
         .accessibilityIdentifier("Button_SegueInsertFullScreenCover")
 
-
+        Button("Insert after 1") {
+            performMultiSegue(segues: [.sheet, .push, .push])
+            
+            Task {
+                try? await Task.sleep(for: .seconds(1.1))
+                performSegue(segue: .push, location: .insertAfter(id: "1"), screenNumberOverride: 3)
+                try? await Task.sleep(for: .seconds(1.1))
+            }
+        }
+        .accessibilityIdentifier("Button_SegueInsertFullScreenCover")
+        
         Button("Test dismiss last screen") {
             performMultiSegue(segues: [.push, .sheet, .fullScreenCover, .push])
             

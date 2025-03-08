@@ -136,6 +136,14 @@ final class RouterViewModel {
                 return
             }
             stackIndex = index
+        case .insertAfter(id: let requestedRouterId):
+            guard let index = activeScreenStacks.lastIndex(where: { stack in
+                return stack.screens.contains(where: { $0.id == requestedRouterId })
+            }) else {
+                print("🚨 Error showScreen: NOT FOUND!")
+                return
+            }
+            stackIndex = index
         case .append:
             guard let index = activeScreenStacks.indices.last else {
                 print("🚨 Error showScreen: NOT FOUND!")
@@ -157,7 +165,53 @@ final class RouterViewModel {
 
             let appendingIndex: Int = currentStack.segue == .push ? (stackIndex) : (stackIndex + 1)
             
-            activeScreenStacks[appendingIndex].screens.append(destination)
+            let existingScreens = activeScreenStacks[appendingIndex].screens
+            switch destination.location {
+            case .insert:
+                // If there are no screens yet, we can append
+                if existingScreens.isEmpty {
+                    activeScreenStacks[appendingIndex].screens.append(destination)
+                    return
+                }
+                
+                // If there are existing screens and we find the requested screen
+                if let index = existingScreens.firstIndex(where: { $0.id == routerId }) {
+                    // If it is not last, insert
+                    if existingScreens.indices.contains(index + 1) {
+                        activeScreenStacks[appendingIndex].screens.insert(destination, at: index + 1)
+                        return
+                    } else {
+                        activeScreenStacks[appendingIndex].screens.append(destination)
+                        return
+                    }
+                }
+                
+                // Else, requested screen was the sheet or fullScreenCover before this stack (ie: index 0)
+                activeScreenStacks[appendingIndex].screens.insert(destination, at: 0)
+            case .append:
+                activeScreenStacks[appendingIndex].screens.append(destination)
+            case .insertAfter(let requestedRouterId):
+                // If there are no screens yet, we can append
+                if existingScreens.isEmpty {
+                    activeScreenStacks[appendingIndex].screens.append(destination)
+                    return
+                }
+                
+                // If there are existing screens and we find the requested screen
+                if let index = existingScreens.firstIndex(where: { $0.id == requestedRouterId }) {
+                    // If it is not last, insert
+                    if existingScreens.indices.contains(index + 1) {
+                        activeScreenStacks[appendingIndex].screens.insert(destination, at: index + 1)
+                        return
+                    } else {
+                        activeScreenStacks[appendingIndex].screens.append(destination)
+                        return
+                    }
+                }
+                
+                // Else, requested screen was the sheet or fullScreenCover before this stack (ie: index 0)
+                activeScreenStacks[appendingIndex].screens.insert(destination, at: 0)
+            }
         case .sheet, .fullScreenCover:
             // If showing sheet or fullScreenCover,
             //  If currentStack is .push, add newStack next (index + 1)
@@ -580,11 +634,11 @@ struct RouterViewInternal<Content: View>: View, Router {
 // Push screens - DONE
 // Push screens with Sheet? - DONE
 //
-// 3. Make sure dismiss is working - DONEISH
-// Dismiss working for all segues - DONEISH
+// 3. Make sure dismiss is working - DONE
+// Dismiss working for all segues - DONE
 //
-// 4. Write tests for segues -
-// Tests for onDismiss
+// 4. Write tests for segues - DONE
+// Tests for onDismiss - DONE
 //
 // 5.
 // Enter screen flow / queue -
@@ -606,8 +660,7 @@ struct RouterViewInternal<Content: View>: View, Router {
  Todo:
  - dismiss tests - DONE
  - on dismiss tests - DONE
- - insert, append, last dismisses -
- -
+ - insert, append, last dismisses - DONE
  
  
  - dismiss style (.single, .waterfall)

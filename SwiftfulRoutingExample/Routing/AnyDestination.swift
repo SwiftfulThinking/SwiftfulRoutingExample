@@ -14,6 +14,8 @@ enum SegueLocation {
     case insert
     /// Append screen to the end of the active stack
     case append
+    /// Insert screen after the location injected screen's router
+    case insertAfter(id: String)
 }
 
 struct AnyDestination: Identifiable, Hashable {
