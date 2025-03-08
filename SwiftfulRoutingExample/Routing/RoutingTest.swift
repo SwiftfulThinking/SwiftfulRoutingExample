@@ -72,19 +72,19 @@ protocol Router {
 //    func showScreen(destination: AnyDestination)
     func showScreens(destinations: [AnyDestination])
 //    func showScreen<T>(segue: SegueOption, location: SegueLocation, id: String, @ViewBuilder destination: @escaping (Router) -> T) where T: View
-    func dismissScreen()
-    func dismissScreen(id: String)
-    func dismissScreens(upToScreenId: String)
-    func dismissScreens(count: Int)
+    func dismissScreen(animates: Bool)
+    func dismissScreen(id: String, animates: Bool)
+    func dismissScreens(upToScreenId: String, animates: Bool)
+    func dismissScreens(count: Int, animates: Bool)
     
-    func dismissPushStack()
-    func dismissEnvironment()
+    func dismissPushStack(animates: Bool)
+    func dismissEnvironment(animates: Bool)
     
-    func dismissLastScreen()
-    func dismissLastPushStack()
-    func dismissLastEnvironment()
+    func dismissLastScreen(animates: Bool)
+    func dismissLastPushStack(animates: Bool)
+    func dismissLastEnvironment(animates: Bool)
 
-    func dismissAllScreens()
+    func dismissAllScreens(animates: Bool)
 }
 
 
@@ -170,7 +170,9 @@ final class RouterViewModel {
             case .insert:
                 // If there are no screens yet, we can append
                 if existingScreens.isEmpty {
-                    activeScreenStacks[appendingIndex].screens.append(destination)
+                    triggerAction(withAnimation: destination.animates) {
+                        self.activeScreenStacks[appendingIndex].screens.append(destination)
+                    }
                     return
                 }
                 
@@ -178,22 +180,32 @@ final class RouterViewModel {
                 if let index = existingScreens.firstIndex(where: { $0.id == routerId }) {
                     // If it is not last, insert
                     if existingScreens.indices.contains(index + 1) {
-                        activeScreenStacks[appendingIndex].screens.insert(destination, at: index + 1)
+                        triggerAction(withAnimation: destination.animates) {
+                            self.activeScreenStacks[appendingIndex].screens.insert(destination, at: index + 1)
+                        }
                         return
                     } else {
-                        activeScreenStacks[appendingIndex].screens.append(destination)
+                        triggerAction(withAnimation: destination.animates) {
+                            self.activeScreenStacks[appendingIndex].screens.append(destination)
+                        }
                         return
                     }
                 }
                 
                 // Else, requested screen was the sheet or fullScreenCover before this stack (ie: index 0)
-                activeScreenStacks[appendingIndex].screens.insert(destination, at: 0)
+                triggerAction(withAnimation: destination.animates) {
+                    self.activeScreenStacks[appendingIndex].screens.insert(destination, at: 0)
+                }
             case .append:
-                activeScreenStacks[appendingIndex].screens.append(destination)
+                triggerAction(withAnimation: destination.animates) {
+                    self.activeScreenStacks[appendingIndex].screens.append(destination)
+                }
             case .insertAfter(let requestedRouterId):
                 // If there are no screens yet, we can append
                 if existingScreens.isEmpty {
-                    activeScreenStacks[appendingIndex].screens.append(destination)
+                    triggerAction(withAnimation: destination.animates) {
+                        self.activeScreenStacks[appendingIndex].screens.append(destination)
+                    }
                     return
                 }
                 
@@ -201,16 +213,22 @@ final class RouterViewModel {
                 if let index = existingScreens.firstIndex(where: { $0.id == requestedRouterId }) {
                     // If it is not last, insert
                     if existingScreens.indices.contains(index + 1) {
-                        activeScreenStacks[appendingIndex].screens.insert(destination, at: index + 1)
+                        triggerAction(withAnimation: destination.animates) {
+                            self.activeScreenStacks[appendingIndex].screens.insert(destination, at: index + 1)
+                        }
                         return
                     } else {
-                        activeScreenStacks[appendingIndex].screens.append(destination)
+                        triggerAction(withAnimation: destination.animates) {
+                            self.activeScreenStacks[appendingIndex].screens.append(destination)
+                        }
                         return
                     }
                 }
                 
                 // Else, requested screen was the sheet or fullScreenCover before this stack (ie: index 0)
-                activeScreenStacks[appendingIndex].screens.insert(destination, at: 0)
+                triggerAction(withAnimation: destination.animates) {
+                    self.activeScreenStacks[appendingIndex].screens.insert(destination, at: 0)
+                }
             }
         case .sheet, .fullScreenCover:
             // If showing sheet or fullScreenCover,
@@ -224,7 +242,21 @@ final class RouterViewModel {
             let blankStack = AnyDestinationStack(segue: .push, screens: [])
             let appendingIndex: Int = currentStack.segue == .push ? (stackIndex + 1) : (stackIndex + 2)
             
-            activeScreenStacks.insert(contentsOf: [newStack, blankStack], at: appendingIndex)
+            triggerAction(withAnimation: destination.animates) {
+                self.activeScreenStacks.insert(contentsOf: [newStack, blankStack], at: appendingIndex)
+            }
+        }
+    }
+    
+    private func triggerAction(withAnimation: Bool, action: @escaping () -> Void) {
+        if withAnimation {
+            action()
+        } else {
+            var transaction = Transaction(animation: .none)
+            transaction.disablesAnimations = true
+            withTransaction(transaction) {
+                action()
+            }
         }
     }
     
@@ -296,7 +328,7 @@ final class RouterViewModel {
     }
 
     /// Dismiss screen at routeId and all screens in front of it.
-    func dismissScreen(routeId: String) {
+    func dismissScreen(routeId: String, animates: Bool) {
         for (stackIndex, stack) in activeScreenStacks.enumerated().reversed() {
             // Check if stack.screens contains the routeId
             // Loop from last, in case there are multiple screens in the stack with the same routeId (should not happen)
@@ -326,12 +358,13 @@ final class RouterViewModel {
                 }
                 
                 // Publish update to the view
-                activeScreenStacks = keep
+                triggerAction(withAnimation: animates) {
+                    self.activeScreenStacks = keep
+                }
 
                 // Trigger screen onDismiss closures, if available
                 for screen in screensToDismiss.reversed() {
                     screen.onDismiss?()
-                    print("DISMISSING SCREEN \(screen.id)")
                 }
                 
                 // Stop loop
@@ -342,18 +375,18 @@ final class RouterViewModel {
         print("🚨 RouteId: \(routeId) not found in active view heirarchy.")
     }
     
-    func dismissScreens(toEnvironmentId routeId: String) {
+    func dismissScreens(toEnvironmentId routeId: String, animates: Bool) {
         if let stackIndex = activeScreenStacks.firstIndex(where: { $0.screens.contains(where: { $0.id == routeId }) }) {
             if activeScreenStacks.indices.contains(stackIndex + 1) {
                 let nextStack = activeScreenStacks[stackIndex + 1]
                 if let lastScreen = nextStack.screens.last {
-                    dismissScreens(to: lastScreen.id)
+                    dismissScreens(to: lastScreen.id, animates: animates)
                     return
                 }
             }
             
             if let lastScreen = activeScreenStacks[stackIndex].screens.last {
-                dismissScreens(to: lastScreen.id)
+                dismissScreens(to: lastScreen.id, animates: animates)
                 return
             }
         }
@@ -366,7 +399,7 @@ final class RouterViewModel {
     }
     
     /// Dismiss all screens in front of routeId, leaving routeId as the active screen.
-    func dismissScreens(to routeId: String) {
+    func dismissScreens(to routeId: String, animates: Bool) {
         // The parameter routeId should be the remaining screen after dismissing all screens in front of it
         // So we call dismissScreen(routeId:) with the next screen's routeId
         
@@ -376,7 +409,7 @@ final class RouterViewModel {
         if let screenIndex = allScreens.firstIndex(where: { $0.id == routeId }) {
             if allScreens.indices.contains(screenIndex + 1) {
                 let nextRoute = allScreens[screenIndex + 1]
-                dismissScreen(routeId: nextRoute.id)
+                dismissScreen(routeId: nextRoute.id, animates: animates)
                 return
             }
         }
@@ -389,10 +422,10 @@ final class RouterViewModel {
     }
     
     /// Dismiss the last screen presented.
-    func dismissLastScreen() {
+    func dismissLastScreen(animates: Bool) {
         let allScreens = activeScreenStacks.flatMap({ $0.screens })
         if let lastScreen = allScreens.last {
-            dismissScreen(routeId: lastScreen.id)
+            dismissScreen(routeId: lastScreen.id, animates: animates)
             return
         }
         
@@ -400,7 +433,7 @@ final class RouterViewModel {
     }
     
     /// Dismiss the last x screens presented.
-    func dismissScreens(count: Int) {
+    func dismissScreens(count: Int, animates: Bool) {
         let allScreensReversed = activeScreenStacks.flatMap({ $0.screens }).reversed()
         
         var counter: Int = 0
@@ -408,7 +441,7 @@ final class RouterViewModel {
             counter += 1
             
             if counter == count || screen == allScreensReversed.last {
-                dismissScreen(routeId: screen.id)
+                dismissScreen(routeId: screen.id, animates: animates)
                 return
             }
         }
@@ -417,7 +450,7 @@ final class RouterViewModel {
     }
     
     /// Dismiss the closest .sheet or .fullScreenCover below the routeId.
-    func dismissEnvironment(routeId: String) {
+    func dismissEnvironment(routeId: String, animates: Bool) {
         var didFindScreen: Bool = false
         for stack in activeScreenStacks.reversed() {
             if stack.screens.contains(where: { $0.id == routeId }) {
@@ -425,17 +458,17 @@ final class RouterViewModel {
             }
             
             if didFindScreen, stack.segue.presentsNewEnvironment, let route = stack.screens.first {
-                dismissScreen(routeId: route.id)
+                dismissScreen(routeId: route.id, animates: animates)
                 return
             }
         }
     }
     
     /// Dismiss the last .sheet or .fullScreenCover presented.
-    func dismissLastEnvironment() {
+    func dismissLastEnvironment(animates: Bool) {
         let lastEnvironmentStack = activeScreenStacks.last(where: { $0.segue.presentsNewEnvironment })
         if let route = lastEnvironmentStack?.screens.first {
-            dismissScreen(routeId: route.id)
+            dismissScreen(routeId: route.id, animates: animates)
             return
         }
         
@@ -443,13 +476,13 @@ final class RouterViewModel {
     }
     
     /// Dismiss all .push routes on the current NavigationStack, up-to but not including any .sheet or .fullScreenCover.
-    func dismissPushStack(routeId: String) {
+    func dismissPushStack(routeId: String, animates: Bool) {
         for (stackIndex, stack) in activeScreenStacks.enumerated().reversed() {
             if stack.screens.contains(where: { $0.id == routeId }) {
                 
                 // If current stack is .push, dismiss to the first screen in this stack
                 if stack.segue == .push, let route = stack.screens.first {
-                    dismissScreen(routeId: route.id)
+                    dismissScreen(routeId: route.id, animates: animates)
                     return
                 }
                 
@@ -458,7 +491,7 @@ final class RouterViewModel {
                     if activeScreenStacks.indices.contains(stackIndex + 1) {
                         let nextStack = activeScreenStacks[stackIndex + 1]
                         if nextStack.segue == .push, let route = nextStack.screens.first {
-                            dismissScreen(routeId: route.id)
+                            dismissScreen(routeId: route.id, animates: animates)
                             return
                         }
                     }
@@ -468,10 +501,10 @@ final class RouterViewModel {
     }
     
     /// Dismiss all .push routes on the last NavigationStack, up-to but not including any .sheet or .fullScreenCover.
-    func dismissLastPushStack() {
+    func dismissLastPushStack(animates: Bool) {
         let lastPushStack = activeScreenStacks.last(where: { $0.segue == .push })
         if let route = lastPushStack?.screens.first {
-            dismissScreen(routeId: route.id)
+            dismissScreen(routeId: route.id, animates: animates)
             return
         }
         
@@ -479,8 +512,8 @@ final class RouterViewModel {
     }
     
     /// Dismiss all screens back to root.
-    func dismissAllScreens() {
-        dismissScreen(routeId: RouterViewModel.rootId)
+    func dismissAllScreens(animates: Bool) {
+        dismissScreens(to: RouterViewModel.rootId, animates: animates)
     }
 
 }
@@ -503,9 +536,9 @@ struct RouterViewInternal<Content: View>: View, Router {
             .ifSatisfiesCondition(addNavigationStack, transform: { content in
                 NavigationStack(path: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, onDidDismiss: { lastRouteRemaining in
                     if let lastRouteRemaining {
-                        viewModel.dismissScreens(to: lastRouteRemaining.id)
+                        viewModel.dismissScreens(to: lastRouteRemaining.id, animates: true)
                     } else {
-                        viewModel.dismissPushStack(routeId: routerId)
+                        viewModel.dismissPushStack(routeId: routerId, animates: true)
                     }
                 })) {
                     content
@@ -520,7 +553,7 @@ struct RouterViewInternal<Content: View>: View, Router {
                     .sheet(item: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, segue: .sheet, onDidDismiss: {
                         // This triggers if the user swipes down to dismiss the screen
                         // Now we must update activeScreenStacks to match that behavior
-                        viewModel.dismissScreens(toEnvironmentId: routerId)
+                        viewModel.dismissScreens(toEnvironmentId: routerId, animates: true)
                     }), onDismiss: nil) { destination in
                         destination.destination
                     }
@@ -532,7 +565,7 @@ struct RouterViewInternal<Content: View>: View, Router {
                     .fullScreenCover(item: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, segue: .fullScreenCover, onDidDismiss: {
                         // This triggers if the user swipes down to dismiss the screen
                         // Now we must update activeScreenStacks to match that behavior
-                        viewModel.dismissScreens(toEnvironmentId: routerId)
+                        viewModel.dismissScreens(toEnvironmentId: routerId, animates: true)
                     }), onDismiss: nil) { destination in
                         destination.destination
                     }
@@ -585,44 +618,44 @@ struct RouterViewInternal<Content: View>: View, Router {
     func showScreen<T>(segue: SegueOption, location: SegueLocation, id: String, destination: @escaping (any Router) -> T) where T : View {
     }
     
-    func dismissScreen() {
-        viewModel.dismissScreen(routeId: routerId)
+    func dismissScreen(animates: Bool) {
+        viewModel.dismissScreen(routeId: routerId, animates: animates)
     }
     
-    func dismissScreen(id: String) {
-        viewModel.dismissScreen(routeId: id)
+    func dismissScreen(id: String, animates: Bool) {
+        viewModel.dismissScreen(routeId: id, animates: animates)
     }
     
-    func dismissScreens(upToScreenId: String) {
-        viewModel.dismissScreens(to: upToScreenId)
+    func dismissScreens(upToScreenId: String, animates: Bool) {
+        viewModel.dismissScreens(to: upToScreenId, animates: animates)
     }
     
-    func dismissScreens(count: Int) {
-        viewModel.dismissScreens(count: count)
+    func dismissScreens(count: Int, animates: Bool) {
+        viewModel.dismissScreens(count: count, animates: animates)
     }
     
-    func dismissLastScreen() {
-        viewModel.dismissLastScreen()
+    func dismissLastScreen(animates: Bool) {
+        viewModel.dismissLastScreen(animates: animates)
     }
     
-    func dismissEnvironment() {
-        viewModel.dismissEnvironment(routeId: routerId)
+    func dismissEnvironment(animates: Bool) {
+        viewModel.dismissEnvironment(routeId: routerId, animates: animates)
     }
         
-    func dismissLastEnvironment() {
-        viewModel.dismissLastEnvironment()
+    func dismissLastEnvironment(animates: Bool) {
+        viewModel.dismissLastEnvironment(animates: animates)
     }
     
-    func dismissLastPushStack() {
-        viewModel.dismissLastPushStack()
+    func dismissLastPushStack(animates: Bool) {
+        viewModel.dismissLastPushStack(animates: animates)
     }
     
-    func dismissPushStack() {
-        viewModel.dismissPushStack(routeId: routerId)
+    func dismissPushStack(animates: Bool) {
+        viewModel.dismissPushStack(routeId: routerId, animates: animates)
     }
     
-    func dismissAllScreens() {
-        viewModel.dismissAllScreens()
+    func dismissAllScreens(animates: Bool) {
+        viewModel.dismissAllScreens(animates: animates)
     }
 }
 
@@ -661,17 +694,18 @@ struct RouterViewInternal<Content: View>: View, Router {
  - dismiss tests - DONE
  - on dismiss tests - DONE
  - insert, append, last dismisses - DONE
- 
- 
- - dismiss style (.single, .waterfall)
- - duplicate screen ids? warning?
- - location .insertAfter(x)
+ - location .insertAfter(x) - DONE
+
  - dismiss or segue with no animation?
+
+ - duplicate screen ids? warning?
  - addToQueue
  - nextScreen
  - contentTransition
  - Kavsoft's floating UI no background?
  
+ - dismiss style (.single, .waterfall)
+
  
  - tests
  - alerts

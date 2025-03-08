@@ -22,6 +22,7 @@ struct AnyDestination: Identifiable, Hashable {
     let id: String
     let segue: SegueOption
     let location: SegueLocation
+    let animates: Bool
     private(set) var destination: AnyView
     let onDismiss: (() -> Void)?
     
@@ -29,10 +30,18 @@ struct AnyDestination: Identifiable, Hashable {
 //        self.init(id: id, segue: segue, location: location, onDismiss: onDismiss, destination: destination)
 //    }
     
-    init<T:View>(id: String = UUID().uuidString, segue: SegueOption = .push, location: SegueLocation = .insert, onDismiss: (() -> Void)? = nil, destination: @escaping (AnyRouter) -> T) {
+    init<T:View>(
+        id: String = UUID().uuidString,
+        segue: SegueOption = .push,
+        location: SegueLocation = .insert,
+        animates: Bool = true,
+        onDismiss: (() -> Void)? = nil,
+        destination: @escaping (AnyRouter) -> T
+    ) {
         self.id = id
         self.segue = segue
         self.location = location
+        self.animates = animates
         self.destination = AnyView(
             RouterViewInternal(
                 routerId: id,

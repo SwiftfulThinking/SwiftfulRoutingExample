@@ -40,54 +40,54 @@ struct AnyRouter: Router {
         object.showScreens(destinations: destinations)
     }
     
-    func showScreen<T>(id: String = UUID().uuidString, segue: SegueOption = .push, location: SegueLocation = .insert, onDismiss: (() -> Void)? = nil, destination: @escaping (AnyRouter) -> T) where T : View {
+    func showScreen<T>(id: String = UUID().uuidString, segue: SegueOption = .push, location: SegueLocation = .insert, onDismiss: (() -> Void)? = nil, animates: Bool = true, destination: @escaping (AnyRouter) -> T) where T : View {
+        let destination = AnyDestination(id: id, segue: segue, location: location, animates: animates, onDismiss: onDismiss, destination: destination)
+        object.showScreens(destinations: [destination])
+    }
+    
+    func showScreen<T>(id: String = UUID().uuidString, _ segue: SegueOption = .push, location: SegueLocation = .insert, onDismiss: (() -> Void)? = nil, animates: Bool = true, destination: @escaping (AnyRouter) -> T) where T : View {
         let destination = AnyDestination(id: id, segue: segue, location: location, onDismiss: onDismiss, destination: destination)
         object.showScreens(destinations: [destination])
     }
     
-    func showScreen<T>(id: String = UUID().uuidString, _ segue: SegueOption = .push, location: SegueLocation = .insert, onDismiss: (() -> Void)? = nil, destination: @escaping (AnyRouter) -> T) where T : View {
-        let destination = AnyDestination(id: id, segue: segue, location: location, onDismiss: onDismiss, destination: destination)
-        object.showScreens(destinations: [destination])
+    func dismissScreen(animates: Bool = true) {
+        object.dismissScreen(animates: animates)
     }
     
-    func dismissScreen() {
-        object.dismissScreen()
+    func dismissScreen(id: String, animates: Bool = true) {
+        object.dismissScreen(id: id, animates: animates)
     }
     
-    func dismissScreen(id: String) {
-        object.dismissScreen(id: id)
+    func dismissScreens(upToScreenId: String, animates: Bool = true) {
+        object.dismissScreens(upToScreenId: upToScreenId, animates: animates)
     }
     
-    func dismissScreens(upToScreenId: String) {
-        object.dismissScreens(upToScreenId: upToScreenId)
+    func dismissScreens(count: Int, animates: Bool = true) {
+        object.dismissScreens(count: count, animates: animates)
     }
     
-    func dismissScreens(count: Int) {
-        object.dismissScreens(count: count)
+    func dismissPushStack(animates: Bool = true) {
+        object.dismissPushStack(animates: animates)
     }
     
-    func dismissPushStack() {
-        object.dismissPushStack()
+    func dismissEnvironment(animates: Bool = true) {
+        object.dismissEnvironment(animates: animates)
     }
     
-    func dismissEnvironment() {
-        object.dismissEnvironment()
+    func dismissLastScreen(animates: Bool = true) {
+        object.dismissLastScreen(animates: animates)
     }
     
-    func dismissLastScreen() {
-        object.dismissLastScreen()
+    func dismissLastPushStack(animates: Bool = true) {
+        object.dismissLastPushStack(animates: animates)
     }
     
-    func dismissLastPushStack() {
-        object.dismissLastPushStack()
+    func dismissLastEnvironment(animates: Bool = true) {
+        object.dismissLastEnvironment(animates: animates)
     }
     
-    func dismissLastEnvironment() {
-        object.dismissLastEnvironment()
-    }
-    
-    func dismissAllScreens() {
-        object.dismissAllScreens()
+    func dismissAllScreens(animates: Bool = true) {
+        object.dismissAllScreens(animates: animates)
     }
 
     

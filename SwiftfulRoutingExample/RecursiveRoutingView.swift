@@ -92,12 +92,13 @@ struct RecursiveRoutingView: View {
         lastDismiss = number
     }
     
-    private func performSegue(segue: SegueOption, location: SegueLocation = .insert, screenNumberOverride: Int? = nil) {
+    private func performSegue(segue: SegueOption, location: SegueLocation = .insert, screenNumberOverride: Int? = nil, animates: Bool = true) {
         let screenNumber = (screenNumberOverride ?? screenNumber) + 1
         let screen = AnyDestination(
             id: "\(screenNumber)",
             segue: segue,
             location: location,
+            animates: animates,
             onDismiss: {
                 dismissAction(screenNumber)
             },
@@ -161,15 +162,27 @@ struct RecursiveRoutingView: View {
         }
         .accessibilityIdentifier("Button_Push")
 
+        Button("Push (no animation)") {
+            performSegue(segue: .push, animates: false)
+        }
+        
         Button("Sheet") {
             performSegue(segue: .sheet)
         }
         .accessibilityIdentifier("Button_Sheet")
 
+        Button("Sheet (no animation)") {
+            performSegue(segue: .sheet, animates: false)
+        }
+        
         Button("FullScreenCover") {
             performSegue(segue: .fullScreenCover)
         }
         .accessibilityIdentifier("Button_FullScreenCover")
+        
+        Button("FullScreenCover (no animation)") {
+            performSegue(segue: .fullScreenCover, animates: false)
+        }
     }
     
     @ViewBuilder
@@ -208,6 +221,10 @@ struct RecursiveRoutingView: View {
         .accessibilityIdentifier("Button_Dismiss")
 
         if showAll {
+            Button("Dismiss (no animation)") {
+                router.dismissScreen(animates: false)
+            }
+
             Button("Dismiss screen 2") {
                 router.dismissScreen(id: "2")
             }
@@ -237,6 +254,10 @@ struct RecursiveRoutingView: View {
                 router.dismissAllScreens()
             }
             .accessibilityIdentifier("Button_DismissAll")
+            
+            Button("Dismiss all screens (no animation)") {
+                router.dismissAllScreens(animates: false)
+            }
         }
     }
     
