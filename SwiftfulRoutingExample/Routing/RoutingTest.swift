@@ -289,9 +289,6 @@ final class RouterViewModel {
     }
     
     func dismissScreens(toEnvironmentId routeId: String) {
-//        print("TRIGGERING2 ON :\(routeId)")
-//        print(activeScreenStacks)
-        
         if let stackIndex = activeScreenStacks.firstIndex(where: { $0.screens.contains(where: { $0.id == routeId }) }) {
             if activeScreenStacks.indices.contains(stackIndex + 1) {
                 let nextStack = activeScreenStacks[stackIndex + 1]
@@ -299,6 +296,11 @@ final class RouterViewModel {
                     dismissScreens(to: lastScreen.id)
                     return
                 }
+            }
+            
+            if let lastScreen = activeScreenStacks[stackIndex].screens.last {
+                dismissScreens(to: lastScreen.id)
+                return
             }
         }
         
@@ -602,7 +604,7 @@ struct RouterViewInternal<Content: View>: View, Router {
 /*
  
  Todo:
- - dismiss tests -
+ - dismiss tests - DONE
  - on dismiss tests -
  - insert tests -
  - 
@@ -611,14 +613,19 @@ struct RouterViewInternal<Content: View>: View, Router {
  - dismiss style (.single, .waterfall)
  - duplicate screen ids? warning?
  - location .insertAfter(x)
+ - dismiss or segue with no animation?
  - addToQueue
  - nextScreen
+ - contentTransition
+ - Kavsoft's floating UI no background?
  
  
  - tests
  - alerts
  - modals
  - transitions
+    - preloaded
+    - no animation
  - modules
  - tabbars
  
@@ -748,7 +755,15 @@ extension Binding where Value == [AnyDestination] {
             return stack[index + 1].screens
         } set: { newValue in
             // User manually swiped back on screen
-            if newValue.count < stack.count {
+            
+            let index = stack.firstIndex { subStack in
+                return subStack.screens.contains(where: { $0.id == routerId })
+            }
+            guard let index, stack.indices.contains(index + 1) else {
+                return
+            }
+            
+            if newValue.count < stack[index + 1].screens.count {
                 onDidDismiss(newValue.last)
             }
         }

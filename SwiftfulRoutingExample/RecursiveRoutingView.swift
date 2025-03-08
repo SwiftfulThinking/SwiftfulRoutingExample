@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView2: View {
     var body: some View {
-        RouterView(addNavigationStack: true) { router in
+        RouterView(addNavigationStack: true, logger: true) { router in
             RecursiveRoutingView(router: router, screenNumber: 0)
         }
     }
@@ -19,6 +19,8 @@ struct RecursiveRoutingView: View {
     
     let router: AnyRouter
     let screenNumber: Int
+
+    @State private var lastDismiss: Int = -1
 
     var isUITesting: Bool {
         ProcessInfo.processInfo.arguments.contains("UI_TESTING")
@@ -40,6 +42,9 @@ struct RecursiveRoutingView: View {
         List {
             Text("Screen Number: \(screenNumber)")
                 .accessibilityIdentifier("Title_\(screenNumber)")
+
+            Text("Last dismiss number: " + (lastDismiss >= 0 ? "\(lastDismiss)" : ""))
+                .accessibilityIdentifier("LastDismiss_\(lastDismiss)")
 
             if isUITesting {
                 if isSegueTesting {
@@ -71,16 +76,24 @@ struct RecursiveRoutingView: View {
 //        .listStyle(PlainListStyle())
     }
     
+    private func dismissAction(_ number: Int) {
+        print("DISMISS ACTION: \(number)")
+        lastDismiss = number
+    }
+    
     private func performSegue(segue: SegueOption) {
+        let screenNumber = screenNumber + 1
         let screen = AnyDestination(
-            id: "\(screenNumber + 1)",
+            id: "\(screenNumber)",
             segue: segue,
             location: .insert,
-            onDismiss: nil,
+            onDismiss: {
+                dismissAction(screenNumber)
+            },
             destination: { router in
                 RecursiveRoutingView(
                     router: router,
-                    screenNumber: screenNumber + 1
+                    screenNumber: screenNumber
                 )
             }
         )
@@ -97,7 +110,9 @@ struct RecursiveRoutingView: View {
                 id: "\(screenNumber)",
                 segue: segue,
                 location: .insert,
-                onDismiss: nil,
+                onDismiss: {
+                    dismissAction(screenNumber)
+                },
                 destination: { router in
                     RecursiveRoutingView(
                         router: router,
