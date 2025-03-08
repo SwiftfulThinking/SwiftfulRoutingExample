@@ -31,6 +31,10 @@ struct RecursiveRoutingView: View {
     var isMultiSegueTesting: Bool {
         ProcessInfo.processInfo.arguments.contains("MULTISEGUES")
     }
+    
+    var isDismissTesting: Bool {
+        ProcessInfo.processInfo.arguments.contains("DISMISSING")
+    }
         
     var body: some View {
         List {
@@ -40,17 +44,26 @@ struct RecursiveRoutingView: View {
             if isUITesting {
                 if isSegueTesting {
                     segueButtons
-                    dismissButtons
+                    dismissButtons()
                 } else if isMultiSegueTesting {
                     multiSegueButtons
-                    dismissButtons
+                    dismissButtons()
+                } else if isDismissTesting {
+                    segueButtons
+                    dismissButtons(showAll: true)
                 } else {
                     Text("Err")
                 }
             } else {
-                segueButtons
-                multiSegueButtons
-                dismissButtons
+                Section("Segues") {
+                    segueButtons
+                }
+                Section("Multi-Segues") {
+                    multiSegueButtons
+                }
+                Section("Dismiss actions") {
+                    dismissButtons(showAll: true)
+                }
             }
         }
         .navigationTitle("\(screenNumber)")
@@ -162,12 +175,44 @@ struct RecursiveRoutingView: View {
     }
     
     @ViewBuilder
-    var dismissButtons: some View {
+    func dismissButtons(showAll: Bool = false) -> some View {
         Button("Dismiss") {
             router.dismissScreen()
         }
         .accessibilityIdentifier("Button_Dismiss")
 
+        if showAll {
+            Button("Dismiss screen 2") {
+                router.dismissScreen(id: "2")
+            }
+            .accessibilityIdentifier("Button_DismissId2")
+
+            Button("Dismiss to screen 1") {
+                router.dismissScreens(upToScreenId: "1")
+            }
+            .accessibilityIdentifier("Button_DismissTo1")
+            
+            Button("Dismiss to 2 screens") {
+                router.dismissScreens(upToScreenId: "1")
+            }
+            .accessibilityIdentifier("Button_DismissCount2")
+
+            Button("Dismiss push stack") {
+                router.dismissPushStack()
+            }
+            .accessibilityIdentifier("Button_DismissStack")
+
+            Button("Dismiss environment") {
+                router.dismissEnvironment()
+            }
+            .accessibilityIdentifier("Button_DismissEnvironment")
+
+            Button("Dismiss all screens") {
+                router.dismissAllScreens()
+            }
+            .accessibilityIdentifier("Button_DismissAll")
+
+        }
     }
 
 }

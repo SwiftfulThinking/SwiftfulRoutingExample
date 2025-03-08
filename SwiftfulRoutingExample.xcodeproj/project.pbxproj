@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		021CF2D22A9CDB4500BFB255 /* PopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 021CF2D12A9CDB4500BFB255 /* PopoverView.swift */; };
+		024651CA2D7BFA7E00545A5F /* DismissTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024651C92D7BFA7E00545A5F /* DismissTests.swift */; };
 		027D76642D63C52C00D24A22 /* AnyDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027D76632D63C52C00D24A22 /* AnyDestination.swift */; };
 		027D76662D63C53600D24A22 /* OnFirstAppearModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027D76652D63C53600D24A22 /* OnFirstAppearModifier.swift */; };
 		027D76682D63C54700D24A22 /* SegueOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027D76672D63C54700D24A22 /* SegueOption.swift */; };
@@ -51,6 +52,7 @@
 
 /* Begin PBXFileReference section */
 		021CF2D12A9CDB4500BFB255 /* PopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverView.swift; sourceTree = "<group>"; };
+		024651C92D7BFA7E00545A5F /* DismissTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DismissTests.swift; sourceTree = "<group>"; };
 		027D76632D63C52C00D24A22 /* AnyDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyDestination.swift; sourceTree = "<group>"; };
 		027D76652D63C53600D24A22 /* OnFirstAppearModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnFirstAppearModifier.swift; sourceTree = "<group>"; };
 		027D76672D63C54700D24A22 /* SegueOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegueOption.swift; sourceTree = "<group>"; };
@@ -154,7 +156,7 @@
 			isa = PBXGroup;
 			children = (
 				028A8980281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.swift */,
-				02C673C32D77FF82001C1A62 /* Segues */,
+				02C673C32D77FF82001C1A62 /* NewTests */,
 			);
 			path = SwiftfulRoutingExampleUITests;
 			sourceTree = "<group>";
@@ -172,13 +174,14 @@
 			path = Routing;
 			sourceTree = "<group>";
 		};
-		02C673C32D77FF82001C1A62 /* Segues */ = {
+		02C673C32D77FF82001C1A62 /* NewTests */ = {
 			isa = PBXGroup;
 			children = (
 				02C673C62D7800AA001C1A62 /* SegueTests.swift */,
 				02C673CB2D797784001C1A62 /* MultiSegueTests.swift */,
+				024651C92D7BFA7E00545A5F /* DismissTests.swift */,
 			);
-			path = Segues;
+			path = NewTests;
 			sourceTree = "<group>";
 		};
 		02CFF0DF2986B2A700E6ABCC /* MVVM (View Routing) */ = {
@@ -366,6 +369,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				024651CA2D7BFA7E00545A5F /* DismissTests.swift in Sources */,
 				028A8981281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.swift in Sources */,
 				02C673CC2D797784001C1A62 /* MultiSegueTests.swift in Sources */,
 				02C673C72D7800AA001C1A62 /* SegueTests.swift in Sources */,
