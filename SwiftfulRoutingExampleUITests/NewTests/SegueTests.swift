@@ -46,9 +46,14 @@ final class SegueTests: XCTestCase {
         let titleElement = app.staticTexts["Title_\(name)"]
         XCTAssertFalse(titleElement.exists)
     }
+    
+    private func assertLastDismissExists(number: Int) {
+        let titleElement = app.staticTexts["LastDismiss_\(number)"]
+        XCTAssertTrue(titleElement.exists)
+    }
         
     private func tapDismiss(names: [String]) {
-        for name in names.reversed() {
+        for (index, name) in names.enumerated().reversed() {
             let buttons = app.collectionViews.buttons.matching(identifier: "Button_Dismiss")
 //            let buttons = app.buttons.matching(identifier: "Button_Dismiss")
             let lookForFirstElement = name == "FullScreenCover"
@@ -58,6 +63,7 @@ final class SegueTests: XCTestCase {
                 buttons.allElementsBoundByIndex.last {
                 button.tap()
                 sleep(1)
+                assertLastDismissExists(number: index + 1)
             }
         }
     }

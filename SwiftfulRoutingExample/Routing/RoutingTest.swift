@@ -605,9 +605,9 @@ struct RouterViewInternal<Content: View>: View, Router {
  
  Todo:
  - dismiss tests - DONE
- - on dismiss tests -
- - insert tests -
- - 
+ - on dismiss tests - DONE
+ - insert, append, last dismisses -
+ -
  
  
  - dismiss style (.single, .waterfall)

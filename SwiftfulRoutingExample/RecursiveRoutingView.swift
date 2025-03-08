@@ -21,23 +21,32 @@ struct RecursiveRoutingView: View {
     let screenNumber: Int
 
     @State private var lastDismiss: Int = -1
-
-    var isUITesting: Bool {
-        ProcessInfo.processInfo.arguments.contains("UI_TESTING")
-    }
-
-    var isSegueTesting: Bool {
-        ProcessInfo.processInfo.arguments.contains("SEGUES")
+    
+    enum ViewState {
+        case regular
+        case testingSegues
+        case testingMultiSegues
+        case testingDismissing
+        case testingMultiRouters
     }
     
-    var isMultiSegueTesting: Bool {
-        ProcessInfo.processInfo.arguments.contains("MULTISEGUES")
-    }
-    
-    var isDismissTesting: Bool {
-        ProcessInfo.processInfo.arguments.contains("DISMISSING")
-    }
+    var viewState: ViewState {
+        let arguments = ProcessInfo.processInfo.arguments
+        if arguments.contains("UI_TESTING") {
+            if arguments.contains("SEGUES") {
+                return .testingSegues
+            } else if arguments.contains("MULTISEGUES") {
+                return .testingMultiSegues
+            } else if arguments.contains("DISMISSING") {
+                return .testingDismissing
+            } else if arguments.contains("MULTIROUTER") {
+                return .testingMultiRouters
+            }
+        }
         
+        return .regular
+    }
+    
     var body: some View {
         List {
             Text("Screen Number: \(screenNumber)")
@@ -46,20 +55,8 @@ struct RecursiveRoutingView: View {
             Text("Last dismiss number: " + (lastDismiss >= 0 ? "\(lastDismiss)" : ""))
                 .accessibilityIdentifier("LastDismiss_\(lastDismiss)")
 
-            if isUITesting {
-                if isSegueTesting {
-                    segueButtons
-                    dismissButtons()
-                } else if isMultiSegueTesting {
-                    multiSegueButtons
-                    dismissButtons()
-                } else if isDismissTesting {
-                    segueButtons
-                    dismissButtons(showAll: true)
-                } else {
-                    Text("Err")
-                }
-            } else {
+            switch viewState {
+            case .regular:
                 Section("Segues") {
                     segueButtons
                 }
@@ -69,6 +66,21 @@ struct RecursiveRoutingView: View {
                 Section("Dismiss actions") {
                     dismissButtons(showAll: true)
                 }
+                Section("Multi-Routers") {
+                    multiRouterButtons
+                }
+            case .testingSegues:
+                segueButtons
+                dismissButtons()
+            case .testingMultiSegues:
+                multiSegueButtons
+                dismissButtons()
+            case .testingDismissing:
+                segueButtons
+                dismissButtons(showAll: true)
+            case .testingMultiRouters:
+                multiRouterButtons
+                dismissButtons(showAll: false)
             }
         }
         .navigationTitle("\(screenNumber)")
@@ -77,16 +89,15 @@ struct RecursiveRoutingView: View {
     }
     
     private func dismissAction(_ number: Int) {
-        print("DISMISS ACTION: \(number)")
         lastDismiss = number
     }
     
-    private func performSegue(segue: SegueOption) {
-        let screenNumber = screenNumber + 1
+    private func performSegue(segue: SegueOption, location: SegueLocation = .insert, screenNumberOverride: Int? = nil) {
+        let screenNumber = (screenNumberOverride ?? screenNumber) + 1
         let screen = AnyDestination(
             id: "\(screenNumber)",
             segue: segue,
-            location: .insert,
+            location: location,
             onDismiss: {
                 dismissAction(screenNumber)
             },
@@ -226,8 +237,91 @@ struct RecursiveRoutingView: View {
                 router.dismissAllScreens()
             }
             .accessibilityIdentifier("Button_DismissAll")
-
         }
+    }
+    
+    @ViewBuilder
+    var multiRouterButtons: some View {
+        // Appending screens from a previous router
+        Button("Segue, then append screens") {
+            performSegue(segue: .sheet, location: .append)
+            
+            Task {
+                try? await Task.sleep(for: .seconds(1.1))
+                performSegue(segue: .push, location: .append, screenNumberOverride: 1)
+                try? await Task.sleep(for: .seconds(1.1))
+                performSegue(segue: .fullScreenCover, location: .append, screenNumberOverride: 2)
+                try? await Task.sleep(for: .seconds(1.1))
+                performSegue(segue: .push, location: .append, screenNumberOverride: 3)
+            }
+        }
+        .accessibilityIdentifier("Button_SegueAppend")
+
+        // Inserting screens from a previous router
+        Button("Segue, then insert push") {
+            performSegue(segue: .sheet, location: .insert)
+            
+            Task {
+                try? await Task.sleep(for: .seconds(1.1))
+                performSegue(segue: .push, location: .insert, screenNumberOverride: 1)
+                try? await Task.sleep(for: .seconds(1.1))
+            }
+        }
+        .accessibilityIdentifier("Button_SegueInsertPush")
+        
+        Button("Segue, then insert sheet") {
+            performSegue(segue: .sheet, location: .insert)
+            
+            Task {
+                try? await Task.sleep(for: .seconds(1.1))
+                performSegue(segue: .sheet, location: .insert, screenNumberOverride: 1)
+                try? await Task.sleep(for: .seconds(1.1))
+            }
+        }
+        .accessibilityIdentifier("Button_SegueInsertSheet")
+
+        
+        Button("Segue, then insert full") {
+            performSegue(segue: .sheet, location: .insert)
+            
+            Task {
+                try? await Task.sleep(for: .seconds(1.1))
+                performSegue(segue: .fullScreenCover, location: .insert, screenNumberOverride: 1)
+                try? await Task.sleep(for: .seconds(1.1))
+            }
+        }
+        .accessibilityIdentifier("Button_SegueInsertFullScreenCover")
+
+
+        Button("Test dismiss last screen") {
+            performMultiSegue(segues: [.push, .sheet, .fullScreenCover, .push])
+            
+            Task {
+                try? await Task.sleep(for: .seconds(2))
+                router.dismissLastScreen()
+            }
+        }
+        .accessibilityIdentifier("Button_DismissLastScreen")
+        
+        Button("Test dismiss last environment") {
+            performMultiSegue(segues: [.push, .sheet, .fullScreenCover, .push])
+            
+            Task {
+                try? await Task.sleep(for: .seconds(2))
+                router.dismissLastEnvironment()
+            }
+        }
+        .accessibilityIdentifier("Button_DismissLastEnvironment")
+
+        Button("Test dismiss last push stack") {
+            performMultiSegue(segues: [.push, .sheet, .fullScreenCover, .push, .push])
+            
+            Task {
+                try? await Task.sleep(for: .seconds(2))
+                router.dismissLastPushStack()
+            }
+        }
+        .accessibilityIdentifier("Button_DismissLastPushStack")
     }
 
 }
