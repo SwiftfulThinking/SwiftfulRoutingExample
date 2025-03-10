@@ -122,7 +122,7 @@ struct RecursiveRoutingView: View {
         router.showScreen(screen)
     }
     
-    private func performMultiSegue(segues: [SegueOption]) {
+    private func performMultiSegue(segues: [SegueOption], animates: Bool = true) {
         var destinations: [AnyDestination] = []
         
         for (index, segue) in segues.enumerated() {
@@ -131,6 +131,7 @@ struct RecursiveRoutingView: View {
                 id: "\(screenNumber)",
                 segue: segue,
                 location: .insert,
+                animates: animates,
                 onDismiss: {
                     dismissAction(screenNumber)
                 },
@@ -203,6 +204,11 @@ struct RecursiveRoutingView: View {
         
         Button("Sheet 3x") {
             performMultiSegue(segues: [.sheet, .sheet, .sheet])
+        }
+        .accessibilityIdentifier("Button_Sheet3x")
+
+        Button("Sheet 3x (no animation)") {
+            performMultiSegue(segues: [.sheet, .sheet, .sheet], animates: false)
         }
         .accessibilityIdentifier("Button_Sheet3x")
 

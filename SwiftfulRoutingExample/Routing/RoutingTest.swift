@@ -170,7 +170,8 @@ final class RouterViewModel {
                 if lastSegue?.presentsNewEnvironment == true {
                     // If there is a .push after a new environment, the OS needs a slight delay before it will animate (idk why)
                     // Also if 2 new environments back to back
-                    if destination.segue == .push || destination.segue.presentsNewEnvironment {
+                    // But works without delay if there is no animation
+                    if (destination.segue == .push || destination.segue.presentsNewEnvironment) && destination.animates  {
                         try? await Task.sleep(for: .seconds(0.55))
                     }
                 }
@@ -787,22 +788,15 @@ struct RouterViewInternal<Content: View>: View, Router {
  - location .insertAfter(x) - DONE
  - dismiss or segue with no animation? - DONE
 
- - finish tests for queue!
+ - finish tests for queue! - DONE
  
- - addToQueue(destination, location: insert)
- - addToQueue(destination, location: append)
- - addToQueue(destinations, location: insert)
- - nextScreen
+ - addToQueue(destination, location: insert) - DONE
+ - addToQueue(destination, location: append) - DONE
+ - addToQueue(destinations, location: insert) - DONE
+ - nextScreen - DONE
  
- - if no animations, need delay on multi segues??
- 
- // 3 pushes
- // go next or dismiss
- // add 2 more to queue
- //
- 
- // a, b, d, e, c
-
+ - if no animations, need delay on multi segues?? - DONE
+  
  - contentTransition
  - Resizable sheet
 
@@ -820,6 +814,8 @@ struct RouterViewInternal<Content: View>: View, Router {
     - no animation
  - modules
  - tabbars
+ 
+ - clean up example project UI
  
  */
 
