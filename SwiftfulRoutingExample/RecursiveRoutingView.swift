@@ -28,6 +28,7 @@ struct RecursiveRoutingView: View {
         case testingMultiSegues
         case testingDismissing
         case testingMultiRouters
+        case testingSegueQueue
     }
     
     var viewState: ViewState {
@@ -41,6 +42,8 @@ struct RecursiveRoutingView: View {
                 return .testingDismissing
             } else if arguments.contains("MULTIROUTER") {
                 return .testingMultiRouters
+            } else if arguments.contains("SEGUEQUEUE") {
+                return .testingSegueQueue
             }
         }
         
@@ -69,6 +72,9 @@ struct RecursiveRoutingView: View {
                 Section("Multi-Routers") {
                     multiRouterButtons
                 }
+                Section("Segue Queue") {
+                    queueButtons
+                }
             case .testingSegues:
                 segueButtons
                 dismissButtons()
@@ -80,6 +86,9 @@ struct RecursiveRoutingView: View {
                 dismissButtons(showAll: true)
             case .testingMultiRouters:
                 multiRouterButtons
+                dismissButtons(showAll: false)
+            case .testingSegueQueue:
+                queueButtons
                 dismissButtons(showAll: false)
             }
         }
@@ -235,8 +244,8 @@ struct RecursiveRoutingView: View {
             }
             .accessibilityIdentifier("Button_DismissTo1")
             
-            Button("Dismiss to 2 screens") {
-                router.dismissScreens(upToScreenId: "1")
+            Button("Dismiss 2 screens") {
+                router.dismissScreens(count: 2)
             }
             .accessibilityIdentifier("Button_DismissCount2")
 
@@ -355,6 +364,125 @@ struct RecursiveRoutingView: View {
         .accessibilityIdentifier("Button_DismissLastPushStack")
     }
 
+    @ViewBuilder
+    var queueButtons:  some View {
+        Button("Append 1 push to queue") {
+            let number = 100
+            let screen = AnyDestination(
+                id: "\(number)",
+                segue: .push,
+                location: .append,
+                animates: true,
+                onDismiss: {
+                    dismissAction(number)
+                },
+                destination: { router in
+                    RecursiveRoutingView(
+                        router: router,
+                        screenNumber: number
+                    )
+                }
+            )
+            router.addScreenToQueue(destination: screen)
+        }
+        .accessibilityIdentifier("Button_QueueAppend")
+        
+        Button("Insert 1 push to queue") {
+            let number = 200
+            let screen = AnyDestination(
+                id: "\(number)",
+                segue: .push,
+                location: .insert,
+                animates: true,
+                onDismiss: {
+                    dismissAction(number)
+                },
+                destination: { router in
+                    RecursiveRoutingView(
+                        router: router,
+                        screenNumber: number
+                    )
+                }
+            )
+            router.addScreenToQueue(destination: screen)
+        }
+        .accessibilityIdentifier("Button_QueueInsert")
+
+        Button("Append 3 push to queue") {
+            let screen1Number = 300
+            let screen1 = AnyDestination(
+                id: "\(screen1Number)",
+                segue: .push,
+                location: .append,
+                animates: true,
+                onDismiss: {
+                    dismissAction(screen1Number)
+                },
+                destination: { router in
+                    RecursiveRoutingView(
+                        router: router,
+                        screenNumber: screen1Number
+                    )
+                }
+            )
+            
+            let screen2Number = 301
+            let screen2 = AnyDestination(
+                id: "\(screen2Number)",
+                segue: .push,
+                location: .append,
+                animates: true,
+                onDismiss: {
+                    dismissAction(screen2Number)
+                },
+                destination: { router in
+                    RecursiveRoutingView(
+                        router: router,
+                        screenNumber: screen2Number
+                    )
+                }
+            )
+            
+            let screen3Number = 302
+            let screen3 = AnyDestination(
+                id: "\(screen3Number)",
+                segue: .push,
+                location: .append,
+                animates: true,
+                onDismiss: {
+                    dismissAction(screen3Number)
+                },
+                destination: { router in
+                    RecursiveRoutingView(
+                        router: router,
+                        screenNumber: screen3Number
+                    )
+                }
+            )
+            router.addScreensToQueue(destinations: [screen1, screen2, screen3])
+        }
+        .accessibilityIdentifier("Button_QueueAppend3")
+
+        Button("Remove screen 301 from queue") {
+            router.removeScreenFromQueue(id: "301")
+        }
+        .accessibilityIdentifier("Button_QueueRemove1")
+        
+        Button("Remove screen 300 and 301 from queue") {
+            router.removeScreensFromQueue(ids: ["300", "301"])
+        }
+        .accessibilityIdentifier("Button_QueueRemove2")
+
+        Button("Clear queue") {
+            router.clearQueue()
+        }
+        .accessibilityIdentifier("Button_QueueClear")
+
+        Button("Try to show next screen") {
+            try? router.showNextScreen()
+        }
+        .accessibilityIdentifier("Button_QueueNext")
+    }
 }
 
 #Preview {

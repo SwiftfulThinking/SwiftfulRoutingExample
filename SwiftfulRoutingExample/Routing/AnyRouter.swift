@@ -90,69 +90,64 @@ struct AnyRouter: Router {
         object.dismissAllScreens(animates: animates)
     }
 
+    func addScreenToQueue(destination: AnyDestination) {
+        object.addScreensToQueue(destinations: [destination])
+    }
     
-    /// Show any screen via Push (NavigationLink), Sheet, or FullScreenCover.
-//    func showScreen<T>(id: String = UUID().uuidString, _ option: SegueOption, onDismiss: (() -> Void)? = nil, @ViewBuilder destination: @escaping (AnyRouter) -> T) where T : View {
-//        object.enterScreenFlow([AnyRoute(id: id, option, onDismiss: onDismiss, destination: destination)])
-//    }
-//
-//    /// Show any screen via Push (NavigationLink), Sheet, or FullScreenCover.
-//    func showScreen(_ route: AnyRoute) {
-//        object.enterScreenFlow([route])
-//    }
-//    
-//    /// Show a flow of screens, segueing to the first route immediately. The following routes can be accessed via 'showNextScreen()'.
-//    func enterScreenFlow(_ routes: [AnyRoute]) {
-//        object.enterScreenFlow(routes)
-//    }
-//    
-//    /// Shows the next screen set in the current screen flow. This would have been set previously via showScreens().
-//    func showNextScreen() throws {
-//        try object.showNextScreen()
-//    }
-//    
-//    /// If there is a next screen in the current screen flow, go to it. Otherwise, flow is complete and dismiss the environment.
-//    func showNextScreenOrDismissEnvironment() {
-//        do {
-//            try showNextScreen()
-//        } catch {
-//            dismissEnvironment()
-//        }
-//    }
-//    
-//    /// Dismiss the top-most presented environment (this would be the top-most sheet or fullScreenCover).
-//    func dismissEnvironment() {
-//        object.dismissEnvironment()
-//    }
-//    
-//    /// Dismiss the top-most presented screen in the current Environment. Same as calling presentationMode.wrappedValue.dismiss().
-//    func dismissScreen() {
-//        object.dismissScreen()
-//    }
-//    
-//    func dismissScreens(to id: String) {
-//        object.dismissScreens(to: id)
-//    }
-//
-//    /// Push a stack of screens and show the last one immediately.
-//    @available(iOS 16, *)
-//    func pushScreenStack(destinations: [PushRoute]) {
-//        object.pushScreenStack(destinations: destinations)
-//    }
-//    
-//    /// Show a resizeable sheet on top of the current context.
-//    @available(iOS 16, *)
-//    func showResizableSheet<V>(sheetDetents: Set<PresentationDetentTransformable>, selection: Binding<PresentationDetentTransformable>?, showDragIndicator: Bool, onDismiss: (() -> Void)? = nil, destination: @escaping (AnyRouter) -> V) where V : View {
-//        object.showResizableSheet(sheetDetents: sheetDetents, selection: selection, showDragIndicator: showDragIndicator, onDismiss: onDismiss, destination: destination)
-//    }
-//        
-//    /// Dismiss all NavigationLinks in NavigationStack heirarchy.
-//    ///
-//    ///  WARNING: Does not dismiss Sheet or FullScreenCover.
-//    @available(iOS 16, *)
-//    func dismissScreenStack() {
-//        object.dismissScreenStack()
-//    }
+    func addScreensToQueue(destinations: [AnyDestination]) {
+        object.addScreensToQueue(destinations: destinations)
+    }
+    
+    func removeScreenFromQueue(id: String) {
+        object.removeScreensFromQueue(ids: [id])
+    }
+    
+    func removeScreensFromQueue(ids: [String]) {
+        object.removeScreensFromQueue(ids: ids)
+    }
+    
+    func clearQueue() {
+        object.clearQueue()
+    }
+    
+    func showNextScreen() throws {
+        try object.showNextScreen()
+    }
+    
+    func showNextScreenOrDismiss(animateDismiss: Bool = true) throws {
+        do {
+            try object.showNextScreen()
+        } catch {
+            object.dismissScreen(animates: animateDismiss)
+        }
+    }
+    
+    func showNextScreenOrDismissEnvironment(animateDismiss: Bool = true) throws {
+        do {
+            try object.showNextScreen()
+        } catch {
+            object.dismissEnvironment(animates: animateDismiss)
+        }
+    }
+    
+    func showNextScreenOrDismissPushStack(animateDismiss: Bool = true) throws {
+        do {
+            try object.showNextScreen()
+        } catch {
+            object.dismissPushStack(animates: animateDismiss)
+        }
+    }
+    
+    
+    // next screen actions
+    // test on simulator
+    // tests
+    
+
+    
+    
+    
+    
     
     /// Show any Alert or ConfirmationDialog.
     ///

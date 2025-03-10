@@ -69,9 +69,8 @@ struct RouterView<Content: View>: View {
 
 @MainActor
 protocol Router {
-//    func showScreen(destination: AnyDestination)
     func showScreens(destinations: [AnyDestination])
-//    func showScreen<T>(segue: SegueOption, location: SegueLocation, id: String, @ViewBuilder destination: @escaping (Router) -> T) where T: View
+    
     func dismissScreen(animates: Bool)
     func dismissScreen(id: String, animates: Bool)
     func dismissScreens(upToScreenId: String, animates: Bool)
@@ -85,6 +84,11 @@ protocol Router {
     func dismissLastEnvironment(animates: Bool)
 
     func dismissAllScreens(animates: Bool)
+    
+    func addScreensToQueue(destinations: [AnyDestination])
+    func removeScreensFromQueue(ids: [String])
+    func clearQueue()
+    func showNextScreen() throws
 }
 
 
@@ -95,8 +99,65 @@ final class RouterViewModel {
 
     var activeScreenStacks: [AnyDestinationStack] = [AnyDestinationStack(segue: .push, screens: [])]
     
+    var availableScreenQueue: [AnyDestination] = []
+    
     func insertRootView(view: AnyDestination) {
         activeScreenStacks.insert(AnyDestinationStack(segue: .fullScreenCover, screens: [view]), at: 0)
+    }
+    
+    func addScreensToQueue(routerId: String, destinations: [AnyDestination]) {
+        var insertCounts: [String: Int] = [
+            routerId: 0
+        ]
+        for destination in destinations {
+            switch destination.location {
+            case .append:
+                availableScreenQueue.append(destination)
+            case .insert:
+                // Here we insert screens, but
+                // For example:
+                // If the original is [A, B, C]
+                // And then insert 2 screens herein
+                // Result should be [1, 2, A, B, C]
+                // So we can't just .insert 2 at 0
+                let index = insertCounts[routerId] ?? 0
+                availableScreenQueue.insert(destination, at: index)
+                insertCounts[routerId] = index + 1
+            case .insertAfter(id: let requestedId):
+                if let requestedIsInQueueIndex = availableScreenQueue.firstIndex(where: { $0.id == requestedId }) {
+                    let index = Int(requestedIsInQueueIndex) + 1 + (insertCounts[requestedId] ?? 0)
+                    availableScreenQueue.insert(destination, at: index)
+                    insertCounts[requestedId] = index + 1
+                } else {
+                    let index = insertCounts[routerId] ?? 0
+                    availableScreenQueue.insert(destination, at: index)
+                    insertCounts[routerId] = index + 1
+                }
+            }
+        }
+    }
+    
+    func removeScreensFromQueue(screenIds: [String]) {
+        for screenId in screenIds {
+            availableScreenQueue.removeAll(where: { $0.id == screenId })
+        }
+    }
+    
+    func clearQueue() {
+        availableScreenQueue.removeAll()
+    }
+    
+    enum ScreenQueueError: Error {
+        case noScreensInQueue
+    }
+    
+    func showNextScreen(routerId: String) throws {
+        guard let nextScreen = availableScreenQueue.first else {
+            throw ScreenQueueError.noScreensInQueue
+        }
+        
+        showScreen(routerId: routerId, destination: nextScreen)
+        availableScreenQueue.removeFirst()
     }
     
     func showScreens(routerId: String, destinations: [AnyDestination]) {
@@ -584,16 +645,20 @@ struct RouterViewInternal<Content: View>: View, Router {
             .ifSatisfiesCondition(logger && routerId == RouterViewModel.rootId, transform: { content in
                 content
                     .onChange(of: viewModel.activeScreenStacks) { oldValue, newValue in
-                        printScreenStack(newValue)
+                        printScreenStack(screenStack: newValue, screenQueue: nil)
+                    }
+                    .onChange(of: viewModel.availableScreenQueue) { oldValue, newValue in
+                        printScreenStack(screenStack: nil, screenQueue: newValue)
                     }
             })
     }
     
-    private func printScreenStack(_ newValue: [AnyDestinationStack]) {
-        print("PRINTING SCREEN STACK")
+    private func printScreenStack(screenStack: [AnyDestinationStack]?, screenQueue: [AnyDestination]?) {
+        print("🕊️ SwiftfulRouting Screen Stacks 🕊️")
         
         // For each AnyDestinationStack
-        for (arrayIndex, item) in newValue.enumerated() {
+        let screenStack = screenStack ?? viewModel.activeScreenStacks
+        for (arrayIndex, item) in screenStack.enumerated() {
             print("stack \(arrayIndex): \(item.segue.rawValue)")
             
             if item.screens.isEmpty {
@@ -605,6 +670,18 @@ struct RouterViewInternal<Content: View>: View, Router {
             }
         }
         print("\n")
+        
+        print("🪺 SwiftfulRouting Screen Queue 🪺")
+
+        let screenQueue = screenQueue ?? viewModel.availableScreenQueue
+        if screenQueue.isEmpty {
+            print("    no queue")
+        } else {
+            for (arrayIndex, item) in screenQueue.enumerated() {
+                print("queue \(arrayIndex): \(item.id)")
+            }
+        }
+        print("\n")
     }
     
     func showScreens(destinations: [AnyDestination]) {
@@ -613,9 +690,6 @@ struct RouterViewInternal<Content: View>: View, Router {
     
     func showScreen(destination: AnyDestination) {
         viewModel.showScreens(routerId: routerId, destinations: [destination])
-    }
-    
-    func showScreen<T>(segue: SegueOption, location: SegueLocation, id: String, destination: @escaping (any Router) -> T) where T : View {
     }
     
     func dismissScreen(animates: Bool) {
@@ -657,6 +731,22 @@ struct RouterViewInternal<Content: View>: View, Router {
     func dismissAllScreens(animates: Bool) {
         viewModel.dismissAllScreens(animates: animates)
     }
+    
+    func addScreensToQueue(destinations: [AnyDestination]) {
+        viewModel.addScreensToQueue(routerId: routerId, destinations: destinations)
+    }
+    
+    func removeScreensFromQueue(ids: [String]) {
+        viewModel.removeScreensFromQueue(screenIds: ids)
+    }
+    
+    func clearQueue() {
+        viewModel.clearQueue()
+    }
+    
+    func showNextScreen() throws {
+        try viewModel.showNextScreen(routerId: routerId)
+    }
 }
 
 // 1.
@@ -695,16 +785,31 @@ struct RouterViewInternal<Content: View>: View, Router {
  - on dismiss tests - DONE
  - insert, append, last dismisses - DONE
  - location .insertAfter(x) - DONE
+ - dismiss or segue with no animation? - DONE
 
- - dismiss or segue with no animation?
+ - finish tests for queue!
+ 
+ - addToQueue(destination, location: insert)
+ - addToQueue(destination, location: append)
+ - addToQueue(destinations, location: insert)
+ - nextScreen
+ 
+ - if no animations, need delay on multi segues??
+ 
+ // 3 pushes
+ // go next or dismiss
+ // add 2 more to queue
+ //
+ 
+ // a, b, d, e, c
+
+ - contentTransition
+ - Resizable sheet
 
  - duplicate screen ids? warning?
- - addToQueue
- - nextScreen
- - contentTransition
  - Kavsoft's floating UI no background?
  
- - dismiss style (.single, .waterfall)
+ - dismiss style (.single, .waterfall) - HOLD?
 
  
  - tests
