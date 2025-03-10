@@ -75,6 +75,9 @@ struct RecursiveRoutingView: View {
                 Section("Segue Queue") {
                     queueButtons
                 }
+                Section("Resizable Sheets") {
+                    resizableSheetButtons
+                }
             case .testingSegues:
                 segueButtons
                 dismissButtons()
@@ -184,7 +187,7 @@ struct RecursiveRoutingView: View {
         Button("Sheet (no animation)") {
             performSegue(segue: .sheet, animates: false)
         }
-        
+
         Button("FullScreenCover") {
             performSegue(segue: .fullScreenCover)
         }
@@ -488,6 +491,45 @@ struct RecursiveRoutingView: View {
             try? router.showNextScreen()
         }
         .accessibilityIdentifier("Button_QueueNext")
+    }
+    
+    @ViewBuilder
+    var resizableSheetButtons: some View {
+        Button("Resizable Sheet [.medium, .large]") {
+            let config = ResizableSheetConfig(
+                detents: [.medium, .large],
+                selection: nil,
+                dragIndicator: .visible
+            )
+            performSegue(segue: .resizableSheet(config: config))
+        }
+
+        Button("Resizable Sheet [.medium]") {
+            let config = ResizableSheetConfig(
+                detents: [.medium],
+                selection: nil,
+                dragIndicator: .visible
+            )
+            performSegue(segue: .resizableSheet(config: config))
+        }
+        
+        Button("Resizable Sheet [.fraction(0.3, 0.5, 0.8)]") {
+            let config = ResizableSheetConfig(
+                detents: [.fraction(0.3), .fraction(0.5), .fraction(0.8)],
+                selection: nil,
+                dragIndicator: .visible
+            )
+            performSegue(segue: .resizableSheet(config: config))
+        }
+        
+        Button("Resizable Sheet [.height(300, 500)]") {
+            let config = ResizableSheetConfig(
+                detents: [.height(300), .height(500)],
+                selection: nil,
+                dragIndicator: .visible
+            )
+            performSegue(segue: .resizableSheet(config: config))
+        }
     }
 }
 

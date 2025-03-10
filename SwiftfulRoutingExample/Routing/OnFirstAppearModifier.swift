@@ -37,4 +37,25 @@ extension View {
         }
     }
     
+    @ViewBuilder func applyResizableSheetModifiersIfNeeded(segue: SegueOption) -> some View {
+        switch segue {
+        case .push:
+            self
+        case .sheet:
+            self
+        case .fullScreenCover:
+            self
+        case .resizableSheet(let config):
+            if let selection = config.selection {
+                self
+                    .presentationDetents(config.detents.setMap({ $0.asPresentationDetent }), selection: Binding(selection: selection))
+                    .presentationDragIndicator(config.dragIndicator)
+            } else {
+                self
+                    .presentationDetents(config.detents.setMap({ $0.asPresentationDetent }))
+                    .presentationDragIndicator(config.dragIndicator)
+            }
+        }
+    }
+    
 }

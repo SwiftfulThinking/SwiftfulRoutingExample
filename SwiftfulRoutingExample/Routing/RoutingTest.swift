@@ -292,7 +292,7 @@ final class RouterViewModel {
                     self.activeScreenStacks[appendingIndex].screens.insert(destination, at: 0)
                 }
             }
-        case .sheet, .fullScreenCover:
+        case .sheet, .fullScreenCover, .resizableSheet:
             // If showing sheet or fullScreenCover,
             //  If currentStack is .push, add newStack next (index + 1)
             //  If currentStack is sheet or fullScreenCover, the next stack already a .push, add newStack after (index + 2)
@@ -391,6 +391,8 @@ final class RouterViewModel {
 
     /// Dismiss screen at routeId and all screens in front of it.
     func dismissScreen(routeId: String, animates: Bool) {
+        guard routeId != RouterViewModel.rootId else { return }
+        
         for (stackIndex, stack) in activeScreenStacks.enumerated().reversed() {
             // Check if stack.screens contains the routeId
             // Loop from last, in case there are multiple screens in the stack with the same routeId (should not happen)
@@ -434,7 +436,7 @@ final class RouterViewModel {
             }
         }
         
-        print("🚨 RouteId: \(routeId) not found in active view heirarchy.")
+        print("🚨 RouteId not found in active view heirarchy (\(routeId))")
     }
     
     func dismissScreens(toEnvironmentId routeId: String, animates: Bool) {
@@ -612,19 +614,20 @@ struct RouterViewInternal<Content: View>: View, Router {
             // Add Sheet modifier. Add on background to supress OS warnings.
             .background(
                 Text("")
-                    .sheet(item: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, segue: .sheet, onDidDismiss: {
+                    .sheet(item: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, segues: [.sheet, .resizableSheet()], onDidDismiss: {
                         // This triggers if the user swipes down to dismiss the screen
                         // Now we must update activeScreenStacks to match that behavior
                         viewModel.dismissScreens(toEnvironmentId: routerId, animates: true)
                     }), onDismiss: nil) { destination in
                         destination.destination
+                            .applyResizableSheetModifiersIfNeeded(segue: destination.segue)
                     }
             )
         
             // Add FullScreenCover modifier. Add on background to supress OS warnings.
             .background(
                 Text("")
-                    .fullScreenCover(item: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, segue: .fullScreenCover, onDidDismiss: {
+                    .fullScreenCover(item: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, segues: [.fullScreenCover], onDidDismiss: {
                         // This triggers if the user swipes down to dismiss the screen
                         // Now we must update activeScreenStacks to match that behavior
                         viewModel.dismissScreens(toEnvironmentId: routerId, animates: true)
@@ -660,7 +663,7 @@ struct RouterViewInternal<Content: View>: View, Router {
         // For each AnyDestinationStack
         let screenStack = screenStack ?? viewModel.activeScreenStacks
         for (arrayIndex, item) in screenStack.enumerated() {
-            print("stack \(arrayIndex): \(item.segue.rawValue)")
+            print("stack \(arrayIndex): \(item.segue.stringValue)")
             
             if item.screens.isEmpty {
                 print("    no screens")
@@ -798,7 +801,8 @@ struct RouterViewInternal<Content: View>: View, Router {
  - if no animations, need delay on multi segues?? - DONE
   
  - navigationTransition - HOLD
- - Resizable sheet - 
+ - Resizable sheet -
+ - navigationTransition example code
 
  - duplicate screen ids? warning?
  - Kavsoft's floating UI no background?
@@ -828,23 +832,36 @@ struct RoutingTest: View {
         RouterView(logger: true) { router in
             Button("Click me 1") {
                 
-                var firstRouter: AnyRouter? = nil
-                let screen1 = AnyDestination(id: "screen_1", segue: .push, destination: { router in
-                    firstRouter = router
-                    return Color.red.ignoresSafeArea()
-                })
-
-                let screen2 = AnyDestination(id: "screen_2", segue: .sheet, destination: { router in
-                    Color.blue.ignoresSafeArea()
-                        .onTapGesture {
-                            firstRouter?.showScreen(id: "adsf", segue: .push, location: .insert, destination: { _ in
-                                Color.orange.ignoresSafeArea()
-                                    .onTapGesture {
-                                        router.dismissLastScreen()
-                                    }
-                            })
-                        }
-                })
+                let destination = AnyDestination(
+//                    id: T##String,
+                    segue: .resizableSheet(),
+//                    location: T##SegueLocation,
+//                    animates: T##Bool,
+//                    onDismiss: T##(() -> Void)?##(() -> Void)?##() -> Void,
+                    destination: { router in
+                        Color.red.ignoresSafeArea()
+                    }
+                )
+                
+                router.showScreen(destination)
+                
+//                var firstRouter: AnyRouter? = nil
+//                let screen1 = AnyDestination(id: "screen_1", segue: .push, destination: { router in
+//                    firstRouter = router
+//                    return Color.red.ignoresSafeArea()
+//                })
+//
+//                let screen2 = AnyDestination(id: "screen_2", segue: .sheet, destination: { router in
+//                    Color.blue.ignoresSafeArea()
+//                        .onTapGesture {
+//                            firstRouter?.showScreen(id: "adsf", segue: .push, location: .insert, destination: { _ in
+//                                Color.orange.ignoresSafeArea()
+//                                    .onTapGesture {
+//                                        router.dismissLastScreen()
+//                                    }
+//                            })
+//                        }
+//                })
                 
 //                let screen3 = AnyDestination(id: "screen_3", segue: .fullScreenCover, { router in
 //                    Color.orange.ignoresSafeArea()
@@ -855,7 +872,7 @@ struct RoutingTest: View {
 //                }, onDismiss: nil)
 
 
-                router.showScreens(destinations: [screen1, screen2]) // screen3, screen4
+//                router.showScreens(destinations: [screen1, screen2]) // screen3, screen4
                 
                 
                 
@@ -958,10 +975,18 @@ extension Binding where Value == [AnyDestination] {
     }
 }
 
+import Foundation
+
+extension Set {
+    func setMap<U>(_ transform: (Element) -> U) -> Set<U> {
+        return Set<U>(self.lazy.map(transform))
+    }
+}
+
 
 extension Binding where Value == AnyDestination? {
     
-    init(stack: [AnyDestinationStack], routerId: String, segue: SegueOption, onDidDismiss: @escaping () -> Void) {
+    init(stack: [AnyDestinationStack], routerId: String, segues: [SegueOption], onDidDismiss: @escaping () -> Void) {
         self.init {
             let routerStackIndex = stack.firstIndex { subStack in
                 return subStack.screens.contains(where: { $0.id == routerId })
@@ -984,7 +1009,7 @@ extension Binding where Value == AnyDestination? {
                 nextSheetStack = stack[routerStackIndex + 2]
             }
 
-            if nextSheetStack?.segue == segue, let screen = nextSheetStack?.screens.first {
+            if let nextSegue = nextSheetStack?.segue, segues.contains(nextSegue), let screen = nextSheetStack?.screens.first {
                 return screen
             }
             
@@ -996,6 +1021,18 @@ extension Binding where Value == AnyDestination? {
             }
         }
     }
+}
+
+extension Binding where Value == PresentationDetent {
+    
+    init(selection: Binding<PresentationDetentTransformable>) {
+        self.init {
+            selection.wrappedValue.asPresentationDetent
+        } set: { newValue in
+            selection.wrappedValue = PresentationDetentTransformable(detent: newValue)
+        }
+    }
+    
 }
 
 //struct NavigationDestinationViewModifier: ViewModifier {
