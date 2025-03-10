@@ -21,6 +21,7 @@ struct RecursiveRoutingView: View {
     let screenNumber: Int
 
     @State private var lastDismiss: Int = -1
+    @Namespace private var namespace
     
     enum ViewState {
         case regular
@@ -195,6 +196,30 @@ struct RecursiveRoutingView: View {
         
         Button("FullScreenCover (no animation)") {
             performSegue(segue: .fullScreenCover, animates: false)
+        }
+        
+        
+        if #available(iOS 18.0, *) {
+            Button("Zoom (ie. push w/ navigationTransition)") {
+                let screenNumber = screenNumber + 1
+                let screen = AnyDestination(
+                    id: "\(screenNumber)",
+                    segue: .push,
+                    onDismiss: {
+                        dismissAction(screenNumber)
+                    },
+                    destination: { router in
+                        RecursiveRoutingView(
+                            router: router,
+                            screenNumber: screenNumber
+                        )
+                        .navigationTransition(.zoom(sourceID: "\(screenNumber)", in: namespace))
+                    }
+                )
+                
+                router.showScreen(screen)
+            }
+            .matchedTransitionSource(id: "\(screenNumber + 1)", in: namespace)
         }
     }
     
