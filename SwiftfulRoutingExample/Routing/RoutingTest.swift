@@ -797,8 +797,8 @@ struct RouterViewInternal<Content: View>: View, Router {
  
  - if no animations, need delay on multi segues?? - DONE
   
- - contentTransition
- - Resizable sheet
+ - navigationTransition - HOLD
+ - Resizable sheet - 
 
  - duplicate screen ids? warning?
  - Kavsoft's floating UI no background?
