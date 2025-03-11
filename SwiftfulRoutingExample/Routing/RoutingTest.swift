@@ -808,13 +808,13 @@ struct RouterViewInternal<Content: View>: View, Router {
  - dismiss style (.single, .waterfall) - HOLD?
 
  - duplicate screen ids? warning? - HOLD
- - Kavsoft's floating UI no background? -
- - Testing
-    - check normals
-    - color
-    - clear
-    - corner radius
-    - full screen
+ - Kavsoft's floating UI no background? - DONE
+ - Testing - DONE
+    - check normals - DONE
+    - color - DONE
+    - clear - DONE
+    - corner radius - DONE
+    - full screen - DONE
  
  - tests - DONE
  - alerts
