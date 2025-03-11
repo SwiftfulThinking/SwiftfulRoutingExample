@@ -102,7 +102,7 @@ final class RouterViewModel {
     var availableScreenQueue: [AnyDestination] = []
     
     func insertRootView(view: AnyDestination) {
-        activeScreenStacks.insert(AnyDestinationStack(segue: .fullScreenCover, screens: [view]), at: 0)
+        activeScreenStacks.insert(AnyDestinationStack(segue: .fullScreenCover(), screens: [view]), at: 0)
     }
     
     func addScreensToQueue(routerId: String, destinations: [AnyDestination]) {
@@ -292,7 +292,7 @@ final class RouterViewModel {
                     self.activeScreenStacks[appendingIndex].screens.insert(destination, at: 0)
                 }
             }
-        case .sheet, .fullScreenCover, .resizableSheet:
+        case .sheet, .fullScreenCover:
             // If showing sheet or fullScreenCover,
             //  If currentStack is .push, add newStack next (index + 1)
             //  If currentStack is sheet or fullScreenCover, the next stack already a .push, add newStack after (index + 2)
@@ -614,7 +614,7 @@ struct RouterViewInternal<Content: View>: View, Router {
             // Add Sheet modifier. Add on background to supress OS warnings.
             .background(
                 Text("")
-                    .sheet(item: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, segues: [.sheet, .resizableSheet()], onDidDismiss: {
+                    .sheet(item: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, segue: .sheet(), onDidDismiss: {
                         // This triggers if the user swipes down to dismiss the screen
                         // Now we must update activeScreenStacks to match that behavior
                         viewModel.dismissScreens(toEnvironmentId: routerId, animates: true)
@@ -627,12 +627,13 @@ struct RouterViewInternal<Content: View>: View, Router {
             // Add FullScreenCover modifier. Add on background to supress OS warnings.
             .background(
                 Text("")
-                    .fullScreenCover(item: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, segues: [.fullScreenCover], onDidDismiss: {
+                    .fullScreenCover(item: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, segue: .fullScreenCover(), onDidDismiss: {
                         // This triggers if the user swipes down to dismiss the screen
                         // Now we must update activeScreenStacks to match that behavior
                         viewModel.dismissScreens(toEnvironmentId: routerId, animates: true)
                     }), onDismiss: nil) { destination in
                         destination.destination
+                            .applyResizableSheetModifiersIfNeeded(segue: destination.segue)
                     }
             )
         
@@ -640,7 +641,7 @@ struct RouterViewInternal<Content: View>: View, Router {
             .ifSatisfiesCondition(routerId == RouterViewModel.rootId, transform: { content in
                 content
                     .onFirstAppear {
-                        let view = AnyDestination(id: routerId, segue: .fullScreenCover, location: .insert, onDismiss: nil, destination: { _ in self })
+                        let view = AnyDestination(id: routerId, segue: .fullScreenCover(), location: .insert, onDismiss: nil, destination: { _ in self })
                         viewModel.insertRootView(view: view)
                     }
             })
@@ -802,22 +803,29 @@ struct RouterViewInternal<Content: View>: View, Router {
   
  - navigationTransition - HOLD
  - Resizable sheet - DONE
- - navigationTransition example code - 
-
- - duplicate screen ids? warning?
- - Kavsoft's floating UI no background?
+ - navigationTransition example code - DONE
  
  - dismiss style (.single, .waterfall) - HOLD?
 
+ - duplicate screen ids? warning? - HOLD
+ - Kavsoft's floating UI no background? -
+ - Testing
+    - check normals
+    - color
+    - clear
+    - corner radius
+    - full screen
  
- - tests
+ - tests - DONE
  - alerts
+    - textfield
  - modals
  - transitions
     - preloaded
     - no animation
  - modules
  - tabbars
+    - on selection
  
  - clean up example project UI
  
@@ -834,7 +842,7 @@ struct RoutingTest: View {
                 
                 let destination = AnyDestination(
 //                    id: T##String,
-                    segue: .resizableSheet(),
+                    segue: .sheet(),
 //                    location: T##SegueLocation,
 //                    animates: T##Bool,
 //                    onDismiss: T##(() -> Void)?##(() -> Void)?##() -> Void,
@@ -986,7 +994,7 @@ extension Set {
 
 extension Binding where Value == AnyDestination? {
     
-    init(stack: [AnyDestinationStack], routerId: String, segues: [SegueOption], onDidDismiss: @escaping () -> Void) {
+    init(stack: [AnyDestinationStack], routerId: String, segue: SegueOption, onDidDismiss: @escaping () -> Void) {
         self.init {
             let routerStackIndex = stack.firstIndex { subStack in
                 return subStack.screens.contains(where: { $0.id == routerId })
@@ -1009,7 +1017,7 @@ extension Binding where Value == AnyDestination? {
                 nextSheetStack = stack[routerStackIndex + 2]
             }
 
-            if let nextSegue = nextSheetStack?.segue, segues.contains(nextSegue), let screen = nextSheetStack?.screens.first {
+            if let nextSegue = nextSheetStack?.segue, nextSegue == segue, let screen = nextSheetStack?.screens.first {
                 return screen
             }
             

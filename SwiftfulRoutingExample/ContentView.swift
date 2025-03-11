@@ -113,7 +113,7 @@ extension MyView {
             }
 
             Button("Sheet") {
-                router.showScreen(AnyDestination(segue: .sheet, onDismiss: {
+                router.showScreen(AnyDestination(segue: .sheet(), onDismiss: {
                     dismissAction(count + 1)
                 }, destination: { router in
                     MyView(router: router, count: count + 1)
@@ -160,7 +160,7 @@ extension MyView {
 
             if #available(iOS 14, *) {
                 Button("FullScreenCover") {
-                    router.showScreen(.fullScreenCover, onDismiss: {
+                    router.showScreen(.fullScreenCover(), onDismiss: {
                         dismissAction(count + 1)
                     }) { router in
                         MyView(router: router, count: count + 1)
@@ -187,7 +187,7 @@ extension MyView {
 //                let screen1 = { router in
 //                    MyView(router: router, count: 11111)
 //                }
-//                router2.showScreen(AnyRoute(.fullScreenCover, onDismiss: {
+//                router2.showScreen(AnyRoute(.fullScreenCover(), onDismiss: {
 //                    dismissAction(11111)
 //                }, destination: screen1))
 //            }
@@ -207,7 +207,7 @@ extension MyView {
 //                }
 //                
 //                router2.enterScreenFlow([
-//                    AnyRoute(.fullScreenCover, onDismiss: {
+//                    AnyRoute(.fullScreenCover(), onDismiss: {
 //                        dismissAction(369)
 //                    }, destination: screen1),
 //                    AnyRoute(.push, onDismiss: {

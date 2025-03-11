@@ -5,31 +5,60 @@
 //  Created by Nick Sarno on 2/17/25.
 //
 
+public struct FullScreenCoverConfig {
+    var background: EnvironmentBackgroundOption
+
+    public init(
+        background: EnvironmentBackgroundOption = .automatic
+    ) {
+        self.background = background
+    }
+}
+
+public enum EnvironmentBackgroundOption {
+    case automatic
+    case clear
+    case custom(any ShapeStyle)
+}
 
 public struct ResizableSheetConfig {
     var detents: Set<PresentationDetentTransformable>
     var selection: Binding<PresentationDetentTransformable>?
     var dragIndicator: Visibility
-    
+    var background: EnvironmentBackgroundOption
+    var cornerRadius: CGFloat?
+    var backgroundInteraction: PresentationBackgroundInteraction
+    var contentInteraction: PresentationContentInteraction
+
     public init(
-        detents: Set<PresentationDetentTransformable> = [.medium, .large],
+        detents: Set<PresentationDetentTransformable> = [.large],
         selection: Binding<PresentationDetentTransformable>? = nil,
-        dragIndicator: Visibility = .visible
+        dragIndicator: Visibility = .automatic,
+        background: EnvironmentBackgroundOption = .automatic,
+        cornerRadius: CGFloat? = nil,
+        backgroundInteraction: PresentationBackgroundInteraction = .automatic,
+        contentInteraction: PresentationContentInteraction = .automatic
     ) {
         self.detents = detents
         self.selection = selection
         self.dragIndicator = dragIndicator
+        self.background = background
+        self.cornerRadius = cornerRadius
+        self.backgroundInteraction = backgroundInteraction
+        self.contentInteraction = contentInteraction
     }
 }
 
 public enum SegueOption: Equatable {
-    case push, sheet, fullScreenCover
+    case push
+    case fullScreenCover(config: FullScreenCoverConfig = FullScreenCoverConfig())
+    case sheet(config: ResizableSheetConfig = ResizableSheetConfig())
     
 //    @available(iOS 14.0, *)
 //    case
 //    
 //    @available(iOS 16.0, *)
-    case resizableSheet(config: ResizableSheetConfig = ResizableSheetConfig())
+//    case resizableSheet(config: ResizableSheetConfig = ResizableSheetConfig())
     
     public static func == (lhs: SegueOption, rhs: SegueOption) -> Bool {
         lhs.stringValue == rhs.stringValue
@@ -43,8 +72,8 @@ public enum SegueOption: Equatable {
             return "sheet"
         case .fullScreenCover:
             return "fullScreenCover"
-        case .resizableSheet:
-            return "resizableSheet"
+//        case .resizableSheet:
+//            return "resizableSheet"
         }
     }
     
@@ -52,7 +81,7 @@ public enum SegueOption: Equatable {
         switch self {
         case .push:
             return false
-        case .sheet, .fullScreenCover, .resizableSheet:
+        case .sheet, .fullScreenCover:
             return true
         }
     }

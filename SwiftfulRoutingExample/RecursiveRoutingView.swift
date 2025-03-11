@@ -76,8 +76,8 @@ struct RecursiveRoutingView: View {
                 Section("Segue Queue") {
                     queueButtons
                 }
-                Section("Resizable Sheets") {
-                    resizableSheetButtons
+                Section("Custom Sheets") {
+                    customSheetButtons
                 }
             case .testingSegues:
                 segueButtons
@@ -105,7 +105,7 @@ struct RecursiveRoutingView: View {
         lastDismiss = number
     }
     
-    private func performSegue(segue: SegueOption, location: SegueLocation = .insert, screenNumberOverride: Int? = nil, animates: Bool = true) {
+    private func performSegue(segue: SegueOption, location: SegueLocation = .insert, screenNumberOverride: Int? = nil, animates: Bool = true, hideListBackground: Bool = false) {
         let screenNumber = (screenNumberOverride ?? screenNumber) + 1
         let screen = AnyDestination(
             id: "\(screenNumber)",
@@ -120,6 +120,10 @@ struct RecursiveRoutingView: View {
                     router: router,
                     screenNumber: screenNumber
                 )
+                .ifSatisfiesCondition(hideListBackground) { content in
+                    content
+                        .scrollContentBackground(.hidden)
+                }
             }
         )
         
@@ -181,23 +185,22 @@ struct RecursiveRoutingView: View {
         }
         
         Button("Sheet") {
-            performSegue(segue: .sheet)
+            performSegue(segue: .sheet())
         }
         .accessibilityIdentifier("Button_Sheet")
 
         Button("Sheet (no animation)") {
-            performSegue(segue: .sheet, animates: false)
+            performSegue(segue: .sheet(), animates: false)
         }
 
         Button("FullScreenCover") {
-            performSegue(segue: .fullScreenCover)
+            performSegue(segue: .fullScreenCover())
         }
         .accessibilityIdentifier("Button_FullScreenCover")
         
         Button("FullScreenCover (no animation)") {
-            performSegue(segue: .fullScreenCover, animates: false)
+            performSegue(segue: .fullScreenCover(), animates: false)
         }
-        
         
         if #available(iOS 18.0, *) {
             Button("Zoom (ie. push w/ navigationTransition)") {
@@ -231,27 +234,27 @@ struct RecursiveRoutingView: View {
         .accessibilityIdentifier("Button_Push3x")
         
         Button("Sheet 3x") {
-            performMultiSegue(segues: [.sheet, .sheet, .sheet])
+            performMultiSegue(segues: [.sheet(), .sheet(), .sheet()])
         }
         .accessibilityIdentifier("Button_Sheet3x")
 
         Button("Sheet 3x (no animation)") {
-            performMultiSegue(segues: [.sheet, .sheet, .sheet], animates: false)
+            performMultiSegue(segues: [.sheet(), .sheet(), .sheet()], animates: false)
         }
         .accessibilityIdentifier("Button_Sheet3x")
 
         Button("Full 3x") {
-            performMultiSegue(segues: [.fullScreenCover, .fullScreenCover, .fullScreenCover])
+            performMultiSegue(segues: [.fullScreenCover(), .fullScreenCover(), .fullScreenCover()])
         }
         .accessibilityIdentifier("Button_Full3x")
 
         Button("Push, Sheet, Full") {
-            performMultiSegue(segues: [.push, .sheet, .fullScreenCover])
+            performMultiSegue(segues: [.push, .sheet(), .fullScreenCover()])
         }
         .accessibilityIdentifier("Button_PushSheetFull")
 
         Button("Full, Sheet, Push") {
-            performMultiSegue(segues: [.fullScreenCover, .sheet, .push])
+            performMultiSegue(segues: [.fullScreenCover(), .sheet(), .push])
         }
         .accessibilityIdentifier("Button_FullSheetPush")
     }
@@ -308,13 +311,13 @@ struct RecursiveRoutingView: View {
     var multiRouterButtons: some View {
         // Appending screens from a previous router
         Button("Segue, then append screens") {
-            performSegue(segue: .sheet, location: .append)
+            performSegue(segue: .sheet(), location: .append)
             
             Task {
                 try? await Task.sleep(for: .seconds(1.1))
                 performSegue(segue: .push, location: .append, screenNumberOverride: 1)
                 try? await Task.sleep(for: .seconds(1.1))
-                performSegue(segue: .fullScreenCover, location: .append, screenNumberOverride: 2)
+                performSegue(segue: .fullScreenCover(), location: .append, screenNumberOverride: 2)
                 try? await Task.sleep(for: .seconds(1.1))
                 performSegue(segue: .push, location: .append, screenNumberOverride: 3)
             }
@@ -323,7 +326,7 @@ struct RecursiveRoutingView: View {
 
         // Inserting screens from a previous router
         Button("Segue, then insert push") {
-            performSegue(segue: .sheet, location: .insert)
+            performSegue(segue: .sheet(), location: .insert)
             
             Task {
                 try? await Task.sleep(for: .seconds(1.1))
@@ -334,11 +337,11 @@ struct RecursiveRoutingView: View {
         .accessibilityIdentifier("Button_SegueInsertPush")
         
         Button("Segue, then insert sheet") {
-            performSegue(segue: .sheet, location: .insert)
+            performSegue(segue: .sheet(), location: .insert)
             
             Task {
                 try? await Task.sleep(for: .seconds(1.1))
-                performSegue(segue: .sheet, location: .insert, screenNumberOverride: 1)
+                performSegue(segue: .sheet(), location: .insert, screenNumberOverride: 1)
                 try? await Task.sleep(for: .seconds(1.1))
             }
         }
@@ -346,18 +349,18 @@ struct RecursiveRoutingView: View {
 
         
         Button("Segue, then insert full") {
-            performSegue(segue: .sheet, location: .insert)
+            performSegue(segue: .sheet(), location: .insert)
             
             Task {
                 try? await Task.sleep(for: .seconds(1.1))
-                performSegue(segue: .fullScreenCover, location: .insert, screenNumberOverride: 1)
+                performSegue(segue: .fullScreenCover(), location: .insert, screenNumberOverride: 1)
                 try? await Task.sleep(for: .seconds(1.1))
             }
         }
         .accessibilityIdentifier("Button_SegueInsertFullScreenCover")
 
         Button("Insert after 1") {
-            performMultiSegue(segues: [.sheet, .push, .push])
+            performMultiSegue(segues: [.sheet(), .push, .push])
             
             Task {
                 try? await Task.sleep(for: .seconds(1.1))
@@ -368,7 +371,7 @@ struct RecursiveRoutingView: View {
         .accessibilityIdentifier("Button_SegueInsertFullScreenCover")
         
         Button("Test dismiss last screen") {
-            performMultiSegue(segues: [.push, .sheet, .fullScreenCover, .push])
+            performMultiSegue(segues: [.push, .sheet(), .fullScreenCover(), .push])
             
             Task {
                 try? await Task.sleep(for: .seconds(2))
@@ -378,7 +381,7 @@ struct RecursiveRoutingView: View {
         .accessibilityIdentifier("Button_DismissLastScreen")
         
         Button("Test dismiss last environment") {
-            performMultiSegue(segues: [.push, .sheet, .fullScreenCover, .push])
+            performMultiSegue(segues: [.push, .sheet(), .fullScreenCover(), .push])
             
             Task {
                 try? await Task.sleep(for: .seconds(2))
@@ -388,7 +391,7 @@ struct RecursiveRoutingView: View {
         .accessibilityIdentifier("Button_DismissLastEnvironment")
 
         Button("Test dismiss last push stack") {
-            performMultiSegue(segues: [.push, .sheet, .fullScreenCover, .push, .push])
+            performMultiSegue(segues: [.push, .sheet(), .fullScreenCover(), .push, .push])
             
             Task {
                 try? await Task.sleep(for: .seconds(2))
@@ -519,14 +522,14 @@ struct RecursiveRoutingView: View {
     }
     
     @ViewBuilder
-    var resizableSheetButtons: some View {
+    var customSheetButtons: some View {
         Button("Resizable Sheet [.medium, .large]") {
             let config = ResizableSheetConfig(
                 detents: [.medium, .large],
                 selection: nil,
                 dragIndicator: .visible
             )
-            performSegue(segue: .resizableSheet(config: config))
+            performSegue(segue: .sheet(config: config))
         }
 
         Button("Resizable Sheet [.medium]") {
@@ -535,7 +538,7 @@ struct RecursiveRoutingView: View {
                 selection: nil,
                 dragIndicator: .visible
             )
-            performSegue(segue: .resizableSheet(config: config))
+            performSegue(segue: .sheet(config: config))
         }
         
         Button("Resizable Sheet [.fraction(0.3, 0.5, 0.8)]") {
@@ -544,7 +547,7 @@ struct RecursiveRoutingView: View {
                 selection: nil,
                 dragIndicator: .visible
             )
-            performSegue(segue: .resizableSheet(config: config))
+            performSegue(segue: .sheet(config: config))
         }
         
         Button("Resizable Sheet [.height(300, 500)]") {
@@ -553,7 +556,61 @@ struct RecursiveRoutingView: View {
                 selection: nil,
                 dragIndicator: .visible
             )
-            performSegue(segue: .resizableSheet(config: config))
+            performSegue(segue: .sheet(config: config))
+        }
+        
+        Button("Sheet: Background color") {
+            let config = ResizableSheetConfig(
+                detents: [.medium, .large],
+                selection: nil,
+                dragIndicator: .visible,
+                background: .custom(LinearGradient(colors: [.red, .blue], startPoint: .topLeading, endPoint: .bottomTrailing)),
+                cornerRadius: 100,
+                backgroundInteraction: .disabled,
+                contentInteraction: .automatic
+            )
+            performSegue(segue: .sheet(config: config), hideListBackground: true)
+        }
+        
+        Button("Sheet: No background") {
+            let config = ResizableSheetConfig(
+                detents: [.medium],
+                selection: nil,
+                dragIndicator: .hidden,
+                background: .clear,
+                cornerRadius: 0,
+                backgroundInteraction: .enabled,
+                contentInteraction: .automatic
+            )
+            
+            let destination = AnyDestination(segue: .sheet(config: config)) { router in
+                Rectangle()
+                    .padding(40)
+                    .onTapGesture {
+                        router.dismissScreen()
+                    }
+            }
+            
+            router.showScreen(destination)
+        }
+        
+        Button("FullScreenColor: Background color") {
+            let config = FullScreenCoverConfig(background: .custom(Color.orange))
+            performSegue(segue: .fullScreenCover(config: config), hideListBackground: true)
+        }
+        
+        Button("FullScreenColor: Background clear") {
+            let config = FullScreenCoverConfig(background: .clear)
+            
+            let destination = AnyDestination(segue: .fullScreenCover(config: config)) { router in
+                Rectangle()
+                    .padding(40)
+                    .onTapGesture {
+                        router.dismissScreen()
+                    }
+            }
+
+            router.showScreen(destination)
         }
     }
 }
