@@ -101,11 +101,14 @@ final class RouterViewModel {
     static let rootId = "root"
 
     // make these private(set)?
+    // throw errors on dismiss?
+    
+    
     var activeScreenStacks: [AnyDestinationStack] = [AnyDestinationStack(segue: .push, screens: [])]
     
     var availableScreenQueue: [AnyDestination] = []
     
-    var activeAlert: AnyAlert? = nil
+    var activeAlert: [String: AnyAlert] = [:] // RouterId : Alert
     
     func insertRootView(view: AnyDestination) {
         activeScreenStacks.insert(AnyDestinationStack(segue: .fullScreenCover(), screens: [view]), at: 0)
@@ -586,12 +589,28 @@ final class RouterViewModel {
         dismissScreens(to: RouterViewModel.rootId, animates: animates)
     }
 
-    func showAlert(alert: AnyAlert) {
-        self.activeAlert = alert // test changing fast
+    func showAlert(routerId: String, alert: AnyAlert) {
+        var routerId = routerId
+        if alert.location == .topScreen {
+            if let lastScreen = activeScreenStacks.flatMap({ $0.screens }).last {
+                routerId = lastScreen.id
+            }
+        }
+        
+        if activeAlert[routerId] == nil {
+            self.activeAlert[routerId] = alert
+        } else {
+            self.activeAlert.removeValue(forKey: routerId)
+            
+            Task {
+                try? await Task.sleep(for: .seconds(0.1))
+                self.activeAlert[routerId] = alert
+            }
+        }
     }
     
-    func dismissAlert() {
-        self.activeAlert = nil
+    func dismissAlert(routerId: String) {
+        self.activeAlert.removeValue(forKey: routerId)
     }
 }
 
@@ -661,10 +680,10 @@ struct RouterViewInternal<Content: View>: View, Router {
         
             // Add Alert modifier.
             .modifier(AlertViewModifier(alert: Binding(get: {
-                viewModel.activeAlert
+                viewModel.activeAlert[routerId]
             }, set: { newValue in
                 if newValue == nil {
-                    viewModel.dismissAlert()
+                    viewModel.dismissAlert(routerId: routerId)
                 }
             })))
         
@@ -697,18 +716,20 @@ struct RouterViewInternal<Content: View>: View, Router {
             }
         }
         print("\n")
-        
-        print("🪺 SwiftfulRouting Screen Queue 🪺")
 
         let screenQueue = screenQueue ?? viewModel.availableScreenQueue
-        if screenQueue.isEmpty {
-            print("    no queue")
-        } else {
-            for (arrayIndex, item) in screenQueue.enumerated() {
-                print("queue \(arrayIndex): \(item.id)")
+        if !screenQueue.isEmpty {
+            print("🪺 SwiftfulRouting Screen Queue 🪺")
+
+            if screenQueue.isEmpty {
+                print("    no queue")
+            } else {
+                for (arrayIndex, item) in screenQueue.enumerated() {
+                    print("queue \(arrayIndex): \(item.id)")
+                }
             }
+            print("\n")
         }
-        print("\n")
     }
     
     func showScreens(destinations: [AnyDestination]) {
@@ -776,11 +797,11 @@ struct RouterViewInternal<Content: View>: View, Router {
     }
     
     func showAlert(alert: AnyAlert) {
-        viewModel.showAlert(alert: alert)
+        viewModel.showAlert(routerId: routerId, alert: alert)
     }
     
     func dismissAlert() {
-        viewModel.dismissAlert()
+        viewModel.dismissAlert(routerId: routerId)
     }
 }
 
@@ -847,9 +868,9 @@ struct RouterViewInternal<Content: View>: View, Router {
     - full screen - DONE
  
  - tests - DONE
- - alerts
-    - textfield
- - modals
+ - alerts - DONE
+    - textfield - DONE
+ - modals -
  - transitions
     - preloaded
     - no animation

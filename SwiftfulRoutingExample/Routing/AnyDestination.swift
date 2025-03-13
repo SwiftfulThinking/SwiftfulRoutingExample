@@ -66,20 +66,27 @@ enum AlertStyle {
     case alert, confirmationDialog
 }
 
+enum AlertLocation {
+    case currentScreen, topScreen
+}
+
 struct AnyAlert: Identifiable {
     let id = UUID().uuidString
     let style: AlertStyle
+    let location: AlertLocation
     let title: String
     let subtitle: String?
     let buttons: AnyView
     
     init<T:View>(
         style: AlertStyle = .alert,
+        location: AlertLocation = .topScreen,
         title: String,
         subtitle: String? = nil,
         @ViewBuilder buttons: () -> T
     ) {
         self.style = style
+        self.location = location
         self.title = title
         self.subtitle = subtitle
         self.buttons = AnyView(buttons())
@@ -87,10 +94,12 @@ struct AnyAlert: Identifiable {
     
     init(
         style: AlertStyle = .alert,
+        location: AlertLocation = .topScreen,
         title: String,
         subtitle: String? = nil
     ) {
         self.style = style
+        self.location = location
         self.title = title
         self.subtitle = subtitle
         self.buttons = AnyView(

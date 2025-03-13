@@ -141,13 +141,13 @@ struct AnyRouter: Router {
     
     // MARK: ALERTS
     
-    public func showAlert<T:View>(_ style: AlertStyle, title: String, subtitle: String? = nil, @ViewBuilder buttons: @escaping () -> T) where T : View {
-        let alert = AnyAlert(style: style, title: title, subtitle: subtitle, buttons: buttons)
+    public func showAlert<T:View>(_ style: AlertStyle = .alert, location: AlertLocation = .topScreen, title: String, subtitle: String? = nil, @ViewBuilder buttons: @escaping () -> T) where T : View {
+        let alert = AnyAlert(style: style, location: location, title: title, subtitle: subtitle, buttons: buttons)
         object.showAlert(alert: alert)
     }
     
-    public func showAlert(_ style: AlertStyle, title: String, subtitle: String? = nil) {
-        let alert = AnyAlert(style: style, title: title, subtitle: subtitle)
+    public func showAlert(_ style: AlertStyle = .alert, location: AlertLocation = .topScreen, title: String, subtitle: String? = nil) {
+        let alert = AnyAlert(style: style, location: location, title: title, subtitle: subtitle)
         object.showAlert(alert: alert)
     }
     
