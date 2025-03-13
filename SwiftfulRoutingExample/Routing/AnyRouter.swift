@@ -167,8 +167,42 @@ struct AnyRouter: Router {
         object.dismissAlert()
     }
 
+    // MARK: MODALS
     
+//    public func showModal<T>(
+//        id: String = UUID().uuidString,
+//        transition: AnyTransition = .identity,
+//        animation: Animation = .smooth,
+//        alignment: Alignment = .center,
+//        backgroundColor: Color? = nil,
+//        dismissOnBackgroundTap: Bool = true,
+//        ignoreSafeArea: Bool = true,
+//        @ViewBuilder destination: @escaping () -> T) where T : View {
+//            object.showModal(id: id, transition: transition, animation: animation, alignment: alignment, backgroundColor: backgroundColor, dismissOnBackgroundTap: dismissOnBackgroundTap, ignoreSafeArea: ignoreSafeArea, destination: destination)
+//    }
+    
+    /// Convenience method for a simple modal appearing over the current Environment in the center of the screen.
+//    public func showBasicModal<T>(@ViewBuilder destination: @escaping () -> T) where T : View {
+//        showModal(
+//            transition: AnyTransition.opacity.animation(.easeInOut),
+//            animation: .easeInOut,
+//            alignment: .center,
+//            backgroundColor: Color.black.opacity(0.4),
+//            ignoreSafeArea: true,
+//            destination: destination)
+//    }
+    
+    public func showModal(modal: AnyModal) {
+        object.showModal(modal: modal)
+    }
+    
+    public func dismissModal() {
+        object.dismissModal()
+    }
 
+//    public func dismissModal(id: String) {
+//        object.dismissModal(id: id)
+//    }
 
     
     

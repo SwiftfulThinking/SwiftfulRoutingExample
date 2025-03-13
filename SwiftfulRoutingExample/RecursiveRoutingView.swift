@@ -61,26 +61,29 @@ struct RecursiveRoutingView: View {
 
             switch viewState {
             case .regular:
-                Section("Segues") {
-                    segueButtons
-                }
-                Section("Multi-Segues") {
-                    multiSegueButtons
-                }
-                Section("Dismiss actions") {
-                    dismissButtons(showAll: true)
-                }
-                Section("Multi-Routers") {
-                    multiRouterButtons
-                }
-                Section("Segue Queue") {
-                    queueButtons
-                }
-                Section("Custom Sheets") {
-                    customSheetButtons
-                }
-                Section("Alerts") {
-                    alertButtons
+//                Section("Segues") {
+//                    segueButtons
+//                }
+//                Section("Multi-Segues") {
+//                    multiSegueButtons
+//                }
+//                Section("Dismiss actions") {
+//                    dismissButtons(showAll: true)
+//                }
+//                Section("Multi-Routers") {
+//                    multiRouterButtons
+//                }
+//                Section("Segue Queue") {
+//                    queueButtons
+//                }
+//                Section("Custom Sheets") {
+//                    customSheetButtons
+//                }
+//                Section("Alerts") {
+//                    alertButtons
+//                }
+                Section("Modals") {
+                    modalButtons
                 }
             case .testingSegues:
                 segueButtons
@@ -681,6 +684,17 @@ struct RecursiveRoutingView: View {
         }
     }
     
+    @ViewBuilder
+    var modalButtons: some View {
+        Button("Modal 1") {
+            let modal = AnyModal {
+                Rectangle()
+                    .fill(Color.blue)
+            }
+            router.showModal(modal: modal)
+        }
+    }
+                                 
 }
 
 #Preview {

@@ -12,6 +12,8 @@
 		024651CC2D7C23B000545A5F /* MultiRouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024651CB2D7C23B000545A5F /* MultiRouterTests.swift */; };
 		024651CE2D7CEB8000545A5F /* SegueQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024651CD2D7CEB7F00545A5F /* SegueQueueTests.swift */; };
 		024651D02D7EB90D00545A5F /* ZoomTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024651CF2D7EB90D00545A5F /* ZoomTesting.swift */; };
+		0268C8D02D829BD00068896D /* AnyModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0268C8CF2D829BD00068896D /* AnyModal.swift */; };
+		0268C8D32D82A2B40068896D /* SwiftfulRecursiveUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0268C8D22D82A2B40068896D /* SwiftfulRecursiveUI */; };
 		027D76642D63C52C00D24A22 /* AnyDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027D76632D63C52C00D24A22 /* AnyDestination.swift */; };
 		027D76662D63C53600D24A22 /* OnFirstAppearModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027D76652D63C53600D24A22 /* OnFirstAppearModifier.swift */; };
 		027D76682D63C54700D24A22 /* SegueOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027D76672D63C54700D24A22 /* SegueOption.swift */; };
@@ -59,6 +61,7 @@
 		024651CB2D7C23B000545A5F /* MultiRouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiRouterTests.swift; sourceTree = "<group>"; };
 		024651CD2D7CEB7F00545A5F /* SegueQueueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegueQueueTests.swift; sourceTree = "<group>"; };
 		024651CF2D7EB90D00545A5F /* ZoomTesting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomTesting.swift; sourceTree = "<group>"; };
+		0268C8CF2D829BD00068896D /* AnyModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyModal.swift; sourceTree = "<group>"; };
 		027D76632D63C52C00D24A22 /* AnyDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyDestination.swift; sourceTree = "<group>"; };
 		027D76652D63C53600D24A22 /* OnFirstAppearModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnFirstAppearModifier.swift; sourceTree = "<group>"; };
 		027D76672D63C54700D24A22 /* SegueOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegueOption.swift; sourceTree = "<group>"; };
@@ -98,6 +101,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0268C8D32D82A2B40068896D /* SwiftfulRecursiveUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -111,6 +115,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0268C8CE2D829BC80068896D /* ModalsNew */ = {
+			isa = PBXGroup;
+			children = (
+				0268C8CF2D829BD00068896D /* AnyModal.swift */,
+			);
+			path = ModalsNew;
+			sourceTree = "<group>";
+		};
 		028A895D281F9228004E3DA4 = {
 			isa = PBXGroup;
 			children = (
@@ -177,6 +189,7 @@
 				027D76652D63C53600D24A22 /* OnFirstAppearModifier.swift */,
 				027D76672D63C54700D24A22 /* SegueOption.swift */,
 				027D76692D63C57A00D24A22 /* AnyDestinationStack.swift */,
+				0268C8CE2D829BC80068896D /* ModalsNew */,
 			);
 			path = Routing;
 			sourceTree = "<group>";
@@ -259,6 +272,7 @@
 			);
 			name = SwiftfulRoutingExample;
 			packageProductDependencies = (
+				0268C8D22D82A2B40068896D /* SwiftfulRecursiveUI */,
 			);
 			productName = SwiftfulRoutingExample;
 			productReference = 028A8966281F9228004E3DA4 /* SwiftfulRoutingExample.app */;
@@ -311,6 +325,7 @@
 			);
 			mainGroup = 028A895D281F9228004E3DA4;
 			packageReferences = (
+				0268C8D12D82A2B40068896D /* XCRemoteSwiftPackageReference "SwiftfulRecursiveUI" */,
 			);
 			productRefGroup = 028A8967281F9228004E3DA4 /* Products */;
 			projectDirPath = "";
@@ -363,6 +378,7 @@
 				027D76642D63C52C00D24A22 /* AnyDestination.swift in Sources */,
 				02CFF1012986C29900E6ABCC /* HomeRouter.swift in Sources */,
 				02CFF0E32986B66F00E6ABCC /* DataService.swift in Sources */,
+				0268C8D02D829BD00068896D /* AnyModal.swift in Sources */,
 				D1A7AEBA2C778380006AF666 /* ContentTransitionView.swift in Sources */,
 				02CFF0F92986BEEE00E6ABCC /* BasicViewModel.swift in Sources */,
 				02CFF0E82986B6F200E6ABCC /* SampleView.swift in Sources */,
@@ -642,6 +658,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		0268C8D12D82A2B40068896D /* XCRemoteSwiftPackageReference "SwiftfulRecursiveUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftfulThinking/SwiftfulRecursiveUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0268C8D22D82A2B40068896D /* SwiftfulRecursiveUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0268C8D12D82A2B40068896D /* XCRemoteSwiftPackageReference "SwiftfulRecursiveUI" */;
+			productName = SwiftfulRecursiveUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 028A895E281F9228004E3DA4 /* Project object */;
 }

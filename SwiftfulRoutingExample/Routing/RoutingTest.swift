@@ -92,6 +92,9 @@ protocol Router {
     
     func showAlert(alert: AnyAlert)
     func dismissAlert()
+    
+    func showModal(modal: AnyModal)
+    func dismissModal()
 }
 
 
@@ -109,6 +112,9 @@ final class RouterViewModel {
     var availableScreenQueue: [AnyDestination] = []
     
     var activeAlert: [String: AnyAlert] = [:] // RouterId : Alert
+    
+    var allModals: [String: [AnyModal]] = [:] // RouterId : [Modals]
+    var activeModals: [String: AnyModal] = [:] // RouterId : ModalId
     
     func insertRootView(view: AnyDestination) {
         activeScreenStacks.insert(AnyDestinationStack(segue: .fullScreenCover(), screens: [view]), at: 0)
@@ -612,6 +618,19 @@ final class RouterViewModel {
     func dismissAlert(routerId: String) {
         self.activeAlert.removeValue(forKey: routerId)
     }
+    
+    func showModal(routerId: String, modal: AnyModal) {
+        if allModals[routerId] == nil {
+            allModals[routerId] = []
+        }
+        
+        allModals[routerId]!.append(modal)
+        activeModals[routerId] = modal
+    }
+    
+    func dismissModal(routerId: String) {
+        
+    }
 }
 
 struct RouterViewInternal<Content: View>: View, Router {
@@ -686,6 +705,17 @@ struct RouterViewInternal<Content: View>: View, Router {
                     viewModel.dismissAlert(routerId: routerId)
                 }
             })))
+        
+            // Add Modals modifier.
+            .overlay(
+                ModalSupportView(
+                    modals: viewModel.allModals[routerId] ?? [],
+                    activeModal: viewModel.activeModals[routerId],
+                    onDismissModal: { modal in
+                        
+                    }
+                )
+            )
         
             // Print screen stack if logging is enabled
             .ifSatisfiesCondition(logger && routerId == RouterViewModel.rootId, transform: { content in
@@ -803,6 +833,14 @@ struct RouterViewInternal<Content: View>: View, Router {
     func dismissAlert() {
         viewModel.dismissAlert(routerId: routerId)
     }
+    
+    func showModal(modal: AnyModal) {
+        viewModel.showModal(routerId: routerId, modal: modal)
+    }
+    
+    func dismissModal() {
+        viewModel.dismissModal(routerId: routerId)
+    }
 }
 
 // 1.
@@ -871,7 +909,9 @@ struct RouterViewInternal<Content: View>: View, Router {
  - alerts - DONE
     - textfield - DONE
  - modals -
- - transitions
+ 
+ 
+ - transitions -
     - preloaded
     - no animation
  - modules
@@ -1225,3 +1265,4 @@ struct AlertViewModifier: ViewModifier {
             )
     }
 }
+
