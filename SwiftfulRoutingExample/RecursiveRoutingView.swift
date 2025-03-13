@@ -79,6 +79,9 @@ struct RecursiveRoutingView: View {
                 Section("Custom Sheets") {
                     customSheetButtons
                 }
+                Section("Alerts") {
+                    alertButtons
+                }
             case .testingSegues:
                 segueButtons
                 dismissButtons()
@@ -613,6 +616,71 @@ struct RecursiveRoutingView: View {
             router.showScreen(destination)
         }
     }
+    
+    @ViewBuilder
+    var alertButtons: some View {
+        Button("Alert 1") {
+            let alert = AnyAlert(style: .alert, title: "Title goes here", subtitle: "Subtitle goes here", buttons: {
+                Button("Alpha", role: .none, action: {
+                    
+                })
+                Button("Beta", role: .destructive, action: {
+                    
+                })
+                Button("Gamma", role: .cancel, action: {
+                    
+                })
+            })
+            router.showAlert(alert: alert)
+        }
+        
+        Button("Alert 2") {
+            router.showAlert(.alert, title: "Title goes here", subtitle: "Subtitle goes here")
+        }
+        
+        Button("Alert (simple)") {
+            router.showSimpleAlert(text: "Hello!", action: nil)
+        }
+        
+        Button("Alert (textfield)") {
+            
+            var textfieldText: String = "" // Note: could also be a @Binding at the top of SwiftUI View
+            
+            let alert = AnyAlert(style: .alert, title: "Title goes here", subtitle: "Subtitle goes here", buttons: {
+                TextField("Enter your name", text: Binding(get: {
+                    textfieldText
+                }, set: { newValue in
+                    textfieldText = newValue
+                }))
+                
+                Button("SUBMIT", action: {
+                    print(textfieldText)
+                })
+            })
+            
+            router.showAlert(alert: alert)
+        }
+        
+        Button("ConfirmationDialog 1") {
+            let alert = AnyAlert(style: .confirmationDialog, title: "Title goes here", subtitle: "Subtitle goes here", buttons: {
+                Button("Alpha", role: .none, action: {
+                    
+                })
+                Button("Beta", role: .destructive, action: {
+                    
+                })
+                Button("Gamma", role: .cancel, action: {
+                    
+                })
+            })
+            router.showAlert(alert: alert)
+        }
+        
+        Button("ConfirmationDialog 2") {
+            router.showAlert(.confirmationDialog, title: "Title goes here", subtitle: "Subtitle goes here")
+        }
+    }
+    
 }
 
 #Preview {

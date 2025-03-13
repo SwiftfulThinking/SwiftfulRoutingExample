@@ -89,6 +89,9 @@ protocol Router {
     func removeScreensFromQueue(ids: [String])
     func clearQueue()
     func showNextScreen() throws
+    
+    func showAlert(alert: AnyAlert)
+    func dismissAlert()
 }
 
 
@@ -97,9 +100,12 @@ protocol Router {
 final class RouterViewModel {
     static let rootId = "root"
 
+    // make these private(set)?
     var activeScreenStacks: [AnyDestinationStack] = [AnyDestinationStack(segue: .push, screens: [])]
     
     var availableScreenQueue: [AnyDestination] = []
+    
+    var activeAlert: AnyAlert? = nil
     
     func insertRootView(view: AnyDestination) {
         activeScreenStacks.insert(AnyDestinationStack(segue: .fullScreenCover(), screens: [view]), at: 0)
@@ -580,6 +586,13 @@ final class RouterViewModel {
         dismissScreens(to: RouterViewModel.rootId, animates: animates)
     }
 
+    func showAlert(alert: AnyAlert) {
+        self.activeAlert = alert // test changing fast
+    }
+    
+    func dismissAlert() {
+        self.activeAlert = nil
+    }
 }
 
 struct RouterViewInternal<Content: View>: View, Router {
@@ -645,6 +658,15 @@ struct RouterViewInternal<Content: View>: View, Router {
                         viewModel.insertRootView(view: view)
                     }
             })
+        
+            // Add Alert modifier.
+            .modifier(AlertViewModifier(alert: Binding(get: {
+                viewModel.activeAlert
+            }, set: { newValue in
+                if newValue == nil {
+                    viewModel.dismissAlert()
+                }
+            })))
         
             // Print screen stack if logging is enabled
             .ifSatisfiesCondition(logger && routerId == RouterViewModel.rootId, transform: { content in
@@ -751,6 +773,14 @@ struct RouterViewInternal<Content: View>: View, Router {
     
     func showNextScreen() throws {
         try viewModel.showNextScreen(routerId: routerId)
+    }
+    
+    func showAlert(alert: AnyAlert) {
+        viewModel.showAlert(alert: alert)
+    }
+    
+    func dismissAlert() {
+        viewModel.dismissAlert()
     }
 }
 
@@ -1031,6 +1061,22 @@ extension Binding where Value == AnyDestination? {
     }
 }
 
+extension Binding where Value == Bool {
+    
+    init(ifAlert alert: Binding<AnyAlert?>, isStyle style: AlertStyle) {
+        self.init(get: {
+            if let alertStyle = alert.wrappedValue?.style, alertStyle == style {
+                return true
+            }
+            return false
+        }, set: { newValue in
+            if newValue == false {
+                alert.wrappedValue = nil
+            }
+        })
+    }
+}
+
 extension Binding where Value == PresentationDetent {
     
     init(selection: Binding<PresentationDetentTransformable>) {
@@ -1103,7 +1149,58 @@ extension Binding where Value == PresentationDetent {
 //            }
 //    }
 //}
+//
+//struct AlertViewModifier: ViewModifier {
+//    
+//    let alert: Binding<AnyAlert?>
+//
+//    func body(content: Content) -> some View {
+//        let value = alert.wrappedValue
+//        
+//        return content
+//            .alert(value?.title ?? "", isPresented: Binding(ifNotNil: Binding(if: option, is: .alert, value: item))) {
+//                item.wrappedValue?.buttons
+//            } message: {
+//                if let subtitle = item.wrappedValue?.subtitle {
+//                    Text(subtitle)
+//                }
+//            }
+//    }
+//}
 
+import Foundation
+import SwiftUI
 
+struct AlertViewModifier: ViewModifier {
+    
+    let alert: Binding<AnyAlert?>
 
-
+    func body(content: Content) -> some View {
+        content
+            .alert(
+                alert.wrappedValue?.title ?? "",
+                isPresented: Binding(ifAlert: alert, isStyle: .alert),
+                actions: {
+                    alert.wrappedValue?.buttons
+                },
+                message: {
+                    if let subtitle = alert.wrappedValue?.subtitle {
+                        Text(subtitle)
+                    }
+                }
+            )
+            .confirmationDialog(
+                alert.wrappedValue?.title ?? "",
+                isPresented: Binding(ifAlert: alert, isStyle: .confirmationDialog),
+                titleVisibility: alert.wrappedValue?.title.isEmpty ?? true ? .hidden : .visible,
+                actions: {
+                    alert.wrappedValue?.buttons
+                },
+                message: {
+                    if let subtitle = alert.wrappedValue?.subtitle {
+                        Text(subtitle)
+                    }
+                }
+            )
+    }
+}

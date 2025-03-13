@@ -61,3 +61,40 @@ struct AnyDestination: Identifiable, Hashable {
     }
     
 }
+
+enum AlertStyle {
+    case alert, confirmationDialog
+}
+
+struct AnyAlert: Identifiable {
+    let id = UUID().uuidString
+    let style: AlertStyle
+    let title: String
+    let subtitle: String?
+    let buttons: AnyView
+    
+    init<T:View>(
+        style: AlertStyle = .alert,
+        title: String,
+        subtitle: String? = nil,
+        @ViewBuilder buttons: () -> T
+    ) {
+        self.style = style
+        self.title = title
+        self.subtitle = subtitle
+        self.buttons = AnyView(buttons())
+    }
+    
+    init(
+        style: AlertStyle = .alert,
+        title: String,
+        subtitle: String? = nil
+    ) {
+        self.style = style
+        self.title = title
+        self.subtitle = subtitle
+        self.buttons = AnyView(
+            Button("OK", action: { })
+        )
+    }
+}
