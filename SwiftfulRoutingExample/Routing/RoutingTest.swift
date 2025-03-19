@@ -645,7 +645,7 @@ final class RouterViewModel {
     }
     
     func dismissModal(routerId: String, modalId: String) {
-        if let index = allModals[routerId]?.firstIndex(where: { $0.id == modalId }) {
+        if let index = allModals[routerId]?.lastIndex(where: { $0.id == modalId && !$0.isRemoved }) {
             // Trigger onDismiss for the modal
             allModals[routerId]?[index].onDismiss?()
             
@@ -663,7 +663,7 @@ final class RouterViewModel {
         // So we call dismissModal(modalId:) with the next screen's routeId
 
         let allModals = allModals[routerId] ?? []
-        if let modalIndex = allModals.firstIndex(where: { $0.id == modalId }) {
+        if let modalIndex = allModals.lastIndex(where: { $0.id == modalId }) {
             // get all modals AFTER modalIndex
             let modalsToDismiss = allModals[(modalIndex + 1)...]
             for modal in modalsToDismiss.reversed() {
@@ -1008,24 +1008,21 @@ struct RouterViewInternal<Content: View>: View, Router {
  - alerts - DONE
     - textfield - DONE
  - modals - DONE
- - modal dismisses -
- - modal tests -
+ - modal dismisses - DONE
+ - modal tests - DONE
+ - modal blur -
  
  - blurs - HOLD
  - Multiple routers should handle same as multiple modals? -
  
  - transitions -
-    - preloaded
-    - no animation
+    - preloaded - HOLD
+    - no animation (identity)
  - modules
  - tabbars
     - on selection
  
  - clean up example project UI
- 
- 
- - LATER
-    - modal blur
  
  */
 
