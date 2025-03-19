@@ -32,6 +32,7 @@ struct AnyModal: Identifiable, Equatable {
     private(set) var animation: Animation
     private(set) var alignment: Alignment
     private(set) var backgroundColor: Color?
+    private(set) var backgroundEffect: BackgroundEffect?
     private(set) var dismissOnBackgroundTap: Bool
     private(set) var ignoreSafeArea: Bool
     private(set) var destination: AnyView
@@ -44,6 +45,7 @@ struct AnyModal: Identifiable, Equatable {
         animation: Animation = .smooth,
         alignment: Alignment = .center,
         backgroundColor: Color? = nil,
+        backgroundEffect: BackgroundEffect? = nil,
         dismissOnBackgroundTap: Bool = true,
         ignoreSafeArea: Bool = true,
         destination: @escaping () -> T,
@@ -54,12 +56,17 @@ struct AnyModal: Identifiable, Equatable {
         self.animation = animation
         self.alignment = alignment
         self.backgroundColor = backgroundColor
+        self.backgroundEffect = backgroundEffect
         self.dismissOnBackgroundTap = dismissOnBackgroundTap
         self.ignoreSafeArea = ignoreSafeArea
         self.destination = AnyView(
             destination()
         )
         self.onDismiss = onDismiss
+    }
+    
+    var hasBackgroundLayer: Bool {
+        backgroundColor != nil || backgroundEffect != nil
     }
     
     public func hash(into hasher: inout Hasher) {
@@ -73,9 +80,10 @@ struct AnyModal: Identifiable, Equatable {
     mutating func convertToEmptyRemovedModal() {
         id = "removed_\(id)"
         backgroundColor = nil
+        backgroundEffect = nil
         dismissOnBackgroundTap = false
         destination = AnyView(
-            EmptyView()
+            EmptyView().allowsHitTesting(false)
         )
         onDismiss = nil
         isRemoved = true
@@ -127,6 +135,10 @@ import SwiftfulRecursiveUI
 
 struct ModalSupportView: View {
     
+    static let backgroundAnimationDuration: Double = 0.3
+    static let backgroundAnimationCurve: Animation = .easeInOut
+    static let backgroundAnimation: Animation = .easeInOut(duration: 0.3)
+
     let modals: [AnyModal]
     let onDismissModal: (AnyModal) -> Void
 
@@ -142,20 +154,27 @@ struct ModalSupportView: View {
                             .transition(modal.transition.animation(modal.animation))
                             .zIndex(dataIndex + 2)
                     } else {
-                        if let backgroundColor = modal.backgroundColor {
-                            backgroundColor
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .ignoresSafeArea()
-                                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.3)))
-                                
-                                // Only add backgound tap gesture if needed
-                                .ifSatisfiesCondition(modal.dismissOnBackgroundTap, transform: { content in
-                                    content
-                                        .onTapGesture {
-                                            onDismissModal(modal)
-                                        }
-                                })
-                                .zIndex(dataIndex + 1)
+                        if modal.hasBackgroundLayer {
+                            Group {
+                                if let backgroundColor = modal.backgroundColor {
+                                    backgroundColor
+                                }
+                                if let backgroundEffect = modal.backgroundEffect {
+                                    UIIntensityVisualEffectViewRepresentable(effect: backgroundEffect.effect, intensity: backgroundEffect.intensity)
+                                }
+                            }
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .ignoresSafeArea()
+                            .transition(AnyTransition.opacity.animation(ModalSupportView.backgroundAnimation))
+                            
+                            // Only add backgound tap gesture if needed
+                            .ifSatisfiesCondition(modal.dismissOnBackgroundTap, transform: { content in
+                                content
+                                    .onTapGesture {
+                                        onDismissModal(modal)
+                                    }
+                            })
+                            .zIndex(dataIndex + 1)
                         } else {
                             EmptyView()
                         }
@@ -177,6 +196,9 @@ struct ModalSupportView: View {
 //        })
     }
 
+//    private var someBlur: some View {
+//
+//    }
 }
 
 fileprivate extension View {

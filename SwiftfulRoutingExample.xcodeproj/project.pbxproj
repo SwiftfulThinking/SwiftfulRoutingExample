@@ -12,6 +12,7 @@
 		024651CC2D7C23B000545A5F /* MultiRouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024651CB2D7C23B000545A5F /* MultiRouterTests.swift */; };
 		024651CE2D7CEB8000545A5F /* SegueQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024651CD2D7CEB7F00545A5F /* SegueQueueTests.swift */; };
 		024651D02D7EB90D00545A5F /* ZoomTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024651CF2D7EB90D00545A5F /* ZoomTesting.swift */; };
+		02661C052D8A70150067BFA5 /* VisualEffectViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661C042D8A70150067BFA5 /* VisualEffectViewRepresentable.swift */; };
 		026776522D895408009476E7 /* ModalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026776512D895408009476E7 /* ModalTests.swift */; };
 		0268C8D02D829BD00068896D /* AnyModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0268C8CF2D829BD00068896D /* AnyModal.swift */; };
 		0268C8D32D82A2B40068896D /* SwiftfulRecursiveUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0268C8D22D82A2B40068896D /* SwiftfulRecursiveUI */; };
@@ -62,6 +63,7 @@
 		024651CB2D7C23B000545A5F /* MultiRouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiRouterTests.swift; sourceTree = "<group>"; };
 		024651CD2D7CEB7F00545A5F /* SegueQueueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegueQueueTests.swift; sourceTree = "<group>"; };
 		024651CF2D7EB90D00545A5F /* ZoomTesting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomTesting.swift; sourceTree = "<group>"; };
+		02661C042D8A70150067BFA5 /* VisualEffectViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffectViewRepresentable.swift; sourceTree = "<group>"; };
 		026776512D895408009476E7 /* ModalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalTests.swift; sourceTree = "<group>"; };
 		0268C8CF2D829BD00068896D /* AnyModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyModal.swift; sourceTree = "<group>"; };
 		027D76632D63C52C00D24A22 /* AnyDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyDestination.swift; sourceTree = "<group>"; };
@@ -121,6 +123,7 @@
 			isa = PBXGroup;
 			children = (
 				0268C8CF2D829BD00068896D /* AnyModal.swift */,
+				02661C042D8A70150067BFA5 /* VisualEffectViewRepresentable.swift */,
 			);
 			path = ModalsNew;
 			sourceTree = "<group>";
@@ -386,6 +389,7 @@
 				02CFF0F92986BEEE00E6ABCC /* BasicViewModel.swift in Sources */,
 				02CFF0E82986B6F200E6ABCC /* SampleView.swift in Sources */,
 				02C673CA2D7803D7001C1A62 /* RecursiveRoutingView.swift in Sources */,
+				02661C052D8A70150067BFA5 /* VisualEffectViewRepresentable.swift in Sources */,
 				02CFF0FD2986BFE200E6ABCC /* BasicViewModelDelegate.swift in Sources */,
 				028A896A281F9228004E3DA4 /* SwiftfulRoutingExampleApp.swift in Sources */,
 				02CFF0F42986BE2F00E6ABCC /* HomePresenter.swift in Sources */,

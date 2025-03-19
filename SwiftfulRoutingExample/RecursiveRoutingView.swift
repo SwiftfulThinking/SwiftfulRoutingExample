@@ -771,12 +771,13 @@ struct RecursiveRoutingView: View {
         .accessibilityIdentifier("Button_Modal3")
 
         if viewState != .testingModals {
-            Button("Modal: bottom (ex. 2)") {
+            Button("Modal: bottom (ex. 2) (bg color + blur)") {
                 let modal = AnyModal(
                     transition: .move(edge: .bottom),
                     animation: .spring(),
                     alignment: .center,
                     backgroundColor: Color.orange.opacity(0.4),
+                    backgroundEffect: BackgroundEffect(effect: UIBlurEffect(style: .systemMaterialDark), intensity: 0.1),
                     dismissOnBackgroundTap: true,
                     ignoreSafeArea: true,
                     destination: {
