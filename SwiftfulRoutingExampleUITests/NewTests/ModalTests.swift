@@ -69,11 +69,11 @@ final class ModalTests: XCTestCase {
     func test_dismissModal_id_underTop() {
         tapElement(name: "DismissModalId1_under")
         assertModalExists(name: "1")
-        assertModalExists(name: "2")
+        assertModalExists(name: "3")
 
         sleep(3)
         assertModalDoesntExist(name: "1")
-        assertModalExists(name: "2")
+        assertModalExists(name: "3")
     }
     
     func test_dismissModal_count() {

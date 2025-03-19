@@ -635,7 +635,7 @@ final class RouterViewModel {
     }
     
     func dismissLastModal(onRouterId routerId: String) {
-        let allModals = allModals[routerId] ?? []
+        let allModals = (allModals[routerId] ?? []).filter({ !$0.isRemoved })
         if let lastModal = allModals.last {
             dismissModal(routerId: routerId, modalId: lastModal.id)
             return
@@ -650,7 +650,8 @@ final class RouterViewModel {
             allModals[routerId]?[index].onDismiss?()
             
             // Dismiss the modal UI
-            allModals[routerId]?.remove(at: index)
+            allModals[routerId]?[index].convertToEmptyRemovedModal()
+//            allModals[routerId]?.remove(at: index)
             return
         }
         
@@ -666,7 +667,9 @@ final class RouterViewModel {
             // get all modals AFTER modalIndex
             let modalsToDismiss = allModals[(modalIndex + 1)...]
             for modal in modalsToDismiss.reversed() {
-                dismissModal(routerId: routerId, modalId: modal.id)
+                if !modal.isRemoved {
+                    dismissModal(routerId: routerId, modalId: modal.id)
+                }
             }
         }
     }
@@ -676,8 +679,10 @@ final class RouterViewModel {
         
         var counter: Int = 0
         for modal in allModalsReversed {
-            counter += 1
-            dismissModal(routerId: routerId, modalId: modal.id)
+            if !modal.isRemoved {
+                counter += 1
+                dismissModal(routerId: routerId, modalId: modal.id)
+            }
 
             if counter == count {
                 return
@@ -689,7 +694,9 @@ final class RouterViewModel {
         let allModalsReversed = (allModals[routerId] ?? []).reversed()
         
         for modal in allModalsReversed {
-            dismissModal(routerId: routerId, modalId: modal.id)
+            if !modal.isRemoved {
+                dismissModal(routerId: routerId, modalId: modal.id)
+            }
         }
     }
 }

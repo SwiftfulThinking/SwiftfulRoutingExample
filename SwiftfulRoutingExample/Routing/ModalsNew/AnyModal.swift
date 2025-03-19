@@ -27,15 +27,16 @@ import SwiftUI
 //}
 
 struct AnyModal: Identifiable, Equatable {
-    let id: String
-    let transition: AnyTransition
-    let animation: Animation
-    let alignment: Alignment
-    let backgroundColor: Color?
-    let dismissOnBackgroundTap: Bool
-    let ignoreSafeArea: Bool
+    private(set) var id: String
+    private(set) var transition: AnyTransition
+    private(set) var animation: Animation
+    private(set) var alignment: Alignment
+    private(set) var backgroundColor: Color?
+    private(set) var dismissOnBackgroundTap: Bool
+    private(set) var ignoreSafeArea: Bool
     private(set) var destination: AnyView
-    let onDismiss: (() -> Void)?
+    private(set) var onDismiss: (() -> Void)?
+    private(set) var isRemoved: Bool = false
     
     init<T:View>(
         id: String = UUID().uuidString,
@@ -67,6 +68,17 @@ struct AnyModal: Identifiable, Equatable {
     
     public static func == (lhs: AnyModal, rhs: AnyModal) -> Bool {
         lhs.id == rhs.id
+    }
+    
+    mutating func convertToEmptyRemovedModal() {
+        id = "removed_\(id)"
+        backgroundColor = nil
+        dismissOnBackgroundTap = false
+        destination = AnyView(
+            EmptyView()
+        )
+        onDismiss = nil
+        isRemoved = true
     }
 }
 
@@ -116,7 +128,6 @@ import SwiftfulRecursiveUI
 struct ModalSupportView: View {
     
     let modals: [AnyModal]
-//    let activeModal: AnyModal?
     let onDismissModal: (AnyModal) -> Void
 
     var body: some View {

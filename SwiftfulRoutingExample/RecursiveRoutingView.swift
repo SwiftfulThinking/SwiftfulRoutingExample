@@ -694,7 +694,7 @@ struct RecursiveRoutingView: View {
     }
     
     private func modalView(id: String = UUID().uuidString, width: CGFloat? = 275, height: CGFloat? = 450) -> some View {
-        Text("Tap to dismiss")
+        Text("Tap to dismiss \(id)")
             .frame(maxWidth: width == nil ? .infinity : nil, maxHeight: height == nil ? .infinity : nil)
             .frame(width: width, height: height)
             .background(Color.blue)
@@ -770,81 +770,83 @@ struct RecursiveRoutingView: View {
         }
         .accessibilityIdentifier("Button_Modal3")
 
-        Button("Modal: bottom (ex. 2)") {
-            let modal = AnyModal(
-                transition: .move(edge: .bottom),
-                animation: .spring(),
-                alignment: .center,
-                backgroundColor: Color.orange.opacity(0.4),
-                dismissOnBackgroundTap: true,
-                ignoreSafeArea: true,
-                destination: {
-                    modalView(width: 300, height: 400)
-                }
-            )
-            router.showModal(modal: modal)
-        }
-        
-        Button("Modal: top (ex. 1)") {
-            let modal = AnyModal(
-                transition: .move(edge: .top),
-                animation: .easeInOut,
-                alignment: .top,
-                backgroundColor: nil,
-                dismissOnBackgroundTap: true,
-                ignoreSafeArea: true,
-                destination: {
-                    modalView(width: nil, height: 100)
-                }
-            )
-            router.showModal(modal: modal)
-        }
-        
-        Button("Modal: top (ex. 2)") {
-            let modal = AnyModal(
-                transition: .move(edge: .top),
-                animation: .easeInOut,
-                alignment: .top,
-                backgroundColor: nil,
-                dismissOnBackgroundTap: true,
-                ignoreSafeArea: false,
-                destination: {
-                    modalView(width: nil, height: 150)
-                        .padding(24)
-                }
-            )
-            router.showModal(modal: modal)
-        }
-        
-        Button("Modal: leading (ex. 1)") {
-            let modal = AnyModal(
-                transition: .move(edge: .leading),
-                animation: .smooth,
-                alignment: .leading,
-                backgroundColor: Color.black.opacity(0.35),
-                dismissOnBackgroundTap: true,
-                ignoreSafeArea: true,
-                destination: {
-                    modalView(width: 200, height: nil)
-                }
-            )
-            router.showModal(modal: modal)
-        }
-        
-        Button("Modal: trailing (ex. 1)") {
-            let modal = AnyModal(
-                transition: .move(edge: .trailing),
-                animation: .smooth,
-                alignment: .leading,
-                backgroundColor: Color.black.opacity(0.35),
-                dismissOnBackgroundTap: true,
-                ignoreSafeArea: false,
-                destination: {
-                    modalView(width: nil, height: nil)
-                        .padding(24)
-                }
-            )
-            router.showModal(modal: modal)
+        if viewState != .testingModals {
+            Button("Modal: bottom (ex. 2)") {
+                let modal = AnyModal(
+                    transition: .move(edge: .bottom),
+                    animation: .spring(),
+                    alignment: .center,
+                    backgroundColor: Color.orange.opacity(0.4),
+                    dismissOnBackgroundTap: true,
+                    ignoreSafeArea: true,
+                    destination: {
+                        modalView(width: 300, height: 400)
+                    }
+                )
+                router.showModal(modal: modal)
+            }
+            
+            Button("Modal: top (ex. 1)") {
+                let modal = AnyModal(
+                    transition: .move(edge: .top),
+                    animation: .easeInOut,
+                    alignment: .top,
+                    backgroundColor: nil,
+                    dismissOnBackgroundTap: true,
+                    ignoreSafeArea: true,
+                    destination: {
+                        modalView(width: nil, height: 200)
+                    }
+                )
+                router.showModal(modal: modal)
+            }
+            
+            Button("Modal: top (ex. 2)") {
+                let modal = AnyModal(
+                    transition: .move(edge: .top),
+                    animation: .easeInOut,
+                    alignment: .top,
+                    backgroundColor: nil,
+                    dismissOnBackgroundTap: true,
+                    ignoreSafeArea: false,
+                    destination: {
+                        modalView(width: nil, height: 150)
+                            .padding(24)
+                    }
+                )
+                router.showModal(modal: modal)
+            }
+            
+            Button("Modal: leading (ex. 1)") {
+                let modal = AnyModal(
+                    transition: .move(edge: .leading),
+                    animation: .smooth,
+                    alignment: .leading,
+                    backgroundColor: Color.black.opacity(0.35),
+                    dismissOnBackgroundTap: true,
+                    ignoreSafeArea: true,
+                    destination: {
+                        modalView(width: 200, height: nil)
+                    }
+                )
+                router.showModal(modal: modal)
+            }
+            
+            Button("Modal: trailing (ex. 1)") {
+                let modal = AnyModal(
+                    transition: .move(edge: .trailing),
+                    animation: .smooth,
+                    alignment: .leading,
+                    backgroundColor: Color.black.opacity(0.35),
+                    dismissOnBackgroundTap: true,
+                    ignoreSafeArea: false,
+                    destination: {
+                        modalView(width: nil, height: nil)
+                            .padding(24)
+                    }
+                )
+                router.showModal(modal: modal)
+            }
         }
                 
         Button("2 modals (layered)") {
