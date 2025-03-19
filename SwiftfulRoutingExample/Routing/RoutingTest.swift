@@ -95,6 +95,11 @@ protocol Router {
     
     func showModal(modal: AnyModal)
     func dismissModal()
+    func dismissModal(id: String)
+    func dismissModals(upToModalId: String)
+    func dismissModals(count: Int)
+    
+    func dismissAllModals()
 }
 
 
@@ -104,7 +109,8 @@ final class RouterViewModel {
     static let rootId = "root"
 
     // make these private(set)?
-    // throw errors on dismiss?
+    // throw errors on dismiss not there?
+    // better printing
     
     
     var activeScreenStacks: [AnyDestinationStack] = [AnyDestinationStack(segue: .push, screens: [])]
@@ -628,8 +634,63 @@ final class RouterViewModel {
         activeModals[routerId] = modal
     }
     
-    func dismissModal(routerId: String) {
+    func dismissLastModal(onRouterId routerId: String) {
+        let allModals = allModals[routerId] ?? []
+        if let lastModal = allModals.last {
+            dismissModal(routerId: routerId, modalId: lastModal.id)
+            return
+        }
         
+        print("🚨 1 There are no modals to dismiss in the active view heirarchy.")
+    }
+    
+    func dismissModal(routerId: String, modalId: String) {
+        if let index = allModals[routerId]?.firstIndex(where: { $0.id == modalId }) {
+            // Trigger onDismiss for the modal
+            allModals[routerId]?[index].onDismiss?()
+            
+            // Dismiss the modal UI
+            allModals[routerId]?.remove(at: index)
+            return
+        }
+        
+        print("🚨 Modal to dismiss not found.")
+    }
+    
+    func dismissModals(routerId: String, to modalId: String) {
+        // The parameter modalId should be the remaining modal after dismissing all modals in front of it
+        // So we call dismissModal(modalId:) with the next screen's routeId
+
+        let allModals = allModals[routerId] ?? []
+        if let modalIndex = allModals.firstIndex(where: { $0.id == modalId }) {
+            // get all modals AFTER modalIndex
+            let modalsToDismiss = allModals[(modalIndex + 1)...]
+            for modal in modalsToDismiss.reversed() {
+                dismissModal(routerId: routerId, modalId: modal.id)
+            }
+        }
+    }
+    
+    func dismissModals(routerId: String, count: Int) {
+        let allModalsReversed = (allModals[routerId] ?? []).reversed()
+        
+        var counter: Int = 0
+        for modal in allModalsReversed {
+            counter += 1
+            dismissModal(routerId: routerId, modalId: modal.id)
+
+            if counter == count {
+                return
+            }
+        }
+    }
+    
+    func dismissAllModals(routerId: String) {
+        let allModalsReversed = (allModals[routerId] ?? []).reversed()
+        
+        for modal in allModalsReversed {
+            dismissModal(routerId: routerId, modalId: modal.id)
+        }
     }
 }
 
@@ -710,9 +771,9 @@ struct RouterViewInternal<Content: View>: View, Router {
             .overlay(
                 ModalSupportView(
                     modals: viewModel.allModals[routerId] ?? [],
-                    activeModal: viewModel.activeModals[routerId],
+//                    activeModal: viewModel.activeModals[routerId],
                     onDismissModal: { modal in
-                        
+                        viewModel.dismissModal(routerId: routerId, modalId: modal.id)
                     }
                 )
             )
@@ -726,7 +787,22 @@ struct RouterViewInternal<Content: View>: View, Router {
                     .onChange(of: viewModel.availableScreenQueue) { oldValue, newValue in
                         printScreenStack(screenStack: nil, screenQueue: newValue)
                     }
+                    .onChange(of: viewModel.allModals[routerId] ?? []) { oldValue, newValue in
+                        printModalStack(modals: newValue)
+                    }
             })
+    }
+    
+    private func printModalStack(modals: [AnyModal]) {
+        if !modals.isEmpty {
+            print("🕊️ SwiftfulRouting Modal Stack 🕊️")
+
+            for modal in modals {
+                print("modal \(modal.id)")
+            }
+            
+            print("\n")
+        }
     }
     
     private func printScreenStack(screenStack: [AnyDestinationStack]?, screenQueue: [AnyDestination]?) {
@@ -839,7 +915,23 @@ struct RouterViewInternal<Content: View>: View, Router {
     }
     
     func dismissModal() {
-        viewModel.dismissModal(routerId: routerId)
+        viewModel.dismissLastModal(onRouterId: routerId)
+    }
+    
+    func dismissModal(id: String) {
+        viewModel.dismissModal(routerId: routerId, modalId: id)
+    }
+    
+    func dismissModals(upToModalId: String) {
+        viewModel.dismissModals(routerId: routerId, to: upToModalId)
+    }
+    
+    func dismissModals(count: Int) {
+        viewModel.dismissModals(routerId: routerId, count: count)
+    }
+    
+    func dismissAllModals() {
+        viewModel.dismissAllModals(routerId: routerId)
     }
 }
 
@@ -908,8 +1000,12 @@ struct RouterViewInternal<Content: View>: View, Router {
  - tests - DONE
  - alerts - DONE
     - textfield - DONE
- - modals -
+ - modals - DONE
+ - modal dismisses -
+ - modal tests -
  
+ - blurs - HOLD
+ - Multiple routers should handle same as multiple modals? -
  
  - transitions -
     - preloaded
@@ -919,6 +1015,10 @@ struct RouterViewInternal<Content: View>: View, Router {
     - on selection
  
  - clean up example project UI
+ 
+ 
+ - LATER
+    - modal blur
  
  */
 

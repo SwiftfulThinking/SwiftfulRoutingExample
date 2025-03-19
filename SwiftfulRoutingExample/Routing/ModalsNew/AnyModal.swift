@@ -26,7 +26,7 @@ import SwiftUI
 //    )
 //}
 
-struct AnyModal: Identifiable {
+struct AnyModal: Identifiable, Equatable {
     let id: String
     let transition: AnyTransition
     let animation: Animation
@@ -59,6 +59,14 @@ struct AnyModal: Identifiable {
             destination()
         )
         self.onDismiss = onDismiss
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
+    public static func == (lhs: AnyModal, rhs: AnyModal) -> Bool {
+        lhs.id == rhs.id
     }
 }
 
@@ -108,26 +116,26 @@ import SwiftfulRecursiveUI
 struct ModalSupportView: View {
     
     let modals: [AnyModal]
-    let activeModal: AnyModal?
+//    let activeModal: AnyModal?
     let onDismissModal: (AnyModal) -> Void
 
     var body: some View {
         ZStack {
-            LazyZStack(allowSimultaneous: true, selection: activeModal, items: modals) { (modal: AnyModal) in
+            LazyZStack(allowSimultaneous: true, selection: nil, items: modals) { (modal: AnyModal) in
                 let dataIndex: Double = Double(modals.firstIndex(where: { $0.id == modal.id }) ?? 99)
                 
                 return LazyZStack(allowSimultaneous: true, selection: true) { (showView1: Bool) in
                     if showView1 {
                         modal.destination
                             .modalFrame(ignoreSafeArea: modal.ignoreSafeArea, alignment: modal.alignment)
-                            .transition(modal.transition)
+                            .transition(modal.transition.animation(modal.animation))
                             .zIndex(dataIndex + 2)
                     } else {
                         if let backgroundColor = modal.backgroundColor {
                             backgroundColor
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                .edgesIgnoringSafeArea(.all)
-                                .transition(AnyTransition.opacity.animation(.easeInOut))
+                                .ignoresSafeArea()
+                                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.3)))
                                 
                                 // Only add backgound tap gesture if needed
                                 .ifSatisfiesCondition(modal.dismissOnBackgroundTap, transform: { content in
@@ -143,7 +151,7 @@ struct ModalSupportView: View {
                     }
                 }
             }
-            .animation(modals.last?.animation ?? .default, value: (activeModal?.id ?? "") + "\(modals.count)")
+            .animation(modals.last?.animation ?? .default, value: (modals.last?.id ?? "") + "\(modals.count)")
         }
 //        .onFirstAppear {
 //            activeModal = modals.last

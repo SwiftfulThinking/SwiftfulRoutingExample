@@ -30,6 +30,7 @@ struct RecursiveRoutingView: View {
         case testingDismissing
         case testingMultiRouters
         case testingSegueQueue
+        case testingModals
     }
     
     var viewState: ViewState {
@@ -45,6 +46,8 @@ struct RecursiveRoutingView: View {
                 return .testingMultiRouters
             } else if arguments.contains("SEGUEQUEUE") {
                 return .testingSegueQueue
+            } else if arguments.contains("MODALS") {
+                return .testingModals
             }
         }
         
@@ -85,6 +88,12 @@ struct RecursiveRoutingView: View {
                 Section("Modals") {
                     modalButtons
                 }
+                Section("Dismiss modal actions") {
+                    dismissModalButtons
+                }
+            case .testingModals:
+                modalButtons
+                dismissModalButtons
             case .testingSegues:
                 segueButtons
                 dismissButtons()
@@ -684,15 +693,260 @@ struct RecursiveRoutingView: View {
         }
     }
     
+    private func modalView(id: String = UUID().uuidString, width: CGFloat? = 275, height: CGFloat? = 450) -> some View {
+        Text("Tap to dismiss")
+            .frame(maxWidth: width == nil ? .infinity : nil, maxHeight: height == nil ? .infinity : nil)
+            .frame(width: width, height: height)
+            .background(Color.blue)
+            .cornerRadius(10)
+            .onTapGesture {
+                router.dismissModal()
+            }
+            .accessibilityIdentifier("Modal_\(id)")
+    }
+    
+    private func triggerModal1() {
+        let modal = AnyModal(
+            id: "modal_1",
+            transition: .opacity,
+            animation: .smooth(duration: 0.3),
+            alignment: .center,
+            backgroundColor: Color.black.opacity(0.4),
+            dismissOnBackgroundTap: true,
+            ignoreSafeArea: true,
+            destination: {
+                modalView(id: "1")
+            }
+        )
+        router.showModal(modal: modal)
+    }
+    
+    private func triggerModal2() {
+        let modal = AnyModal(
+            id: "modal_2",
+            transition: .scale,
+            animation: .smooth(duration: 0.7),
+            alignment: .center,
+            backgroundColor: nil,
+            dismissOnBackgroundTap: false,
+            ignoreSafeArea: false, // Note: scale doesn't work well if this is true
+            destination: {
+                modalView(id: "2")
+            }
+        )
+        router.showModal(modal: modal)
+    }
+    
+    private func triggerModal3() {
+        let modal = AnyModal(
+            id: "modal_3",
+            transition: .move(edge: .bottom),
+            animation: .smooth(duration: 0.7),
+            alignment: .bottom,
+            backgroundColor: Color.orange.opacity(0.4),
+            dismissOnBackgroundTap: true,
+            ignoreSafeArea: true,
+            destination: {
+                modalView(id: "3", width: nil, height: 400)
+            }
+        )
+        router.showModal(modal: modal)
+    }
+    
     @ViewBuilder
     var modalButtons: some View {
-        Button("Modal 1") {
-            let modal = AnyModal {
-                Rectangle()
-                    .fill(Color.blue)
-            }
+        Button("Modal: opacity, center, background") {
+            triggerModal1()
+        }
+        .accessibilityIdentifier("Button_Modal1")
+        
+        Button("Modal: scale, center, no background") {
+            triggerModal2()
+        }
+        .accessibilityIdentifier("Button_Modal2")
+
+        Button("Modal: bottom (ex. 1)") {
+            triggerModal3()
+        }
+        .accessibilityIdentifier("Button_Modal3")
+
+        Button("Modal: bottom (ex. 2)") {
+            let modal = AnyModal(
+                transition: .move(edge: .bottom),
+                animation: .spring(),
+                alignment: .center,
+                backgroundColor: Color.orange.opacity(0.4),
+                dismissOnBackgroundTap: true,
+                ignoreSafeArea: true,
+                destination: {
+                    modalView(width: 300, height: 400)
+                }
+            )
             router.showModal(modal: modal)
         }
+        
+        Button("Modal: top (ex. 1)") {
+            let modal = AnyModal(
+                transition: .move(edge: .top),
+                animation: .easeInOut,
+                alignment: .top,
+                backgroundColor: nil,
+                dismissOnBackgroundTap: true,
+                ignoreSafeArea: true,
+                destination: {
+                    modalView(width: nil, height: 100)
+                }
+            )
+            router.showModal(modal: modal)
+        }
+        
+        Button("Modal: top (ex. 2)") {
+            let modal = AnyModal(
+                transition: .move(edge: .top),
+                animation: .easeInOut,
+                alignment: .top,
+                backgroundColor: nil,
+                dismissOnBackgroundTap: true,
+                ignoreSafeArea: false,
+                destination: {
+                    modalView(width: nil, height: 150)
+                        .padding(24)
+                }
+            )
+            router.showModal(modal: modal)
+        }
+        
+        Button("Modal: leading (ex. 1)") {
+            let modal = AnyModal(
+                transition: .move(edge: .leading),
+                animation: .smooth,
+                alignment: .leading,
+                backgroundColor: Color.black.opacity(0.35),
+                dismissOnBackgroundTap: true,
+                ignoreSafeArea: true,
+                destination: {
+                    modalView(width: 200, height: nil)
+                }
+            )
+            router.showModal(modal: modal)
+        }
+        
+        Button("Modal: trailing (ex. 1)") {
+            let modal = AnyModal(
+                transition: .move(edge: .trailing),
+                animation: .smooth,
+                alignment: .leading,
+                backgroundColor: Color.black.opacity(0.35),
+                dismissOnBackgroundTap: true,
+                ignoreSafeArea: false,
+                destination: {
+                    modalView(width: nil, height: nil)
+                        .padding(24)
+                }
+            )
+            router.showModal(modal: modal)
+        }
+                
+        Button("2 modals (layered)") {
+            let modal1 = AnyModal(
+                transition: AnyTransition.move(edge: .leading).animation(.easeInOut),
+                backgroundColor: Color.blue.opacity(0.7),
+                ignoreSafeArea: false,
+                destination: {
+                    Text("Sample")
+                        .frame(width: 275, height: 450)
+                        .background(Color.blue)
+                        .cornerRadius(10)
+                        .offset(x: -100)
+                        .onTapGesture {
+                            router.dismissModal()
+                        }
+                        .accessibilityIdentifier("Modal_Alpha")
+                }
+            )
+            
+            let modal2 = AnyModal(
+                transition: AnyTransition.move(edge: .trailing).animation(.easeInOut),
+                backgroundColor: Color.red.opacity(0.7),
+                ignoreSafeArea: false,
+                destination: {
+                    Text("Sample2")
+                        .frame(width: 275, height: 450)
+                        .background(Color.red)
+                        .cornerRadius(10)
+                        .offset(x: 100)
+                        .onTapGesture {
+                            router.dismissModal()
+                        }
+                        .accessibilityIdentifier("Modal_Beta")
+                }
+            )
+            
+            // Note: the background of the 2nd modal should be above the background of 1st modal
+            router.showModals(modals: [modal1, modal2])
+        }
+        .accessibilityIdentifier("Button_2Modals")
+
+    }
+    
+    @ViewBuilder
+    var dismissModalButtons: some View {
+        Button("Dismiss") {
+            router.dismissModal()
+        }
+        .accessibilityIdentifier("Button_DismissModal")
+
+        Button("Dismiss modal_1") {
+            Task {
+                triggerModal1()
+                try? await Task.sleep(for: .seconds(2))
+                router.dismissModal(id: "modal_1")
+            }
+        }
+        .accessibilityIdentifier("Button_DismissModalId1")
+
+        Button("Dismiss modal_1 (2)") {
+            Task {
+                triggerModal1()
+                triggerModal3()
+                try? await Task.sleep(for: .seconds(2))
+                router.dismissModal(id: "modal_1")
+            }
+        }
+        .accessibilityIdentifier("Button_DismissModalId1_under")
+
+        Button("Dismiss to 2 modals") {
+            Task {
+                triggerModal1()
+                triggerModal2()
+                triggerModal3()
+                try? await Task.sleep(for: .seconds(2))
+                router.dismissModals(count: 2)
+            }
+        }
+        .accessibilityIdentifier("Button_Dismiss2Modals")
+        
+        Button("Dismiss up to modal_1") {
+            Task {
+                triggerModal1()
+                triggerModal2()
+                triggerModal3()
+                try? await Task.sleep(for: .seconds(2))
+                router.dismissModals(upToModalId: "modal_1")
+            }
+        }
+        .accessibilityIdentifier("Button_DismissModalsUpTo1")
+
+        Button("Dismiss all modals") {
+            Task {
+                triggerModal1()
+                triggerModal2()
+                triggerModal3()
+                try? await Task.sleep(for: .seconds(2))
+                router.dismissAllModals()
+            }
+        }
+        .accessibilityIdentifier("Button_DismissAllModals")
     }
                                  
 }

@@ -12,6 +12,7 @@
 		024651CC2D7C23B000545A5F /* MultiRouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024651CB2D7C23B000545A5F /* MultiRouterTests.swift */; };
 		024651CE2D7CEB8000545A5F /* SegueQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024651CD2D7CEB7F00545A5F /* SegueQueueTests.swift */; };
 		024651D02D7EB90D00545A5F /* ZoomTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024651CF2D7EB90D00545A5F /* ZoomTesting.swift */; };
+		026776522D895408009476E7 /* ModalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026776512D895408009476E7 /* ModalTests.swift */; };
 		0268C8D02D829BD00068896D /* AnyModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0268C8CF2D829BD00068896D /* AnyModal.swift */; };
 		0268C8D32D82A2B40068896D /* SwiftfulRecursiveUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0268C8D22D82A2B40068896D /* SwiftfulRecursiveUI */; };
 		027D76642D63C52C00D24A22 /* AnyDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027D76632D63C52C00D24A22 /* AnyDestination.swift */; };
@@ -61,6 +62,7 @@
 		024651CB2D7C23B000545A5F /* MultiRouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiRouterTests.swift; sourceTree = "<group>"; };
 		024651CD2D7CEB7F00545A5F /* SegueQueueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegueQueueTests.swift; sourceTree = "<group>"; };
 		024651CF2D7EB90D00545A5F /* ZoomTesting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomTesting.swift; sourceTree = "<group>"; };
+		026776512D895408009476E7 /* ModalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalTests.swift; sourceTree = "<group>"; };
 		0268C8CF2D829BD00068896D /* AnyModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyModal.swift; sourceTree = "<group>"; };
 		027D76632D63C52C00D24A22 /* AnyDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyDestination.swift; sourceTree = "<group>"; };
 		027D76652D63C53600D24A22 /* OnFirstAppearModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnFirstAppearModifier.swift; sourceTree = "<group>"; };
@@ -202,6 +204,7 @@
 				024651C92D7BFA7E00545A5F /* DismissTests.swift */,
 				024651CB2D7C23B000545A5F /* MultiRouterTests.swift */,
 				024651CD2D7CEB7F00545A5F /* SegueQueueTests.swift */,
+				026776512D895408009476E7 /* ModalTests.swift */,
 			);
 			path = NewTests;
 			sourceTree = "<group>";
@@ -398,6 +401,7 @@
 				024651CA2D7BFA7E00545A5F /* DismissTests.swift in Sources */,
 				024651CE2D7CEB8000545A5F /* SegueQueueTests.swift in Sources */,
 				028A8981281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.swift in Sources */,
+				026776522D895408009476E7 /* ModalTests.swift in Sources */,
 				024651CC2D7C23B000545A5F /* MultiRouterTests.swift in Sources */,
 				02C673CC2D797784001C1A62 /* MultiSegueTests.swift in Sources */,
 				02C673C72D7800AA001C1A62 /* SegueTests.swift in Sources */,

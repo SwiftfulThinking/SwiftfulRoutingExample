@@ -40,12 +40,26 @@ struct AnyRouter: Router {
         object.showScreens(destinations: destinations)
     }
     
-    func showScreen<T>(id: String = UUID().uuidString, segue: SegueOption = .push, location: SegueLocation = .insert, onDismiss: (() -> Void)? = nil, animates: Bool = true, destination: @escaping (AnyRouter) -> T) where T : View {
+    func showScreen<T>(
+        id: String = UUID().uuidString,
+        segue: SegueOption = .push,
+        location: SegueLocation = .insert,
+        onDismiss: (() -> Void)? = nil,
+        animates: Bool = true,
+        destination: @escaping (AnyRouter) -> T
+    ) where T : View {
         let destination = AnyDestination(id: id, segue: segue, location: location, animates: animates, onDismiss: onDismiss, destination: destination)
         object.showScreens(destinations: [destination])
     }
     
-    func showScreen<T>(id: String = UUID().uuidString, _ segue: SegueOption = .push, location: SegueLocation = .insert, onDismiss: (() -> Void)? = nil, animates: Bool = true, destination: @escaping (AnyRouter) -> T) where T : View {
+    func showScreen<T>(
+        id: String = UUID().uuidString,
+        _ segue: SegueOption = .push,
+        location: SegueLocation = .insert,
+        onDismiss: (() -> Void)? = nil,
+        animates: Bool = true,
+        destination: @escaping (AnyRouter) -> T
+    ) where T : View {
         let destination = AnyDestination(id: id, segue: segue, location: location, onDismiss: onDismiss, destination: destination)
         object.showScreens(destinations: [destination])
     }
@@ -141,7 +155,13 @@ struct AnyRouter: Router {
     
     // MARK: ALERTS
     
-    public func showAlert<T:View>(_ style: AlertStyle = .alert, location: AlertLocation = .topScreen, title: String, subtitle: String? = nil, @ViewBuilder buttons: @escaping () -> T) where T : View {
+    public func showAlert<T:View>(
+        _ style: AlertStyle = .alert,
+        location: AlertLocation = .topScreen,
+        title: String,
+        subtitle: String? = nil,
+        @ViewBuilder buttons: @escaping () -> T
+    ) where T : View {
         let alert = AnyAlert(style: style, location: location, title: title, subtitle: subtitle, buttons: buttons)
         object.showAlert(alert: alert)
     }
@@ -169,17 +189,30 @@ struct AnyRouter: Router {
 
     // MARK: MODALS
     
-//    public func showModal<T>(
-//        id: String = UUID().uuidString,
-//        transition: AnyTransition = .identity,
-//        animation: Animation = .smooth,
-//        alignment: Alignment = .center,
-//        backgroundColor: Color? = nil,
-//        dismissOnBackgroundTap: Bool = true,
-//        ignoreSafeArea: Bool = true,
-//        @ViewBuilder destination: @escaping () -> T) where T : View {
-//            object.showModal(id: id, transition: transition, animation: animation, alignment: alignment, backgroundColor: backgroundColor, dismissOnBackgroundTap: dismissOnBackgroundTap, ignoreSafeArea: ignoreSafeArea, destination: destination)
-//    }
+    public func showModal<T>(
+        id: String = UUID().uuidString,
+        transition: AnyTransition = .identity,
+        animation: Animation = .smooth,
+        alignment: Alignment = .center,
+        backgroundColor: Color? = nil,
+        dismissOnBackgroundTap: Bool = true,
+        ignoreSafeArea: Bool = true,
+        onDismiss: (() -> Void)? = nil,
+        @ViewBuilder destination: @escaping () -> T
+    ) where T : View {
+            let modal = AnyModal(
+                id: id,
+                transition: transition,
+                animation: animation,
+                alignment: alignment,
+                backgroundColor: backgroundColor,
+                dismissOnBackgroundTap: dismissOnBackgroundTap,
+                ignoreSafeArea: ignoreSafeArea,
+                destination: destination,
+                onDismiss: onDismiss
+            )
+            object.showModal(modal: modal)
+    }
     
     /// Convenience method for a simple modal appearing over the current Environment in the center of the screen.
 //    public func showBasicModal<T>(@ViewBuilder destination: @escaping () -> T) where T : View {
@@ -196,8 +229,30 @@ struct AnyRouter: Router {
         object.showModal(modal: modal)
     }
     
-    public func dismissModal() {
+    public func showModals(modals: [AnyModal]) {
+        for modal in modals {
+            object.showModal(modal: modal)
+        }
+    }
+    
+    func dismissModal() {
         object.dismissModal()
+    }
+    
+    func dismissModal(id: String) {
+        object.dismissModal(id: id)
+    }
+    
+    func dismissModals(upToModalId: String) {
+        object.dismissModals(upToModalId: upToModalId)
+    }
+    
+    func dismissModals(count: Int) {
+        object.dismissModals(count: count)
+    }
+    
+    func dismissAllModals() {
+        object.dismissAllModals()
     }
 
 //    public func dismissModal(id: String) {
