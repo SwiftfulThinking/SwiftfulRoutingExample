@@ -271,109 +271,109 @@ fileprivate extension View {
 //        })
 //    }
 //}
-
-public enum TransitionOption: String, CaseIterable {
-    case trailing, trailingCover, leading, leadingCover, top, topCover, bottom, bottomCover // identity //, scale, opacity, slide, slideCover
-    
-    var insertion: AnyTransition {
-        switch self {
-        case .trailing, .trailingCover:
-            return .move(edge: .trailing)
-        case .leading, .leadingCover:
-            return .move(edge: .leading)
-        case .top, .topCover:
-            return .move(edge: .top)
-        case .bottom, .bottomCover:
-            return .move(edge: .bottom)
-//        case .scale:
-//            return .scale.animation(.default)
-//        case .opacity:
-//            return .opacity.animation(.default)
-//        case .slide, .slideCover:
-//            return .slide.animation(.default)
-//        case .identity:
-//            return .identity
-        }
-    }
 //
-//    var removal: AnyTransition {
+//public enum TransitionOption: String, CaseIterable {
+//    case trailing, trailingCover, leading, leadingCover, top, topCover, bottom, bottomCover // identity //, scale, opacity, slide, slideCover
+//    
+//    var insertion: AnyTransition {
 //        switch self {
-//        case .trailingCover, .leadingCover, .topCover, .bottomCover:
-//            return AnyTransition.opacity.animation(.easeInOut.delay(1))
-//        case .trailing:
-//            return .move(edge: .leading)
-//        case .leading:
+//        case .trailing, .trailingCover:
 //            return .move(edge: .trailing)
-//        case .top:
-//            return .move(edge: .bottom)
-//        case .bottom:
+//        case .leading, .leadingCover:
+//            return .move(edge: .leading)
+//        case .top, .topCover:
 //            return .move(edge: .top)
+//        case .bottom, .bottomCover:
+//            return .move(edge: .bottom)
 ////        case .scale:
-////            return .scale.animation(.easeInOut)
+////            return .scale.animation(.default)
 ////        case .opacity:
-////            return .opacity.animation(.easeInOut)
-////        case .slide:
-////            return .slide.animation(.easeInOut)
+////            return .opacity.animation(.default)
+////        case .slide, .slideCover:
+////            return .slide.animation(.default)
 ////        case .identity:
 ////            return .identity
-//
 //        }
 //    }
-    
-    var reversed: TransitionOption {
-        switch self {
-        case .trailing: return .leading
-        case .trailingCover: return .leading
-        case .leading: return .trailing
-        case .leadingCover: return .trailing
-        case .top: return .bottom
-        case .topCover: return .bottom
-        case .bottom: return .top
-        case .bottomCover: return .top
-//        case .identity: return .identity
-        }
-    }
-    
-    var asAlignment: Alignment {
-        switch self {
-        case .trailing:
-            return .trailing
-        case .trailingCover:
-            return .trailing
-        case .leading:
-            return .leading
-        case .leadingCover:
-            return .leading
-        case .top:
-            return .top
-        case .topCover:
-            return .top
-        case .bottom:
-            return .bottom
-        case .bottomCover:
-            return .bottom
-        }
-    }
-    
-    var asAxis: Axis.Set {
-        switch self {
-        case .trailing:
-            return .horizontal
-        case .trailingCover:
-            return .horizontal
-        case .leading:
-            return .horizontal
-        case .leadingCover:
-            return .horizontal
-        case .top:
-            return .vertical
-        case .topCover:
-            return .vertical
-        case .bottom:
-            return .vertical
-        case .bottomCover:
-            return .vertical
-        }
-    }
-}
-
+////
+////    var removal: AnyTransition {
+////        switch self {
+////        case .trailingCover, .leadingCover, .topCover, .bottomCover:
+////            return AnyTransition.opacity.animation(.easeInOut.delay(1))
+////        case .trailing:
+////            return .move(edge: .leading)
+////        case .leading:
+////            return .move(edge: .trailing)
+////        case .top:
+////            return .move(edge: .bottom)
+////        case .bottom:
+////            return .move(edge: .top)
+//////        case .scale:
+//////            return .scale.animation(.easeInOut)
+//////        case .opacity:
+//////            return .opacity.animation(.easeInOut)
+//////        case .slide:
+//////            return .slide.animation(.easeInOut)
+//////        case .identity:
+//////            return .identity
+////
+////        }
+////    }
+//    
+//    var reversed: TransitionOption {
+//        switch self {
+//        case .trailing: return .leading
+//        case .trailingCover: return .leading
+//        case .leading: return .trailing
+//        case .leadingCover: return .trailing
+//        case .top: return .bottom
+//        case .topCover: return .bottom
+//        case .bottom: return .top
+//        case .bottomCover: return .top
+////        case .identity: return .identity
+//        }
+//    }
+//    
+//    var asAlignment: Alignment {
+//        switch self {
+//        case .trailing:
+//            return .trailing
+//        case .trailingCover:
+//            return .trailing
+//        case .leading:
+//            return .leading
+//        case .leadingCover:
+//            return .leading
+//        case .top:
+//            return .top
+//        case .topCover:
+//            return .top
+//        case .bottom:
+//            return .bottom
+//        case .bottomCover:
+//            return .bottom
+//        }
+//    }
+//    
+//    var asAxis: Axis.Set {
+//        switch self {
+//        case .trailing:
+//            return .horizontal
+//        case .trailingCover:
+//            return .horizontal
+//        case .leading:
+//            return .horizontal
+//        case .leadingCover:
+//            return .horizontal
+//        case .top:
+//            return .vertical
+//        case .topCover:
+//            return .vertical
+//        case .bottom:
+//            return .vertical
+//        case .bottomCover:
+//            return .vertical
+//        }
+//    }
+//}
+//

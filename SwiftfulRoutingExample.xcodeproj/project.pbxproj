@@ -13,6 +13,8 @@
 		024651CE2D7CEB8000545A5F /* SegueQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024651CD2D7CEB7F00545A5F /* SegueQueueTests.swift */; };
 		024651D02D7EB90D00545A5F /* ZoomTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024651CF2D7EB90D00545A5F /* ZoomTesting.swift */; };
 		02661C052D8A70150067BFA5 /* VisualEffectViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661C042D8A70150067BFA5 /* VisualEffectViewRepresentable.swift */; };
+		02661C082D8A7DDE0067BFA5 /* TransitionOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661C072D8A7DDE0067BFA5 /* TransitionOption.swift */; };
+		02661C0A2D8A7E450067BFA5 /* AnyTransitionWithDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661C092D8A7E450067BFA5 /* AnyTransitionWithDestination.swift */; };
 		026776522D895408009476E7 /* ModalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026776512D895408009476E7 /* ModalTests.swift */; };
 		0268C8D02D829BD00068896D /* AnyModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0268C8CF2D829BD00068896D /* AnyModal.swift */; };
 		0268C8D32D82A2B40068896D /* SwiftfulRecursiveUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0268C8D22D82A2B40068896D /* SwiftfulRecursiveUI */; };
@@ -64,6 +66,8 @@
 		024651CD2D7CEB7F00545A5F /* SegueQueueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegueQueueTests.swift; sourceTree = "<group>"; };
 		024651CF2D7EB90D00545A5F /* ZoomTesting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomTesting.swift; sourceTree = "<group>"; };
 		02661C042D8A70150067BFA5 /* VisualEffectViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffectViewRepresentable.swift; sourceTree = "<group>"; };
+		02661C072D8A7DDE0067BFA5 /* TransitionOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionOption.swift; sourceTree = "<group>"; };
+		02661C092D8A7E450067BFA5 /* AnyTransitionWithDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyTransitionWithDestination.swift; sourceTree = "<group>"; };
 		026776512D895408009476E7 /* ModalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalTests.swift; sourceTree = "<group>"; };
 		0268C8CF2D829BD00068896D /* AnyModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyModal.swift; sourceTree = "<group>"; };
 		027D76632D63C52C00D24A22 /* AnyDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyDestination.swift; sourceTree = "<group>"; };
@@ -119,6 +123,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		02661C062D8A7DCA0067BFA5 /* TransitionsNew */ = {
+			isa = PBXGroup;
+			children = (
+				02661C072D8A7DDE0067BFA5 /* TransitionOption.swift */,
+				02661C092D8A7E450067BFA5 /* AnyTransitionWithDestination.swift */,
+			);
+			path = TransitionsNew;
+			sourceTree = "<group>";
+		};
 		0268C8CE2D829BC80068896D /* ModalsNew */ = {
 			isa = PBXGroup;
 			children = (
@@ -194,6 +207,7 @@
 				027D76652D63C53600D24A22 /* OnFirstAppearModifier.swift */,
 				027D76672D63C54700D24A22 /* SegueOption.swift */,
 				027D76692D63C57A00D24A22 /* AnyDestinationStack.swift */,
+				02661C062D8A7DCA0067BFA5 /* TransitionsNew */,
 				0268C8CE2D829BC80068896D /* ModalsNew */,
 			);
 			path = Routing;
@@ -371,6 +385,7 @@
 				02CFF0E12986B2D900E6ABCC /* ExampleView.swift in Sources */,
 				02CFF1032986C8D000E6ABCC /* ProgramaticSheetView.swift in Sources */,
 				02CFF0FF2986C20B00E6ABCC /* HomeInteractor.swift in Sources */,
+				02661C0A2D8A7E450067BFA5 /* AnyTransitionWithDestination.swift in Sources */,
 				02C671E72D76BDE1001C1A62 /* AnyRouter.swift in Sources */,
 				027D76662D63C53600D24A22 /* OnFirstAppearModifier.swift in Sources */,
 				028A896C281F9228004E3DA4 /* ContentView.swift in Sources */,
@@ -394,6 +409,7 @@
 				028A896A281F9228004E3DA4 /* SwiftfulRoutingExampleApp.swift in Sources */,
 				02CFF0F42986BE2F00E6ABCC /* HomePresenter.swift in Sources */,
 				02ADB6A92D3D766400F15EBD /* RoutingTest.swift in Sources */,
+				02661C082D8A7DDE0067BFA5 /* TransitionOption.swift in Sources */,
 				021CF2D22A9CDB4500BFB255 /* PopoverView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

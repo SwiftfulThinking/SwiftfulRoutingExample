@@ -120,8 +120,8 @@ struct AnyRouter: Router {
         object.removeScreensFromQueue(ids: ids)
     }
     
-    func clearQueue() {
-        object.clearQueue()
+    func clearScreenQueue() {
+        object.clearScreenQueue()
     }
     
     func showNextScreen() throws {
@@ -254,73 +254,73 @@ struct AnyRouter: Router {
     func dismissAllModals() {
         object.dismissAllModals()
     }
+    
+    public func showTransition<T>(
+        id: String = UUID().uuidString,
+        _ transition: TransitionOption,
+        onDismiss: (() -> Void)? = nil,
+        destination: @escaping (AnyRouter) -> T
+    ) where T : View {
+        let transition = AnyTransitionDestination(id: id, transition: transition, destination: destination)
+        object.showTransition(transition: transition)
+    }
+    
+    public func showTransition(transition: AnyTransitionDestination) {
+        object.showTransition(transition: transition)
+    }
+    
+    public func showTransitions(transitions: [AnyTransitionDestination]) {
+        object.showTransitions(transitions: transitions)
+    }
+    
+    public func dismissTransition() throws {
+        try object.dismissTransition()
+    }
+    
+    public func dismissTransitions(toScreenId: String) {
+        object.dismissTransitions(toScreenId: toScreenId)
+    }
+    
+    public func dismissTransitions(count: Int) {
+        object.dismissTransitions(count: count)
+    }
+    
+    public func dismissTransitionOrDismissScreen() {
+        do {
+            try dismissTransition()
+        } catch {
+            dismissScreen()
+        }
+    }
+    
+    public func dismissAllTransitions() {
+        object.dismissAllTransitions()
+    }
 
-//    public func dismissModal(id: String) {
-//        object.dismissModal(id: id)
-//    }
-
+    public func addTransitionToQueue(transition: AnyTransitionDestination) {
+        object.addTransitionsToQueue(transitions: [transition])
+    }
     
+    public func addTransitionsToQueue(transitions: [AnyTransitionDestination]) {
+        object.addTransitionsToQueue(transitions: transitions)
+    }
     
+    public func removeTransitionFromQueue(id: String) {
+        object.removeTransitionsFromQueue(ids: [id])
+    }
     
+    public func removeTransitionsFromQueue(ids: [String]) {
+        object.removeTransitionsFromQueue(ids: ids)
+    }
     
+    public func clearTransitionsQueue() {
+        object.clearTransitionsQueue()
+    }
     
-    /// Show any Alert or ConfirmationDialog.
-    ///
-    ///  WARNING: Alert modifiers were deprecated between iOS 14 & iOS 15. iOS 15+ will use '@ViewBuilder alert' parameter, while iOS 14 and below will use 'buttonsiOS13' parameter.
-//    @available(iOS 15, *)
-//    func showAlert<T:View>(_ option: DialogOption, title: String, subtitle: String? = nil, @ViewBuilder alert: @escaping () -> T) where T : View {
-//        object.showAlert(option, title: title, subtitle: subtitle, alert: alert, buttonsiOS13: nil)
-//    }
-//    
-//    func showAlert<T:View>(_ option: DialogOption, title: String, subtitle: String? = nil, @ViewBuilder alert: @escaping () -> T, buttonsiOS13: [Alert.Button]? = nil) where T : View {
-//        object.showAlert(option, title: title, subtitle: subtitle, alert: alert, buttonsiOS13: buttonsiOS13)
-//    }
-//    
-//    /// Convenience method for a simple alert with title text and ok button.
-//    func showBasicAlert(text: String, action: (() -> Void)? = nil) {
-//        showAlert(.alert, title: text) {
-//            Button("OK") {
-//                action?()
-//            }
-//        }
-//    }
-//    
-//    /// Dismiss presented alert. Note: Alerts often dismiss themselves. Calling this anyway is ok.
-//    func dismissAlert() {
-//        object.dismissAlert()
-//    }
-//    
-//    /// Show any Modal over the current Environment.
-//    func showModal<T>(
-//        id: String = UUID().uuidString,
-//        transition: AnyTransition = .identity,
-//        animation: Animation = .smooth,
-//        alignment: Alignment = .center,
-//        backgroundColor: Color? = nil,
-//        dismissOnBackgroundTap: Bool = true,
-//        ignoreSafeArea: Bool = true,
-//        @ViewBuilder destination: @escaping () -> T) where T : View {
-//            object.showModal(id: id, transition: transition, animation: animation, alignment: alignment, backgroundColor: backgroundColor, dismissOnBackgroundTap: dismissOnBackgroundTap, ignoreSafeArea: ignoreSafeArea, destination: destination)
-//    }
-//    
-//    /// Convenience method for a simple modal appearing over the current Environment in the center of the screen.
-//    func showBasicModal<T>(@ViewBuilder destination: @escaping () -> T) where T : View {
-//        showModal(
-//            transition: AnyTransition.opacity.animation(.easeInOut),
-//            animation: .easeInOut,
-//            alignment: .center,
-//            backgroundColor: Color.black.opacity(0.4),
-//            ignoreSafeArea: true,
-//            destination: destination)
-//    }
-//    
-//    func dismissModal(id: String? = nil) {
-//        object.dismissModal(id: id)
-//    }
-//    
-//    func dismissAllModals() {
-//        object.dismissAllModals()
-//    }
+    public func showNextTransition() throws {
+        try object.showNextTransition()
+    }
+    
 //    
 //    /// Open URL in Safari app. To open url in in-app browser, use showSheet with a WebView.
 //    func showSafari(_ url: @escaping () -> URL) {

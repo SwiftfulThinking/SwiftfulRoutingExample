@@ -85,12 +85,19 @@ struct RecursiveRoutingView: View {
 //                Section("Alerts") {
 //                    alertButtons
 //                }
-                Section("Modals") {
-                    modalButtons
+//                Section("Modals") {
+//                    modalButtons
+//                }
+//                Section("Dismiss modal actions") {
+//                    dismissModalButtons
+//                }
+                Section("Transitions") {
+                    transitionButtons
                 }
-                Section("Dismiss modal actions") {
+                Section("Transition dismisses") {
                     dismissModalButtons
                 }
+                
             case .testingModals:
                 modalButtons
                 dismissModalButtons
@@ -525,8 +532,8 @@ struct RecursiveRoutingView: View {
         }
         .accessibilityIdentifier("Button_QueueRemove2")
 
-        Button("Clear queue") {
-            router.clearQueue()
+        Button("Clear screen queue") {
+            router.clearScreenQueue()
         }
         .accessibilityIdentifier("Button_QueueClear")
 
@@ -951,7 +958,81 @@ struct RecursiveRoutingView: View {
         }
         .accessibilityIdentifier("Button_DismissAllModals")
     }
-                                 
+                  
+    @ViewBuilder
+    var transitionButtons: some View {
+        Button("Transition trailing") {
+            let transition = AnyTransitionDestination(id: "transition_1", transition: .identity) { router in
+                Rectangle()
+                    .fill(Color.green)
+                    .onTapGesture {
+                        try? router.dismissTransition()
+                    }
+            }
+            router.showTransition(transition: transition)
+        }
+        
+        Button("Transitions 3x + dismiss 2x") {
+            Task {
+                let transition = AnyTransitionDestination(id: "transition_1", transition: .trailing) { router in
+                    Rectangle()
+                        .fill(Color.green)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            try? router.dismissTransition()
+                        }
+                }
+//                router.showTransition(transition: transition)
+                
+//                try? await Task.sleep(for: .seconds(1))
+                
+                let transition2 = AnyTransitionDestination(id: "transition_2", transition: .trailing) { router in
+                    Rectangle()
+                        .fill(Color.orange)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            try? router.dismissTransition()
+                        }
+                }
+//                router.showTransition(transition: transition2)
+                
+//                try? await Task.sleep(for: .seconds(1))
+
+                let transition3 = AnyTransitionDestination(id: "transition_3", transition: .trailing) { router in
+                    Rectangle()
+                        .fill(Color.red)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            try? router.dismissTransition()
+                        }
+                }
+//                router.showTransition(transition: transition3)
+                router.showTransitions(transitions: [transition, transition2, transition3])
+                
+                try? await Task.sleep(for: .seconds(1))
+
+//                router.dismissTransitions(toScreenId: "transition_1")
+//                router.dismissTransitions(count: 100)
+//                router.dismissAllTransitions()
+                try? router.dismissTransition()
+                try? await Task.sleep(for: .seconds(1))
+                try? router.dismissTransition()
+                try? await Task.sleep(for: .seconds(1))
+                try? router.dismissTransition()
+            }
+        }
+//        .accessibilityIdentifier("Button_DismissModal")
+//        
+//        Button("Dismiss modal_1") {
+//            Task {
+//                triggerModal1()
+//                try? await Task.sleep(for: .seconds(2))
+//                router.dismissModal(id: "modal_1")
+//            }
+//        }
+//        .accessibilityIdentifier("Button_DismissModalId1")
+        
+    }
 }
 
 #Preview {

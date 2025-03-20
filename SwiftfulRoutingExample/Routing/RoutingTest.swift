@@ -70,24 +70,20 @@ struct RouterView<Content: View>: View {
 @MainActor
 protocol Router {
     func showScreens(destinations: [AnyDestination])
-    
     func dismissScreen(animates: Bool)
     func dismissScreen(id: String, animates: Bool)
     func dismissScreens(upToScreenId: String, animates: Bool)
     func dismissScreens(count: Int, animates: Bool)
-    
     func dismissPushStack(animates: Bool)
     func dismissEnvironment(animates: Bool)
-    
     func dismissLastScreen(animates: Bool)
     func dismissLastPushStack(animates: Bool)
     func dismissLastEnvironment(animates: Bool)
-
     func dismissAllScreens(animates: Bool)
     
     func addScreensToQueue(destinations: [AnyDestination])
     func removeScreensFromQueue(ids: [String])
-    func clearQueue()
+    func clearScreenQueue()
     func showNextScreen() throws
     
     func showAlert(alert: AnyAlert)
@@ -98,8 +94,19 @@ protocol Router {
     func dismissModal(id: String)
     func dismissModals(upToModalId: String)
     func dismissModals(count: Int)
-    
     func dismissAllModals()
+    
+    func showTransition(transition: AnyTransitionDestination)
+    func showTransitions(transitions: [AnyTransitionDestination])
+    func dismissTransition() throws
+    func dismissTransitions(toScreenId: String)
+    func dismissTransitions(count: Int)
+    func dismissAllTransitions()
+    
+    func addTransitionsToQueue(transitions: [AnyTransitionDestination])
+    func removeTransitionsFromQueue(ids: [String])
+    func clearTransitionsQueue()
+    func showNextTransition() throws
 }
 
 
@@ -120,7 +127,10 @@ final class RouterViewModel {
     var activeAlert: [String: AnyAlert] = [:] // RouterId : Alert
     
     var allModals: [String: [AnyModal]] = [:] // RouterId : [Modals]
-    var activeModals: [String: AnyModal] = [:] // RouterId : ModalId
+    
+    var allTransitions: [String: [AnyTransitionDestination]] = [RouterViewModel.rootId: [.root]] // RouterId : [Transitions]
+    var currentTransitions: [String: TransitionOption] = [RouterViewModel.rootId: .trailing]
+    var availableTransitionQueue: [String: [AnyTransitionDestination]] = [:]
     
     func insertRootView(view: AnyDestination) {
         activeScreenStacks.insert(AnyDestinationStack(segue: .fullScreenCover(), screens: [view]), at: 0)
@@ -164,12 +174,16 @@ final class RouterViewModel {
         }
     }
     
-    func clearQueue() {
+    func clearScreenQueue() {
         availableScreenQueue.removeAll()
     }
     
     enum ScreenQueueError: Error {
         case noScreensInQueue
+    }
+    
+    enum TransitionQueueError: Error {
+        case noTransitionsInQueue
     }
     
     func showNextScreen(routerId: String) throws {
@@ -237,7 +251,7 @@ final class RouterViewModel {
         
 
         let currentStack = activeScreenStacks[stackIndex]
-        
+        allTransitions[destination.id] = [.root]
         
         switch destination.segue {
         case .push:
@@ -631,7 +645,6 @@ final class RouterViewModel {
         }
         
         allModals[routerId]!.append(modal)
-        activeModals[routerId] = modal
     }
     
     func dismissLastModal(onRouterId routerId: String) {
@@ -699,6 +712,204 @@ final class RouterViewModel {
             }
         }
     }
+    
+    func showTransition(routerId: String, transition: AnyTransitionDestination) {
+        self.currentTransitions[routerId] = transition.transition
+        
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 1_000_000)
+            
+            // allTransitions[routerId] should never be nil
+            // since it's added in showScreen
+            self.allTransitions[routerId]?.append(transition)
+        }
+    }
+    
+    func showTransitions(routerId: String, transitions: [AnyTransitionDestination]) {
+        guard let lastTransition = transitions.last?.transition else { return }
+        
+        self.currentTransitions[routerId] = lastTransition
+        
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 1_000_000)
+            
+            // allTransitions[routerId] should never be nil
+            // since it's added in showScreen
+            self.allTransitions[routerId]?.append(contentsOf: transitions)
+        }
+    }
+    
+    func dismissTransition(routerId: String) throws {
+        let transitions = allTransitions[routerId] ?? []
+        
+        guard let index = transitions.indices.last, transitions.indices.contains(index - 1) else {
+            // no transition to dismiss
+            return
+        }
+        
+        // Set current transition
+        self.currentTransitions[routerId] = transitions[index].transition.reversed
+        
+        // Task is needed for UI
+        Task { @MainActor in
+            // Trigger onDismiss for screen
+            defer {
+                transitions[index].onDismiss?()
+            }
+            
+            // Trigger UI update
+            self.allTransitions[routerId]?.remove(at: index)
+        }
+    }
+    
+    func dismissTransitions(routerId: String, toScreenId: String) {
+        let transitions = allTransitions[routerId] ?? []
+        
+        guard let lastIndex = transitions.indices.last, transitions.indices.contains(lastIndex - 1) else {
+            print("no transition to dismiss")
+            return
+        }
+        
+        guard let screenIndex = transitions.firstIndex(where: { $0.id == toScreenId }) else {
+            print("Could not find screen in transitions")
+            return
+        }
+        
+        let screensToDismissStartingIndex = (screenIndex + 1)
+        let screensToDismiss = Array(transitions[screensToDismissStartingIndex...])
+
+        guard !screensToDismiss.isEmpty else {
+            print("No screens to dismiss")
+            return
+        }
+        
+        // Set current transition
+        self.currentTransitions[routerId] = transitions[lastIndex].transition.reversed
+        
+        // Task is needed for UI
+        Task { @MainActor in
+            defer {
+                for screen in screensToDismiss.reversed() {
+                    // Trigger onDismiss for screens
+                    screen.onDismiss?()
+                }
+            }
+            
+            // Trigger UI update
+            self.allTransitions[routerId]?.removeSubrange(screensToDismissStartingIndex...)
+        }
+    }
+    
+    func dismissTransitions(routerId: String, count: Int) {
+        let transitions = allTransitions[routerId] ?? []
+        
+        guard let lastIndex = transitions.indices.last, transitions.indices.contains(lastIndex - 1) else {
+            print("no transition to dismiss")
+            return
+        }
+        
+        var counter: Int = 0
+        var screensToDismissStartingIndex: Int? = nil
+        for (index, _) in transitions.enumerated().reversed() {
+            if counter == count {
+                break
+            }
+            
+            counter += 1
+            screensToDismissStartingIndex = index
+        }
+        
+        guard var screensToDismissStartingIndex else {
+            print("Count not find screens to dismiss to count")
+            return
+        }
+        
+        // Never dismiss root
+        screensToDismissStartingIndex = max(1, screensToDismissStartingIndex)
+        
+        let screensToDismiss = Array(transitions[screensToDismissStartingIndex...])
+
+        guard !screensToDismiss.isEmpty else {
+            print("No screens to dismiss")
+            return
+        }
+        
+        // Set current transition
+        self.currentTransitions[routerId] = transitions[lastIndex].transition.reversed
+        
+        // Task is needed for UI
+        Task { @MainActor in
+            defer {
+                for screen in screensToDismiss.reversed() {
+                    // Trigger onDismiss for screens
+                    screen.onDismiss?()
+                }
+            }
+            
+            // Trigger UI update
+            self.allTransitions[routerId]?.removeSubrange(screensToDismissStartingIndex...)
+        }
+    }
+    
+    func dismissAllTransitions(routerId: String) {
+        let transitions = allTransitions[routerId] ?? []
+        
+        guard let lastIndex = transitions.indices.last, transitions.indices.contains(lastIndex - 1) else {
+            print("no transition to dismiss")
+            return
+        }
+                
+        let screensToDismissStartingIndex = 1
+        let screensToDismiss = Array(transitions[screensToDismissStartingIndex...])
+
+        guard !screensToDismiss.isEmpty else {
+            print("No screens to dismiss")
+            return
+        }
+        
+        // Set current transition
+        self.currentTransitions[routerId] = transitions[lastIndex].transition.reversed
+        
+        // Task is needed for UI
+        Task { @MainActor in
+            defer {
+                for screen in screensToDismiss.reversed() {
+                    // Trigger onDismiss for screens
+                    screen.onDismiss?()
+                }
+            }
+            
+            // Trigger UI update
+            self.allTransitions[routerId]?.removeSubrange(screensToDismissStartingIndex...)
+        }
+    }
+    
+    func addTransitionsToQueue(routerId: String, transitions: [AnyTransitionDestination]) {
+        if availableTransitionQueue[routerId] == nil {
+            availableTransitionQueue[routerId] = []
+        }
+        
+        availableTransitionQueue[routerId]?.append(contentsOf: transitions)
+    }
+    
+    func removeTransitionsFromQueue(routerId: String, transitionIds: [String]) {
+        for transitionId in transitionIds {
+            availableTransitionQueue[routerId]?.removeAll(where: { $0.id == transitionId })
+        }
+    }
+    
+    func clearTransitionsQueue(routerId: String) {
+        availableTransitionQueue[routerId]?.removeAll()
+    }
+    
+    func showNextTransition(routerId: String) throws {
+        guard let nextTransition = availableTransitionQueue[routerId]?.first else {
+            throw TransitionQueueError.noTransitionsInQueue
+        }
+        
+        showTransition(routerId: routerId, transition: nextTransition)
+        availableTransitionQueue[routerId]?.removeFirst()
+    }
 }
 
 struct RouterViewInternal<Content: View>: View, Router {
@@ -714,90 +925,95 @@ struct RouterViewInternal<Content: View>: View, Router {
     }
 
     var body: some View {
-        content(currentRouter)
-            // Add NavigationStack if needed
-            .ifSatisfiesCondition(addNavigationStack, transform: { content in
-                NavigationStack(path: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, onDidDismiss: { lastRouteRemaining in
-                    if let lastRouteRemaining {
-                        viewModel.dismissScreens(to: lastRouteRemaining.id, animates: true)
-                    } else {
-                        viewModel.dismissPushStack(routeId: routerId, animates: true)
-                    }
-                })) {
-                    content
-                        .navigationDestination(for: AnyDestination.self) { value in
-                            value.destination
-                        }
+        // Wrap starting content for Transition support
+        TransitionSupportView2(
+            router: currentRouter,
+            transitions: viewModel.allTransitions[routerId] ?? [],
+            content: content,
+            currentTransition: viewModel.currentTransitions[routerId] ?? .trailing
+        )
+        // Add NavigationStack if needed
+        .ifSatisfiesCondition(addNavigationStack, transform: { content in
+            NavigationStack(path: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, onDidDismiss: { lastRouteRemaining in
+                if let lastRouteRemaining {
+                    viewModel.dismissScreens(to: lastRouteRemaining.id, animates: true)
+                } else {
+                    viewModel.dismissPushStack(routeId: routerId, animates: true)
                 }
-            })
-            // Add Sheet modifier. Add on background to supress OS warnings.
-            .background(
-                Text("")
-                    .sheet(item: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, segue: .sheet(), onDidDismiss: {
-                        // This triggers if the user swipes down to dismiss the screen
-                        // Now we must update activeScreenStacks to match that behavior
-                        viewModel.dismissScreens(toEnvironmentId: routerId, animates: true)
-                    }), onDismiss: nil) { destination in
-                        destination.destination
-                            .applyResizableSheetModifiersIfNeeded(segue: destination.segue)
-                    }
-            )
-        
-            // Add FullScreenCover modifier. Add on background to supress OS warnings.
-            .background(
-                Text("")
-                    .fullScreenCover(item: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, segue: .fullScreenCover(), onDidDismiss: {
-                        // This triggers if the user swipes down to dismiss the screen
-                        // Now we must update activeScreenStacks to match that behavior
-                        viewModel.dismissScreens(toEnvironmentId: routerId, animates: true)
-                    }), onDismiss: nil) { destination in
-                        destination.destination
-                            .applyResizableSheetModifiersIfNeeded(segue: destination.segue)
-                    }
-            )
-        
-            // If this is the root router, add "root" stack to the array
-            .ifSatisfiesCondition(routerId == RouterViewModel.rootId, transform: { content in
+            })) {
                 content
-                    .onFirstAppear {
-                        let view = AnyDestination(id: routerId, segue: .fullScreenCover(), location: .insert, onDismiss: nil, destination: { _ in self })
-                        viewModel.insertRootView(view: view)
+                    .navigationDestination(for: AnyDestination.self) { value in
+                        value.destination
                     }
-            })
-        
-            // Add Alert modifier.
-            .modifier(AlertViewModifier(alert: Binding(get: {
-                viewModel.activeAlert[routerId]
-            }, set: { newValue in
-                if newValue == nil {
-                    viewModel.dismissAlert(routerId: routerId)
+            }
+        })
+        // Add Sheet modifier. Add on background to supress OS warnings.
+        .background(
+            Text("")
+                .sheet(item: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, segue: .sheet(), onDidDismiss: {
+                    // This triggers if the user swipes down to dismiss the screen
+                    // Now we must update activeScreenStacks to match that behavior
+                    viewModel.dismissScreens(toEnvironmentId: routerId, animates: true)
+                }), onDismiss: nil) { destination in
+                    destination.destination
+                        .applyResizableSheetModifiersIfNeeded(segue: destination.segue)
                 }
-            })))
+        )
         
-            // Add Modals modifier.
-            .overlay(
-                ModalSupportView(
-                    modals: viewModel.allModals[routerId] ?? [],
-//                    activeModal: viewModel.activeModals[routerId],
-                    onDismissModal: { modal in
-                        viewModel.dismissModal(routerId: routerId, modalId: modal.id)
-                    }
-                )
+        // Add FullScreenCover modifier. Add on background to supress OS warnings.
+        .background(
+            Text("")
+                .fullScreenCover(item: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, segue: .fullScreenCover(), onDidDismiss: {
+                    // This triggers if the user swipes down to dismiss the screen
+                    // Now we must update activeScreenStacks to match that behavior
+                    viewModel.dismissScreens(toEnvironmentId: routerId, animates: true)
+                }), onDismiss: nil) { destination in
+                    destination.destination
+                        .applyResizableSheetModifiersIfNeeded(segue: destination.segue)
+                }
+        )
+        
+        // If this is the root router, add "root" stack to the array
+        .ifSatisfiesCondition(routerId == RouterViewModel.rootId, transform: { content in
+            content
+                .onFirstAppear {
+                    let view = AnyDestination(id: routerId, segue: .fullScreenCover(), location: .insert, onDismiss: nil, destination: { _ in self })
+                    viewModel.insertRootView(view: view)
+                }
+        })
+        
+        // Add Alert modifier.
+        .modifier(AlertViewModifier(alert: Binding(get: {
+            viewModel.activeAlert[routerId]
+        }, set: { newValue in
+            if newValue == nil {
+                viewModel.dismissAlert(routerId: routerId)
+            }
+        })))
+        
+        // Add Modals modifier.
+        .overlay(
+            ModalSupportView(
+                modals: viewModel.allModals[routerId] ?? [],
+                onDismissModal: { modal in
+                    viewModel.dismissModal(routerId: routerId, modalId: modal.id)
+                }
             )
+        )
         
-            // Print screen stack if logging is enabled
-            .ifSatisfiesCondition(logger && routerId == RouterViewModel.rootId, transform: { content in
-                content
-                    .onChange(of: viewModel.activeScreenStacks) { oldValue, newValue in
-                        printScreenStack(screenStack: newValue, screenQueue: nil)
-                    }
-                    .onChange(of: viewModel.availableScreenQueue) { oldValue, newValue in
-                        printScreenStack(screenStack: nil, screenQueue: newValue)
-                    }
-                    .onChange(of: viewModel.allModals[routerId] ?? []) { oldValue, newValue in
-                        printModalStack(modals: newValue)
-                    }
-            })
+        // Print screen stack if logging is enabled
+        .ifSatisfiesCondition(logger && routerId == RouterViewModel.rootId, transform: { content in
+            content
+                .onChange(of: viewModel.activeScreenStacks) { oldValue, newValue in
+                    printScreenStack(screenStack: newValue, screenQueue: nil)
+                }
+                .onChange(of: viewModel.availableScreenQueue) { oldValue, newValue in
+                    printScreenStack(screenStack: nil, screenQueue: newValue)
+                }
+                .onChange(of: viewModel.allModals[routerId] ?? []) { oldValue, newValue in
+                    printModalStack(modals: newValue)
+                }
+        })
     }
     
     private func printModalStack(modals: [AnyModal]) {
@@ -901,8 +1117,8 @@ struct RouterViewInternal<Content: View>: View, Router {
         viewModel.removeScreensFromQueue(screenIds: ids)
     }
     
-    func clearQueue() {
-        viewModel.clearQueue()
+    func clearScreenQueue() {
+        viewModel.clearScreenQueue()
     }
     
     func showNextScreen() throws {
@@ -939,6 +1155,46 @@ struct RouterViewInternal<Content: View>: View, Router {
     
     func dismissAllModals() {
         viewModel.dismissAllModals(routerId: routerId)
+    }
+    
+    func showTransition(transition: AnyTransitionDestination) {
+        viewModel.showTransition(routerId: routerId, transition: transition)
+    }
+    
+    func showTransitions(transitions: [AnyTransitionDestination]) {
+        viewModel.showTransitions(routerId: routerId, transitions: transitions)
+    }
+    
+    func dismissTransition() throws {
+        try viewModel.dismissTransition(routerId: routerId)
+    }
+    
+    func dismissTransitions(toScreenId: String) {
+        viewModel.dismissTransitions(routerId: routerId, toScreenId: toScreenId)
+    }
+    
+    func dismissTransitions(count: Int) {
+        viewModel.dismissTransitions(routerId: routerId, count: count)
+    }
+    
+    func dismissAllTransitions() {
+        viewModel.dismissAllTransitions(routerId: routerId)
+    }
+    
+    func addTransitionsToQueue(transitions: [AnyTransitionDestination]) {
+        viewModel.addTransitionsToQueue(routerId: routerId, transitions: transitions)
+    }
+    
+    func removeTransitionsFromQueue(ids: [String]) {
+        viewModel.removeTransitionsFromQueue(routerId: routerId, transitionIds: ids)
+    }
+    
+    func clearTransitionsQueue() {
+        viewModel.clearTransitionsQueue(routerId: routerId)
+    }
+    
+    func showNextTransition() throws {
+        try viewModel.showNextTransition(routerId: routerId)
     }
 }
 
@@ -1010,20 +1266,37 @@ struct RouterViewInternal<Content: View>: View, Router {
  - modals - DONE
  - modal dismisses - DONE
  - modal tests - DONE
- - modal blur -
- 
- - blurs - HOLD
- - Multiple routers should handle same as multiple modals? -
+ - modal blur - DONE
+ - blurs - DONE
  
  - transitions -
-    - preloaded - HOLD
-    - no animation (identity)
+    - transition trailing - DONE
+    - transition top - DONE
+    - showTransitions - DONE
+    - no animation (identity) - DONE
+    - transition queue - DONE
+    - swipe back gestures
+        - removePreviousFromMemory
+            - moves to the left - works
+            - stays same place - not possible?
+        - keepPreviousInMemory(allowSwipeBack: Bool)
+            - stays same place - works
+            - moves to the left - possible?
+    - transition tests -
+
  - modules
+    -
+ 
+ - add to starter project for checks
+    - Multiple routers should handle same as multiple modals? -
  - tabbars
     - on selection
  
+ - cookbook view
  - clean up example project UI
  
+ - preloaded transitions - HOLD
+
  */
 
 
