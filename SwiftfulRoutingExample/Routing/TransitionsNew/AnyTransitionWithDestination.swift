@@ -30,7 +30,7 @@ struct AnyTransitionDestination: Identifiable, Equatable {
 
 enum TransitionMemoryBehavior {
     case removePreviousFromMemory
-    case keepPreviousInMemory(allowSwipeBack: Bool)
+    case keepPreviousInMemory
     
     var allowSimultaneous: Bool {
         switch self {
@@ -41,19 +41,19 @@ enum TransitionMemoryBehavior {
         }
     }
     
-    var allowSwipeBack: Bool {
-        switch self {
-        case .removePreviousFromMemory:
-            return false
-        case .keepPreviousInMemory(let allowSwipeBack):
-            return allowSwipeBack
-        }
-    }
+//    var allowSwipeBack: Bool {
+//        switch self {
+//        case .removePreviousFromMemory:
+//            return false
+//        case .keepPreviousInMemory(let allowSwipeBack):
+//            return allowSwipeBack
+//        }
+//    }
 }
 
 struct TransitionSupportView2<Content:View>: View {
     
-    var behavior: TransitionMemoryBehavior = .removePreviousFromMemory // .keepPreviousInMemory(allowSwipeBack: true)
+    var behavior: TransitionMemoryBehavior = .keepPreviousInMemory
     let router: AnyRouter
     let transitions: [AnyTransitionDestination]
     @ViewBuilder var content: (AnyRouter) -> Content

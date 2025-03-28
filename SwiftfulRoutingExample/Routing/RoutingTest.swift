@@ -1276,11 +1276,16 @@ struct RouterViewInternal<Content: View>: View, Router {
     - no animation (identity) - DONE
     - transition queue - DONE
     
-    - inject behavior -
-    - all transitions working -
+    - inject behavior - DONE
+    - all transitions working one - DONE
+    - all transitions working multi - DONE
+    - scale - 
+    - fade -
+    - opacity -
+    - custom animation values?
     - configure swipe gestures -
- 
- 
+        - .leading(allowSwipeBack: Bool)
+
     - swipe back gestures
         - removePreviousFromMemory
             - moves to the left - works

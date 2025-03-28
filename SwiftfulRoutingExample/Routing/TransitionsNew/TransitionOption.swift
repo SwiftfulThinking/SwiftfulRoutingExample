@@ -9,6 +9,7 @@ import SwiftUI
 public enum TransitionOption: String, CaseIterable {
     // identity, scale, opacity, slide, slideCover
     case trailing, leading, top, bottom, identity
+    
 //    case trailingCover, leadingCover, topCover, bottomCover
     
     var animation: Animation? {
