@@ -1275,6 +1275,12 @@ struct RouterViewInternal<Content: View>: View, Router {
     - showTransitions - DONE
     - no animation (identity) - DONE
     - transition queue - DONE
+    
+    - inject behavior -
+    - all transitions working -
+    - configure swipe gestures -
+ 
+ 
     - swipe back gestures
         - removePreviousFromMemory
             - moves to the left - works

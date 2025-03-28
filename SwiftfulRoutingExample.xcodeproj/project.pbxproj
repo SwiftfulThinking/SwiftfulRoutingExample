@@ -15,6 +15,7 @@
 		02661C052D8A70150067BFA5 /* VisualEffectViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661C042D8A70150067BFA5 /* VisualEffectViewRepresentable.swift */; };
 		02661C082D8A7DDE0067BFA5 /* TransitionOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661C072D8A7DDE0067BFA5 /* TransitionOption.swift */; };
 		02661C0A2D8A7E450067BFA5 /* AnyTransitionWithDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661C092D8A7E450067BFA5 /* AnyTransitionWithDestination.swift */; };
+		02661C0C2D8BDD1A0067BFA5 /* SwipeBackSupportContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661C0B2D8BDD1A0067BFA5 /* SwipeBackSupportContainer.swift */; };
 		026776522D895408009476E7 /* ModalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026776512D895408009476E7 /* ModalTests.swift */; };
 		0268C8D02D829BD00068896D /* AnyModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0268C8CF2D829BD00068896D /* AnyModal.swift */; };
 		0268C8D32D82A2B40068896D /* SwiftfulRecursiveUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0268C8D22D82A2B40068896D /* SwiftfulRecursiveUI */; };
@@ -68,6 +69,7 @@
 		02661C042D8A70150067BFA5 /* VisualEffectViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffectViewRepresentable.swift; sourceTree = "<group>"; };
 		02661C072D8A7DDE0067BFA5 /* TransitionOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionOption.swift; sourceTree = "<group>"; };
 		02661C092D8A7E450067BFA5 /* AnyTransitionWithDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyTransitionWithDestination.swift; sourceTree = "<group>"; };
+		02661C0B2D8BDD1A0067BFA5 /* SwipeBackSupportContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeBackSupportContainer.swift; sourceTree = "<group>"; };
 		026776512D895408009476E7 /* ModalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalTests.swift; sourceTree = "<group>"; };
 		0268C8CF2D829BD00068896D /* AnyModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyModal.swift; sourceTree = "<group>"; };
 		027D76632D63C52C00D24A22 /* AnyDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyDestination.swift; sourceTree = "<group>"; };
@@ -128,6 +130,7 @@
 			children = (
 				02661C072D8A7DDE0067BFA5 /* TransitionOption.swift */,
 				02661C092D8A7E450067BFA5 /* AnyTransitionWithDestination.swift */,
+				02661C0B2D8BDD1A0067BFA5 /* SwipeBackSupportContainer.swift */,
 			);
 			path = TransitionsNew;
 			sourceTree = "<group>";
@@ -390,6 +393,7 @@
 				027D76662D63C53600D24A22 /* OnFirstAppearModifier.swift in Sources */,
 				028A896C281F9228004E3DA4 /* ContentView.swift in Sources */,
 				024651D02D7EB90D00545A5F /* ZoomTesting.swift in Sources */,
+				02661C0C2D8BDD1A0067BFA5 /* SwipeBackSupportContainer.swift in Sources */,
 				02CFF0F72986BEE400E6ABCC /* BasicView.swift in Sources */,
 				02CFF0F22986BDFC00E6ABCC /* HomeView.swift in Sources */,
 				027D766A2D63C57A00D24A22 /* AnyDestinationStack.swift in Sources */,

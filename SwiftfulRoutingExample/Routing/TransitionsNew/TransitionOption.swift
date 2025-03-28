@@ -9,7 +9,16 @@ import SwiftUI
 public enum TransitionOption: String, CaseIterable {
     // identity, scale, opacity, slide, slideCover
     case trailing, leading, top, bottom, identity
-    // trailingCover, leadingCover, topCover, bottomCover
+//    case trailingCover, leadingCover, topCover, bottomCover
+    
+    var animation: Animation? {
+        switch self {
+        case .identity:
+            return .none
+        default:
+            return .easeInOut
+        }
+    }
     
     var insertion: AnyTransition {
         switch self {
@@ -36,10 +45,14 @@ public enum TransitionOption: String, CaseIterable {
 //        case .slide, .slideCover:
 //            return .slide.animation(.default)
         case .identity:
-            return .identity
+            // Note: This will NOT work with .identity (idk why)
+            // SwiftUI renders .identity differently than .move transitions
+            // Instead, we keep this as .move(.leading) and will set animation = .none
+            // to get the same result!
+            return .move(edge: .leading)
         }
     }
-//    
+    
 //    var removal: AnyTransition {
 //        switch self {
 //        case .trailingCover, .leadingCover, .topCover, .bottomCover:
@@ -77,5 +90,52 @@ public enum TransitionOption: String, CaseIterable {
         case .identity: return .identity
         }
     }
+    
+    var asAlignment: Alignment {
+        switch self {
+        case .trailing:
+            return .trailing
+//        case .trailingCover:
+//            return .trailing
+        case .leading:
+            return .leading
+//        case .leadingCover:
+//            return .leading
+        case .top:
+            return .top
+//        case .topCover:
+//            return .top
+        case .bottom:
+            return .bottom
+//        case .bottomCover:
+//            return .bottom
+        case .identity:
+            return .center
+        }
+    }
+    
+    var asAxis: Axis.Set {
+        switch self {
+        case .trailing:
+            return .horizontal
+//        case .trailingCover:
+//            return .horizontal
+        case .leading:
+            return .horizontal
+//        case .leadingCover:
+//            return .horizontal
+        case .top:
+            return .vertical
+//        case .topCover:
+//            return .vertical
+        case .bottom:
+            return .vertical
+//        case .bottomCover:
+//            return .vertical
+        case .identity:
+            return .horizontal
+        }
+    }
+
 }
 

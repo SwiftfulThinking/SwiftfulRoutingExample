@@ -12,32 +12,12 @@ struct AnyTransitionDestination: Identifiable, Equatable {
     private(set) var transition: TransitionOption
     private(set) var onDismiss: (() -> Void)?
     private(set) var destination: (AnyRouter) -> any View
-    //     private(set) var destination: AnyView
-
     
     static var root: AnyTransitionDestination {
         AnyTransitionDestination(id: "root", transition: .trailing, destination: { _ in
             EmptyView()
         })
     }
-    
-//    init<T:View>(
-//        id: String = UUID().uuidString,
-//        transition: TransitionOption = .trailingCover,
-//        onDismiss: (() -> Void)? = nil,
-//        destination: @escaping (AnyRouter) -> T
-//    ) {
-//        self.id = id
-//        self.transition = transition
-//        self.destination = AnyView(
-//            RouterViewInternal(
-//                routerId: id,
-//                addNavigationStack: segue != .push,
-//                content: destination
-//            )
-//        )
-//        self.onDismiss = onDismiss
-//    }
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
@@ -48,16 +28,42 @@ struct AnyTransitionDestination: Identifiable, Equatable {
     }
 }
 
+enum TransitionMemoryBehavior {
+    case removePreviousFromMemory
+    case keepPreviousInMemory(allowSwipeBack: Bool)
+    
+    var allowSimultaneous: Bool {
+        switch self {
+        case .removePreviousFromMemory:
+            return false
+        case .keepPreviousInMemory:
+            return true
+        }
+    }
+    
+    var allowSwipeBack: Bool {
+        switch self {
+        case .removePreviousFromMemory:
+            return false
+        case .keepPreviousInMemory(let allowSwipeBack):
+            return allowSwipeBack
+        }
+    }
+}
+
 struct TransitionSupportView2<Content:View>: View {
     
+    var behavior: TransitionMemoryBehavior = .removePreviousFromMemory // .keepPreviousInMemory(allowSwipeBack: true)
     let router: AnyRouter
     let transitions: [AnyTransitionDestination]
     @ViewBuilder var content: (AnyRouter) -> Content
     let currentTransition: TransitionOption
     
+    @State private var viewFrame: CGRect = .zero
+
     var body: some View {
         ZStack {
-            LazyZStack(allowSimultaneous: false, selection: transitions.last, items: transitions) { data in
+            LazyZStack(allowSimultaneous: behavior.allowSimultaneous, selection: transitions.last, items: transitions) { data in
                 let dataIndex: Double = Double(transitions.firstIndex(where: { $0.id == data.id }) ?? 99)
                 
                 if data == transitions.first {
@@ -65,7 +71,7 @@ struct TransitionSupportView2<Content:View>: View {
                         .transition(
                             .asymmetric(
                                 insertion: currentTransition.insertion,
-                                removal: .customRemoval(direction: currentTransition.reversed)
+                                removal: .customRemoval(behavior: behavior, direction: currentTransition.reversed, frame: viewFrame)
                             )
                         )
                         .zIndex(-1)
@@ -74,14 +80,22 @@ struct TransitionSupportView2<Content:View>: View {
                         .transition(
                             .asymmetric(
                                 insertion: currentTransition.insertion,
-                                removal: .customRemoval(direction: currentTransition.reversed)
+                                removal: .customRemoval(behavior: behavior, direction: currentTransition.reversed, frame: viewFrame)
                             )
                         )
                         .zIndex(dataIndex)
                 }
             }
         }
-        .animation(.easeInOut, value: (transitions.last?.id ?? "") + currentTransition.rawValue)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+//        .ignoresSafeArea()
+        .animation(currentTransition.animation, value: (transitions.last?.id ?? "") + currentTransition.rawValue)
+        .ifSatisfiesCondition(viewFrame == .zero, transform: { content in
+            content
+                .readingFrame(onChange: { frame in
+                    self.viewFrame = frame
+                })
+        })
     }
 }
 
@@ -120,14 +134,12 @@ struct TransitionSupportView2<Content:View>: View {
 //}
 
 struct CustomRemovalTransition: ViewModifier {
+    var behavior: TransitionMemoryBehavior
     let option: TransitionOption?
-    @State private var frame: CGRect = .zero
+    var frame: CGRect
 
     func body(content: Content) -> some View {
         content
-            .readingFrame { frame in
-                self.frame = frame
-            }
             .offset(x: xOffset, y: yOffset)
     }
     
@@ -135,59 +147,67 @@ struct CustomRemovalTransition: ViewModifier {
         switch option {
         case .trailing:
             return frame.width
-//        case .trailingCover:
-//            return 0
         case .leading:
             return -frame.width
-//        case .leadingCover:
-//            return 0
-        case .top:
-            return 0
-//        case .topCover:
-//            return 0
-        case .bottom:
-            return 0
-//        case .bottomCover:
-//            return 0
-        case .identity:
-            return 0
-        case nil:
+        default:
             return 0
         }
     }
     
     private var yOffset: CGFloat {
         switch option {
-        case .trailing:
-            return 0
-//        case .trailingCover:
-//            return 0
-        case .leading:
-            return 0
-//        case .leadingCover:
-//            return 0
         case .top:
             return -frame.height
-//        case .topCover:
-//            return 0
         case .bottom:
             return frame.height
-//        case .bottomCover:
-//            return 0
-        case .identity:
-            return 0
-        case nil:
+        default:
             return 0
         }
     }
 }
 
+//struct CustomOffset: ViewModifier {
+//    let option: TransitionOption?
+//    var frame: CGRect
+//
+//    func body(content: Content) -> some View {
+//        content
+//            .offset(x: xOffset, y: yOffset)
+//    }
+//    
+//    private var xOffset: CGFloat {
+//        switch option {
+//        case .trailing:
+//            return frame.width
+//        case .leading:
+//            return -frame.width
+//        default:
+//            return 0
+//        }
+//    }
+//    
+//    private var yOffset: CGFloat {
+//        switch option {
+//        case .top:
+//            return -frame.height
+//        case .bottom:
+//            return frame.height
+//        default:
+//            return 0
+//        }
+//    }
+//}
+
 extension AnyTransition {
     
-    static func customRemoval(direction: TransitionOption) -> AnyTransition {
+    static func customRemoval(
+        behavior: TransitionMemoryBehavior,
+        direction: TransitionOption,
+        frame: CGRect
+    ) -> AnyTransition {
         .modifier(
-            active: CustomRemovalTransition(option: direction),
-            identity: CustomRemovalTransition(option: nil)
+            active: CustomRemovalTransition(behavior: behavior, option: direction, frame: frame),
+            identity: CustomRemovalTransition(behavior: behavior, option: nil, frame: frame)
         )
     }
     

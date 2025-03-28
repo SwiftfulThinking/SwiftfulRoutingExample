@@ -958,18 +958,36 @@ struct RecursiveRoutingView: View {
         }
         .accessibilityIdentifier("Button_DismissAllModals")
     }
+    
+    private func triggerTransition(transition: TransitionOption) {
+        let transition = AnyTransitionDestination(id: UUID().uuidString, transition: transition) { router in
+            Rectangle()
+                .fill(Color.green)
+                .offset(x: 100)
+//                .ignoresSafeArea()
+                .onTapGesture {
+                    try? router.dismissTransition()
+                }
+        }
+        router.showTransition(transition: transition)
+    }
                   
     @ViewBuilder
     var transitionButtons: some View {
-        Button("Transition trailing") {
-            let transition = AnyTransitionDestination(id: "transition_1", transition: .identity) { router in
-                Rectangle()
-                    .fill(Color.green)
-                    .onTapGesture {
-                        try? router.dismissTransition()
-                    }
-            }
-            router.showTransition(transition: transition)
+        Button("trailing") {
+            triggerTransition(transition: .trailing)
+        }
+        Button("leading") {
+            triggerTransition(transition: .leading)
+        }
+        Button("top") {
+            triggerTransition(transition: .top)
+        }
+        Button("bottom") {
+            triggerTransition(transition: .bottom)
+        }
+        Button("identity") {
+            triggerTransition(transition: .identity)
         }
         
         Button("Transitions 3x + dismiss 2x") {
