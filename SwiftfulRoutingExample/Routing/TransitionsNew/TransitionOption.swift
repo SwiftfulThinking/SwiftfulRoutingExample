@@ -17,7 +17,7 @@ public enum TransitionOption: String, CaseIterable {
         case .identity:
             return .none
         default:
-            return .easeInOut
+            return .snappy
         }
     }
     

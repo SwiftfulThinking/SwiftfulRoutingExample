@@ -1279,10 +1279,10 @@ struct RouterViewInternal<Content: View>: View, Router {
     - inject behavior - DONE
     - all transitions working one - DONE
     - all transitions working multi - DONE
-    - scale - 
-    - fade -
-    - opacity -
-    - custom animation values?
+    - scale - HOLD
+    - fade - HOLD
+    - opacity - HOLD
+    - custom animation values? - HOLD
     - configure swipe gestures -
         - .leading(allowSwipeBack: Bool)
 

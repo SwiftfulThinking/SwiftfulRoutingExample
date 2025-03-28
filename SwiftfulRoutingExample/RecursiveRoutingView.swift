@@ -963,8 +963,8 @@ struct RecursiveRoutingView: View {
         let transition = AnyTransitionDestination(id: UUID().uuidString, transition: transition) { router in
             Rectangle()
                 .fill(Color.green)
-                .offset(x: 100)
-//                .ignoresSafeArea()
+//                .offset(x: 100)
+                .ignoresSafeArea()
                 .onTapGesture {
                     try? router.dismissTransition()
                 }

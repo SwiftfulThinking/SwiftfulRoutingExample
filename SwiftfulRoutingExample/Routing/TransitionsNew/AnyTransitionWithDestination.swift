@@ -74,6 +74,7 @@ struct TransitionSupportView2<Content:View>: View {
                                 removal: .customRemoval(behavior: behavior, direction: currentTransition.reversed, frame: viewFrame)
                             )
                         )
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .zIndex(-1)
                 } else {
                     return data.destination(router)
@@ -83,12 +84,12 @@ struct TransitionSupportView2<Content:View>: View {
                                 removal: .customRemoval(behavior: behavior, direction: currentTransition.reversed, frame: viewFrame)
                             )
                         )
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .zIndex(dataIndex)
                 }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-//        .ignoresSafeArea()
         .animation(currentTransition.animation, value: (transitions.last?.id ?? "") + currentTransition.rawValue)
         .ifSatisfiesCondition(viewFrame == .zero, transform: { content in
             content
