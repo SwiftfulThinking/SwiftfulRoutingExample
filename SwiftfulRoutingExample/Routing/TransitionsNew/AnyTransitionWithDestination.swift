@@ -59,7 +59,7 @@ struct TransitionSupportView2<Content:View>: View {
     @ViewBuilder var content: (AnyRouter) -> Content
     let currentTransition: TransitionOption
     
-    @State private var viewFrame: CGRect = .zero
+    @State private var viewFrame: CGRect = UIScreen.main.bounds
 
     var body: some View {
         ZStack {
@@ -74,7 +74,6 @@ struct TransitionSupportView2<Content:View>: View {
                                 removal: .customRemoval(behavior: behavior, direction: currentTransition.reversed, frame: viewFrame)
                             )
                         )
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .zIndex(-1)
                 } else {
                     return data.destination(router)
@@ -84,19 +83,21 @@ struct TransitionSupportView2<Content:View>: View {
                                 removal: .customRemoval(behavior: behavior, direction: currentTransition.reversed, frame: viewFrame)
                             )
                         )
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .zIndex(dataIndex)
                 }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .animation(currentTransition.animation, value: (transitions.last?.id ?? "") + currentTransition.rawValue)
-        .ifSatisfiesCondition(viewFrame == .zero, transform: { content in
-            content
-                .readingFrame(onChange: { frame in
-                    self.viewFrame = frame
-                })
-        })
+//        .ifSatisfiesCondition(viewFrame == .zero, transform: { content in
+//            content
+//                .readingFrame(onChange: { frame in
+//                    // Add +150 to account for safe areas
+//                    self.viewFrame = frame
+////                    self.viewFrame = UIScreen.main.bounds
+////                    self.viewFrame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
+//                })
+//        })
     }
 }
 
