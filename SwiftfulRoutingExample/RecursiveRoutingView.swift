@@ -959,8 +959,8 @@ struct RecursiveRoutingView: View {
         .accessibilityIdentifier("Button_DismissAllModals")
     }
     
-    private func triggerTransition(transition: TransitionOption) {
-        let transition = AnyTransitionDestination(id: UUID().uuidString, transition: transition) { router in
+    private func triggerTransition(transition: TransitionOption, allowsSwipeBack: Bool = true) {
+        let transition = AnyTransitionDestination(id: UUID().uuidString, transition: transition, allowsSwipeBack: allowsSwipeBack) { router in
             Rectangle()
                 .fill(Color.green)
 //                .offset(x: 100)
@@ -975,9 +975,15 @@ struct RecursiveRoutingView: View {
     @ViewBuilder
     var transitionButtons: some View {
         Button("trailing") {
+            triggerTransition(transition: .trailing, allowsSwipeBack: false)
+        }
+        Button("trailing w/ swipe back") {
             triggerTransition(transition: .trailing)
         }
         Button("leading") {
+            triggerTransition(transition: .leading, allowsSwipeBack: false)
+        }
+        Button("leading w/ swipe back") {
             triggerTransition(transition: .leading)
         }
         Button("top") {

@@ -8,9 +8,10 @@ import SwiftUI
 import SwiftfulRecursiveUI
 
 struct AnyTransitionDestination: Identifiable, Equatable {
-    private(set) var id: String
-    private(set) var transition: TransitionOption
-    private(set) var onDismiss: (() -> Void)?
+    private(set) var id: String = UUID().uuidString
+    private(set) var transition: TransitionOption = .trailing
+    private(set) var allowsSwipeBack: Bool = true
+    private(set) var onDismiss: (() -> Void)? = nil
     private(set) var destination: (AnyRouter) -> any View
     
     static var root: AnyTransitionDestination {
@@ -58,33 +59,41 @@ struct TransitionSupportView2<Content:View>: View {
     let transitions: [AnyTransitionDestination]
     @ViewBuilder var content: (AnyRouter) -> Content
     let currentTransition: TransitionOption
-    
+    let onDidSwipeBack: () -> Void
+
     @State private var viewFrame: CGRect = UIScreen.main.bounds
 
     var body: some View {
         ZStack {
             LazyZStack(allowSimultaneous: behavior.allowSimultaneous, selection: transitions.last, items: transitions) { data in
                 let dataIndex: Double = Double(transitions.firstIndex(where: { $0.id == data.id }) ?? 99)
+                let allowsSwipeBack: Bool = data.transition.canSwipeBack && data.allowsSwipeBack
                 
-                if data == transitions.first {
-                    return content(router)
-                        .transition(
-                            .asymmetric(
-                                insertion: currentTransition.insertion,
-                                removal: .customRemoval(behavior: behavior, direction: currentTransition.reversed, frame: viewFrame)
+                return Group {
+                    if data == transitions.first {
+                        content(router)
+                    } else {
+                        if allowsSwipeBack {
+                            SwipeBackSupportContainer(
+                                insertionTransition: data.transition,
+                                swipeThreshold: 30,
+                                content: {
+                                    AnyView(data.destination(router))
+                                },
+                                onDidSwipeBack: onDidSwipeBack
                             )
-                        )
-                        .zIndex(-1)
-                } else {
-                    return data.destination(router)
-                        .transition(
-                            .asymmetric(
-                                insertion: currentTransition.insertion,
-                                removal: .customRemoval(behavior: behavior, direction: currentTransition.reversed, frame: viewFrame)
-                            )
-                        )
-                        .zIndex(dataIndex)
+                        } else {
+                            AnyView(data.destination(router))
+                        }
+                    }
                 }
+                .transition(
+                    .asymmetric(
+                        insertion: currentTransition.insertion,
+                        removal: .customRemoval(behavior: behavior, direction: currentTransition.reversed, frame: viewFrame)
+                    )
+                )
+                .zIndex(dataIndex)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -100,6 +109,23 @@ struct TransitionSupportView2<Content:View>: View {
 //        })
     }
 }
+
+/*
+ Group {
+                         if allowsSwipeBack {
+                             SwipeBackSupportContainer(
+                                 insertionTransition: data.transition,
+                                 swipeThreshold: 30,
+                                 content: {
+                                     data.destination(router).destination
+                                 },
+                                 onDidSwipeBack: onDidSwipeBack
+                             )
+                         } else {
+                             data.destination(router).destination
+                         }
+                     }
+ */
 
 //struct TransitionSupportView<Content:View>: View {
 //    

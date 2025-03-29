@@ -12,6 +12,15 @@ public enum TransitionOption: String, CaseIterable {
     
 //    case trailingCover, leadingCover, topCover, bottomCover
     
+    var canSwipeBack: Bool {
+        switch self {
+        case .trailing, .leading:
+            return true
+        default:
+            return false
+        }
+    }
+    
     var animation: Animation? {
         switch self {
         case .identity:

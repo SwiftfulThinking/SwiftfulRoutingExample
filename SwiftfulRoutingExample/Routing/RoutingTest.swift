@@ -930,7 +930,10 @@ struct RouterViewInternal<Content: View>: View, Router {
             router: currentRouter,
             transitions: viewModel.allTransitions[routerId] ?? [],
             content: content,
-            currentTransition: viewModel.currentTransitions[routerId] ?? .trailing
+            currentTransition: viewModel.currentTransitions[routerId] ?? .trailing,
+            onDidSwipeBack: {
+                try? dismissTransition()
+            }
         )
         // Add NavigationStack if needed
         .ifSatisfiesCondition(addNavigationStack, transform: { content in
@@ -1285,19 +1288,14 @@ struct RouterViewInternal<Content: View>: View, Router {
     - custom animation values? - HOLD
     - configure swipe gestures -
         - .leading(allowSwipeBack: Bool)
-
-    - swipe back gestures
-        - removePreviousFromMemory
-            - moves to the left - works
-            - stays same place - not possible?
-        - keepPreviousInMemory(allowSwipeBack: Bool)
-            - stays same place - works
-            - moves to the left - possible?
     - transition tests -
 
  - modules
     -
  
+ - clean code
+ - observable?
+ - iOS 15?
  - add to starter project for checks
     - Multiple routers should handle same as multiple modals? -
  - tabbars
