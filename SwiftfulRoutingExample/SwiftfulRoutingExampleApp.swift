@@ -19,13 +19,19 @@ struct SwiftfulRoutingExampleApp: App {
         UINavigationBar.appearance().prefersLargeTitles = true
     }
     
+    private var isUITesting: Bool {
+        ProcessInfo.processInfo.arguments.contains("UI_TESTING")
+    }
+    
     var body: some Scene {
         WindowGroup {
-//            Text("Hi")
-//            RoutingTest()
-//            ContentView()
-            ContentView2()
-//            ContentTransitionView()
+            if isUITesting {
+                ContentView2()
+            } else {
+                RouterView(addNavigationStack: true, logger: true) { router in
+                    OverviewView()
+                }
+            }
         }
     }
 }

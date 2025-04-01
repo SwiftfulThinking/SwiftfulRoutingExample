@@ -30,14 +30,14 @@ struct AnyTransitionDestination: Identifiable, Equatable {
 }
 
 enum TransitionMemoryBehavior {
-    case removePreviousFromMemory
-    case keepPreviousInMemory
+    case removePrevious
+    case keepPrevious
     
     var allowSimultaneous: Bool {
         switch self {
-        case .removePreviousFromMemory:
+        case .removePrevious:
             return false
-        case .keepPreviousInMemory:
+        case .keepPrevious:
             return true
         }
     }
@@ -54,7 +54,7 @@ enum TransitionMemoryBehavior {
 
 struct TransitionSupportView2<Content:View>: View {
     
-    var behavior: TransitionMemoryBehavior = .keepPreviousInMemory
+    var behavior: TransitionMemoryBehavior = .keepPrevious
     let router: AnyRouter
     let transitions: [AnyTransitionDestination]
     @ViewBuilder var content: (AnyRouter) -> Content

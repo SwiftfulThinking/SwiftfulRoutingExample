@@ -67,7 +67,7 @@ struct RouterView<Content: View>: View {
     }
 }
 
-@MainActor
+//@MainActor
 protocol Router {
     func showScreens(destinations: [AnyDestination])
     func dismissScreen(animates: Bool)
@@ -99,7 +99,8 @@ protocol Router {
     func showTransition(transition: AnyTransitionDestination)
     func showTransitions(transitions: [AnyTransitionDestination])
     func dismissTransition() throws
-    func dismissTransitions(toScreenId: String)
+    func dismissTransition(id: String)
+    func dismissTransitions(upToScreenId: String)
     func dismissTransitions(count: Int)
     func dismissAllTransitions()
     
@@ -762,6 +763,22 @@ final class RouterViewModel {
         }
     }
     
+    func dismissTransitions(routerId: String, id: String) {
+        // Dismiss to the screen before id
+        guard
+            let transitions = allTransitions[routerId],
+            let requestedIndex = transitions.firstIndex(where: {  $0.id == id }) else {
+            return
+        }
+        
+        var resultingScreenId = RouterViewModel.rootId
+        if transitions.indices.contains(requestedIndex - 1) {
+            resultingScreenId = transitions[requestedIndex - 1].id
+        }
+        
+        dismissTransitions(routerId: routerId, toScreenId: resultingScreenId)
+    }
+    
     func dismissTransitions(routerId: String, toScreenId: String) {
         let transitions = allTransitions[routerId] ?? []
         
@@ -923,10 +940,21 @@ struct RouterViewInternal<Content: View>: View, Router {
     private var currentRouter: AnyRouter {
         AnyRouter(object: self)
     }
+    
+    private var parentDestination: AnyDestination? {
+        guard let index = viewModel.activeScreenStacks.lastIndex(where: { stack in
+            return stack.screens.contains(where: { $0.id == routerId })
+        }) else {
+            return nil
+        }
+        
+        return viewModel.activeScreenStacks[index].screens.first(where: { $0.id == routerId })
+    }
 
     var body: some View {
         // Wrap starting content for Transition support
         TransitionSupportView2(
+            behavior: parentDestination?.transitionBehavior ?? .keepPrevious,
             router: currentRouter,
             transitions: viewModel.allTransitions[routerId] ?? [],
             content: content,
@@ -1017,6 +1045,9 @@ struct RouterViewInternal<Content: View>: View, Router {
                     printModalStack(modals: newValue)
                 }
         })
+        
+        // Add to environment for convenience
+        .environment(\.router, currentRouter)
     }
     
     private func printModalStack(modals: [AnyModal]) {
@@ -1172,8 +1203,12 @@ struct RouterViewInternal<Content: View>: View, Router {
         try viewModel.dismissTransition(routerId: routerId)
     }
     
-    func dismissTransitions(toScreenId: String) {
-        viewModel.dismissTransitions(routerId: routerId, toScreenId: toScreenId)
+    func dismissTransition(id: String) {
+        viewModel.dismissTransitions(routerId: routerId, id: id)
+    }
+    
+    func dismissTransitions(upToScreenId: String) {
+        viewModel.dismissTransitions(routerId: routerId, toScreenId: upToScreenId)
     }
     
     func dismissTransitions(count: Int) {
@@ -1286,12 +1321,12 @@ struct RouterViewInternal<Content: View>: View, Router {
     - fade - HOLD
     - opacity - HOLD
     - custom animation values? - HOLD
-    - configure swipe gestures -
-        - .leading(allowSwipeBack: Bool)
-    - transition tests -
+    - configure swipe gestures - DONE
+        - .leading(allowSwipeBack: Bool) - NO
+    - transition tests - HOLD?
 
  - modules
-    -
+    - 
  
  - clean code
  - observable?

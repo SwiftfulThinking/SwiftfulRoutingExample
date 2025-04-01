@@ -25,6 +25,7 @@ struct AnyDestination: Identifiable, Hashable {
     let animates: Bool
     private(set) var destination: AnyView
     let onDismiss: (() -> Void)?
+    var transitionBehavior: TransitionMemoryBehavior = .keepPrevious
     
 //    init<T:View>(id: String = UUID().uuidString, _ segue: SegueOption = .push, location: SegueLocation = .insert, onDismiss: (() -> Void)? = nil, destination: @escaping (AnyRouter) -> T) {
 //        self.init(id: id, segue: segue, location: location, onDismiss: onDismiss, destination: destination)
@@ -35,6 +36,7 @@ struct AnyDestination: Identifiable, Hashable {
         segue: SegueOption = .push,
         location: SegueLocation = .insert,
         animates: Bool = true,
+        transitionBehavior: TransitionMemoryBehavior = .keepPrevious,
         onDismiss: (() -> Void)? = nil,
         destination: @escaping (AnyRouter) -> T
     ) {
@@ -42,6 +44,7 @@ struct AnyDestination: Identifiable, Hashable {
         self.segue = segue
         self.location = location
         self.animates = animates
+        self.transitionBehavior = transitionBehavior
         self.destination = AnyView(
             RouterViewInternal(
                 routerId: id,

@@ -10,30 +10,11 @@ import SwiftUI
 struct ContentView2: View {
     var body: some View {
         RouterView(addNavigationStack: true, logger: true) { router in
-            RecursiveRoutingView(router: router, screenNumber: 0)
+            RecursiveRoutingView(router: router, screenNumber: 0, viewState: viewState)
         }
     }
-}
-
-struct RecursiveRoutingView: View {
     
-    let router: AnyRouter
-    let screenNumber: Int
-
-    @State private var lastDismiss: Int = -1
-    @Namespace private var namespace
-    
-    enum ViewState {
-        case regular
-        case testingSegues
-        case testingMultiSegues
-        case testingDismissing
-        case testingMultiRouters
-        case testingSegueQueue
-        case testingModals
-    }
-    
-    var viewState: ViewState {
+    var viewState: RecursiveRoutingView.ViewState {
         let arguments = ProcessInfo.processInfo.arguments
         if arguments.contains("UI_TESTING") {
             if arguments.contains("SEGUES") {
@@ -48,10 +29,40 @@ struct RecursiveRoutingView: View {
                 return .testingSegueQueue
             } else if arguments.contains("MODALS") {
                 return .testingModals
+            } else if arguments.contains("TRANSITIONS") {
+                return .testingTransitions
             }
         }
         
         return .regular
+    }
+
+}
+
+struct RecursiveRoutingView: View {
+    
+    let router: AnyRouter
+    let screenNumber: Int
+    var viewState: ViewState = .regular
+    
+    @State private var lastDismiss: Int = -1
+    @Namespace private var namespace
+    
+    enum ViewState {
+        case regular // tbr
+        
+        case segueExamples
+        case alertExamples
+        case modalExamples
+        case transitionExamples
+
+        case testingSegues
+        case testingMultiSegues
+        case testingDismissing
+        case testingMultiRouters
+        case testingSegueQueue
+        case testingModals
+        case testingTransitions
     }
     
     var body: some View {
@@ -64,43 +75,57 @@ struct RecursiveRoutingView: View {
 
             switch viewState {
             case .regular:
-//                Section("Segues") {
-//                    segueButtons
-//                }
-//                Section("Multi-Segues") {
-//                    multiSegueButtons
-//                }
-//                Section("Dismiss actions") {
-//                    dismissButtons(showAll: true)
-//                }
-//                Section("Multi-Routers") {
-//                    multiRouterButtons
-//                }
-//                Section("Segue Queue") {
-//                    queueButtons
-//                }
-//                Section("Custom Sheets") {
-//                    customSheetButtons
-//                }
-//                Section("Alerts") {
-//                    alertButtons
-//                }
-//                Section("Modals") {
-//                    modalButtons
-//                }
-//                Section("Dismiss modal actions") {
-//                    dismissModalButtons
-//                }
+                Section("Segues") {
+                    segueButtons
+                }
+                Section("Multi-Segues") {
+                    multiSegueButtons
+                }
+                Section("Dismiss actions") {
+                    dismissButtons(showAll: true)
+                }
+                Section("Multi-Routers") {
+                    multiRouterButtons
+                }
+                Section("Segue Queue") {
+                    queueButtons
+                }
+                Section("Custom Sheets") {
+                    customSheetButtons
+                }
+                Section("Alerts") {
+                    alertButtons
+                }
+                Section("Modals") {
+                    modalButtons
+                }
+                Section("Dismiss modal actions") {
+                    dismissModalButtons
+                }
                 Section("Transitions") {
                     transitionButtons
                 }
-                Section("Transition dismisses") {
-                    dismissModalButtons
+                Section("Dismiss transition actions") {
+                    
                 }
                 
-            case .testingModals:
-                modalButtons
-                dismissModalButtons
+            // SEGUES
+            case .segueExamples:
+                Section("Segues") {
+                    segueButtons
+                }
+                Section("Dismiss actions") {
+                    dismissButtons(showAll: true)
+                }
+                Section("Multi-Segues") {
+                    multiSegueButtons
+                }
+                Section("Multi-Routers") {
+                    multiRouterButtons
+                }
+                Section("Segue Queue") {
+                    queueButtons
+                }
             case .testingSegues:
                 segueButtons
                 dismissButtons()
@@ -110,12 +135,44 @@ struct RecursiveRoutingView: View {
             case .testingDismissing:
                 segueButtons
                 dismissButtons(showAll: true)
-            case .testingMultiRouters:
-                multiRouterButtons
-                dismissButtons(showAll: false)
             case .testingSegueQueue:
                 queueButtons
                 dismissButtons(showAll: false)
+
+            // MODALS
+            case .modalExamples:
+                Section("Modals") {
+                    modalButtons
+                }
+                Section("Dismiss actions") {
+                    dismissModalButtons
+                }
+            case .testingModals:
+                modalButtons
+                dismissModalButtons
+                
+            // ALERTS
+            case .alertExamples:
+                Section("Alerts") {
+                    alertButtons
+                }
+            
+            case .testingMultiRouters:
+                multiRouterButtons
+                dismissButtons(showAll: false)
+            
+            // TRANSITIONS
+            case .transitionExamples:
+                Section("Transitions") {
+                    transitionButtons
+                }
+                Section("Dismiss transition actions") {
+                    dismissTransitionButtons
+                }
+    
+            case .testingTransitions:
+                transitionButtons
+                dismissTransitionButtons
             }
         }
         .navigationTitle("\(screenNumber)")
@@ -960,14 +1017,17 @@ struct RecursiveRoutingView: View {
     }
     
     private func triggerTransition(transition: TransitionOption, allowsSwipeBack: Bool = true) {
-        let transition = AnyTransitionDestination(id: UUID().uuidString, transition: transition, allowsSwipeBack: allowsSwipeBack) { router in
-            Rectangle()
-                .fill(Color.green)
-//                .offset(x: 100)
-                .ignoresSafeArea()
-                .onTapGesture {
-                    try? router.dismissTransition()
-                }
+        let screenNumber = screenNumber + 1
+        let transition = AnyTransitionDestination(
+            id: "\(screenNumber)",
+            transition: transition,
+            allowsSwipeBack: allowsSwipeBack
+        ) { router in
+            RecursiveRoutingView(
+                router: router,
+                screenNumber: screenNumber,
+                viewState: viewState
+            )
         }
         router.showTransition(transition: transition)
     }
@@ -977,18 +1037,24 @@ struct RecursiveRoutingView: View {
         Button("trailing") {
             triggerTransition(transition: .trailing, allowsSwipeBack: false)
         }
+        .accessibilityIdentifier("Button_TransitionTrailing")
+
         Button("trailing w/ swipe back") {
             triggerTransition(transition: .trailing)
         }
         Button("leading") {
             triggerTransition(transition: .leading, allowsSwipeBack: false)
         }
+        .accessibilityIdentifier("Button_TransitionLeading")
+
         Button("leading w/ swipe back") {
             triggerTransition(transition: .leading)
         }
         Button("top") {
             triggerTransition(transition: .top)
         }
+        .accessibilityIdentifier("Button_TransitionTop")
+
         Button("bottom") {
             triggerTransition(transition: .bottom)
         }
@@ -1046,17 +1112,68 @@ struct RecursiveRoutingView: View {
             }
         }
 //        .accessibilityIdentifier("Button_DismissModal")
-//        
-//        Button("Dismiss modal_1") {
-//            Task {
-//                triggerModal1()
-//                try? await Task.sleep(for: .seconds(2))
-//                router.dismissModal(id: "modal_1")
-//            }
-//        }
-//        .accessibilityIdentifier("Button_DismissModalId1")
+//
         
+        Button("2 Transitions") {
+            let number1 = 700
+            let transition1 = AnyTransitionDestination(
+                id: "\(number1)",
+                transition: .trailing,
+                destination: { router in
+                    RecursiveRoutingView(
+                        router: router,
+                        screenNumber: number1,
+                        viewState: viewState
+                    )
+                }
+            )
+            let number2 = number1 + 1
+            let transition2 = AnyTransitionDestination(
+                id: "\(number2)",
+                transition: .trailing,
+                destination: { router in
+                    RecursiveRoutingView(
+                        router: router,
+                        screenNumber: number2,
+                        viewState: viewState
+                    )
+                }
+            )
+            
+            // Note: the background of the 2nd modal should be above the background of 1st modal
+            router.showTransitions(transitions: [transition1, transition2])
+        }
+        .accessibilityIdentifier("Button_2Transitions")
     }
+    
+    @ViewBuilder
+    var dismissTransitionButtons: some View {
+        Button("Dismiss transition") {
+            try? router.dismissTransition()
+        }
+        .accessibilityIdentifier("Button_DismissTransition")
+
+        Button("Dismiss transition 1") {
+            router.dismissTransition(id: "1")
+        }
+        .accessibilityIdentifier("Button_DismissTransitionId1")
+
+        Button("Dismiss up to transition 1") {
+            router.dismissTransitions(upToScreenId: "1")
+        }
+        .accessibilityIdentifier("Button_DismissupToTransition1")
+
+        Button("Dismiss to 2 transitions") {
+            router.dismissTransitions(count: 2)
+        }
+        .accessibilityIdentifier("Button_Dismiss2Transitions")
+
+        Button("Dismiss all transitions") {
+            router.dismissAllTransitions()
+        }
+        .accessibilityIdentifier("Button_DismissAllTransitions")
+    }
+
 }
 
 #Preview {

@@ -16,6 +16,8 @@
 		02661C082D8A7DDE0067BFA5 /* TransitionOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661C072D8A7DDE0067BFA5 /* TransitionOption.swift */; };
 		02661C0A2D8A7E450067BFA5 /* AnyTransitionWithDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661C092D8A7E450067BFA5 /* AnyTransitionWithDestination.swift */; };
 		02661C0C2D8BDD1A0067BFA5 /* SwipeBackSupportContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661C0B2D8BDD1A0067BFA5 /* SwipeBackSupportContainer.swift */; };
+		02661DA12D98F0550067BFA5 /* OverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661DA02D98F0550067BFA5 /* OverviewView.swift */; };
+		02661DA32D9B9DCB0067BFA5 /* TransitionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661DA22D9B9DCB0067BFA5 /* TransitionTests.swift */; };
 		026776522D895408009476E7 /* ModalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026776512D895408009476E7 /* ModalTests.swift */; };
 		0268C8D02D829BD00068896D /* AnyModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0268C8CF2D829BD00068896D /* AnyModal.swift */; };
 		0268C8D32D82A2B40068896D /* SwiftfulRecursiveUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0268C8D22D82A2B40068896D /* SwiftfulRecursiveUI */; };
@@ -70,6 +72,8 @@
 		02661C072D8A7DDE0067BFA5 /* TransitionOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionOption.swift; sourceTree = "<group>"; };
 		02661C092D8A7E450067BFA5 /* AnyTransitionWithDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyTransitionWithDestination.swift; sourceTree = "<group>"; };
 		02661C0B2D8BDD1A0067BFA5 /* SwipeBackSupportContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeBackSupportContainer.swift; sourceTree = "<group>"; };
+		02661DA02D98F0550067BFA5 /* OverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewView.swift; sourceTree = "<group>"; };
+		02661DA22D9B9DCB0067BFA5 /* TransitionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionTests.swift; sourceTree = "<group>"; };
 		026776512D895408009476E7 /* ModalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalTests.swift; sourceTree = "<group>"; };
 		0268C8CF2D829BD00068896D /* AnyModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyModal.swift; sourceTree = "<group>"; };
 		027D76632D63C52C00D24A22 /* AnyDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyDestination.swift; sourceTree = "<group>"; };
@@ -167,6 +171,7 @@
 			children = (
 				02CFF1042986F59800E6ABCC /* Info.plist */,
 				028A8969281F9228004E3DA4 /* SwiftfulRoutingExampleApp.swift */,
+				02661DA02D98F0550067BFA5 /* OverviewView.swift */,
 				028A896B281F9228004E3DA4 /* ContentView.swift */,
 				02C673C92D7803D7001C1A62 /* RecursiveRoutingView.swift */,
 				D1A7AEB92C778380006AF666 /* ContentTransitionView.swift */,
@@ -225,6 +230,7 @@
 				024651CB2D7C23B000545A5F /* MultiRouterTests.swift */,
 				024651CD2D7CEB7F00545A5F /* SegueQueueTests.swift */,
 				026776512D895408009476E7 /* ModalTests.swift */,
+				02661DA22D9B9DCB0067BFA5 /* TransitionTests.swift */,
 			);
 			path = NewTests;
 			sourceTree = "<group>";
@@ -397,6 +403,7 @@
 				02CFF0F72986BEE400E6ABCC /* BasicView.swift in Sources */,
 				02CFF0F22986BDFC00E6ABCC /* HomeView.swift in Sources */,
 				027D766A2D63C57A00D24A22 /* AnyDestinationStack.swift in Sources */,
+				02661DA12D98F0550067BFA5 /* OverviewView.swift in Sources */,
 				027D76682D63C54700D24A22 /* SegueOption.swift in Sources */,
 				02CFF0ED2986BAEE00E6ABCC /* MyNextView.swift in Sources */,
 				02CFF0EA2986BA1000E6ABCC /* SampleViewModel.swift in Sources */,
@@ -428,6 +435,7 @@
 				026776522D895408009476E7 /* ModalTests.swift in Sources */,
 				024651CC2D7C23B000545A5F /* MultiRouterTests.swift in Sources */,
 				02C673CC2D797784001C1A62 /* MultiSegueTests.swift in Sources */,
+				02661DA32D9B9DCB0067BFA5 /* TransitionTests.swift in Sources */,
 				02C673C72D7800AA001C1A62 /* SegueTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -575,7 +583,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -605,7 +613,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 17;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
