@@ -31,6 +31,8 @@ struct ContentView2: View {
                 return .testingModals
             } else if arguments.contains("TRANSITIONS") {
                 return .testingTransitions
+            } else if arguments.contains("TRANSITIONQUEUE") {
+                return .testingTransitionQueue
             }
         }
         
@@ -63,6 +65,7 @@ struct RecursiveRoutingView: View {
         case testingSegueQueue
         case testingModals
         case testingTransitions
+        case testingTransitionQueue
     }
     
     var body: some View {
@@ -173,6 +176,11 @@ struct RecursiveRoutingView: View {
             case .testingTransitions:
                 transitionButtons
                 dismissTransitionButtons
+                
+            case .testingTransitionQueue:
+                transitionQueueButtons
+                dismissTransitionButtons
+
             }
         }
         .navigationTitle("\(screenNumber)")
@@ -1172,6 +1180,108 @@ struct RecursiveRoutingView: View {
             router.dismissAllTransitions()
         }
         .accessibilityIdentifier("Button_DismissAllTransitions")
+    }
+
+    @ViewBuilder
+    var transitionQueueButtons:  some View {
+        Button("Append 1 transition to queue") {
+            let number = 100
+            let screen = AnyTransitionDestination(
+                id: "\(number)",
+                transition: .trailing,
+                allowsSwipeBack: false,
+                onDismiss: {
+                    dismissAction(number)
+                },
+                destination: { router in
+                    RecursiveRoutingView(
+                        router: router,
+                        screenNumber: number,
+                        viewState: viewState
+                    )
+                }
+            )
+            
+            router.addTransitionToQueue(transition: screen)
+        }
+        .accessibilityIdentifier("Button_TransitionQueueAppend")
+
+        Button("Append 3 push to queue") {
+            let screen1Number = 300
+            let screen1 = AnyTransitionDestination(
+                id: "\(screen1Number)",
+                transition: .trailing,
+                allowsSwipeBack: false,
+                onDismiss: {
+                    dismissAction(screen1Number)
+                },
+                destination: { router in
+                    RecursiveRoutingView(
+                        router: router,
+                        screenNumber: screen1Number,
+                        viewState: viewState
+                    )
+                }
+            )
+                        
+            let screen2Number = 301
+            let screen2 = AnyTransitionDestination(
+                id: "\(screen2Number)",
+                transition: .trailing,
+                allowsSwipeBack: false,
+                onDismiss: {
+                    dismissAction(screen2Number)
+                },
+                destination: { router in
+                    RecursiveRoutingView(
+                        router: router,
+                        screenNumber: screen2Number,
+                        viewState: viewState
+                    )
+                }
+            )
+            
+            
+            let screen3Number = 302
+            let screen3 = AnyTransitionDestination(
+                id: "\(screen3Number)",
+                transition: .trailing,
+                allowsSwipeBack: false,
+                onDismiss: {
+                    dismissAction(screen3Number)
+                },
+                destination: { router in
+                    RecursiveRoutingView(
+                        router: router,
+                        screenNumber: screen3Number,
+                        viewState: viewState
+                    )
+                }
+            )
+            
+            router.addTransitionsToQueue(transitions: [screen1, screen2, screen3])
+        }
+        .accessibilityIdentifier("Button_TransitionQueueAppend3")
+//
+        Button("Remove transition 301 from queue") {
+            router.removeTransitionFromQueue(id: "301")
+        }
+        .accessibilityIdentifier("Button_TransitionQueueRemove1")
+        
+        Button("Remove transitions 300 and 301 from queue") {
+            router.removeTransitionsFromQueue(ids: ["300", "301"])
+        }
+        .accessibilityIdentifier("Button_TransitionQueueRemove2")
+
+        Button("Clear screen queue") {
+            router.clearTransitionsQueue()
+        }
+        .accessibilityIdentifier("Button_TransitionQueueClear")
+
+        Button("Try to show next screen") {
+            try? router.showNextTransition()
+        }
+        .accessibilityIdentifier("Button_TransitionQueueNext")
     }
 
 }
