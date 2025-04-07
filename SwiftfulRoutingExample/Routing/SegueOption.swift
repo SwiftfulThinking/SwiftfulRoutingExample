@@ -49,10 +49,14 @@ public struct ResizableSheetConfig {
     }
 }
 
-public enum SegueOption: Equatable {
+public enum SegueOption: Equatable, CaseIterable, Hashable {
     case push
     case fullScreenCover(config: FullScreenCoverConfig = FullScreenCoverConfig())
     case sheet(config: ResizableSheetConfig = ResizableSheetConfig())
+    
+    public static var allCases: [SegueOption] {
+        [.push, .fullScreenCover(), .sheet()]
+    }
     
 //    @available(iOS 14.0, *)
 //    case
@@ -60,8 +64,25 @@ public enum SegueOption: Equatable {
 //    @available(iOS 16.0, *)
 //    case resizableSheet(config: ResizableSheetConfig = ResizableSheetConfig())
     
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(stringValue)
+    }
+    
     public static func == (lhs: SegueOption, rhs: SegueOption) -> Bool {
         lhs.stringValue == rhs.stringValue
+    }
+    
+    var codeString: String {
+        switch self {
+        case .push:
+            return ".push"
+        case .sheet:
+            return ".sheet()"
+        case .fullScreenCover:
+            return ".fullScreenCover()"
+//        case .resizableSheet:
+//            return "resizableSheet"
+        }
     }
     
     var stringValue: String {

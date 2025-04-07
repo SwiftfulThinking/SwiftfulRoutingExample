@@ -1323,8 +1323,10 @@ struct RouterViewInternal<Content: View>: View, Router {
     - custom animation values? - HOLD
     - configure swipe gestures - DONE
         - .leading(allowSwipeBack: Bool) - NO
-    - transition tests - HOLD?
+    - transition tests - DONE
 
+ 
+ 
  - modules
     - 
  

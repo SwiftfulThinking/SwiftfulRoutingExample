@@ -26,7 +26,13 @@ struct OverviewView: View {
                 }
                 
                 Button("Segue Builder") {
-                    
+                    let destination = AnyDestination(
+                        segue: .push,
+                        destination: { router in
+                            SegueBuilderView()
+                        }
+                    )
+                    router.showScreen(destination)
                 }
             } header: {
                 Text("Segues")
