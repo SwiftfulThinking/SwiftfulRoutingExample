@@ -75,7 +75,13 @@ struct OverviewView: View {
                     router.showScreen(destination)
                 }
                 Button("Modal Builder") {
-                    
+                    let destination = AnyDestination(
+                        segue: .push,
+                        destination: { router in
+                            ModalBuilderView()
+                        }
+                    )
+                    router.showScreen(destination)
                 }
             } header: {
                 Text("Modals")
