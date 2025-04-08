@@ -65,8 +65,12 @@ struct AnyDestination: Identifiable, Hashable {
     
 }
 
-enum AlertStyle {
+enum AlertStyle: String, CaseIterable, Hashable {
     case alert, confirmationDialog
+    
+    var codeString: String {
+        ".\(rawValue)"
+    }
 }
 
 enum AlertLocation {

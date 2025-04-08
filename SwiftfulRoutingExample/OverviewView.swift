@@ -51,7 +51,13 @@ struct OverviewView: View {
                 }
                 
                 Button("Alert Builder") {
-                    
+                    let destination = AnyDestination(
+                        segue: .push,
+                        destination: { router in
+                            AlertBuilderView()
+                        }
+                    )
+                    router.showScreen(destination)
                 }
             } header: {
                 Text("Alerts")

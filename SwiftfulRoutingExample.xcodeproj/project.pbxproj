@@ -20,6 +20,7 @@
 		02661DA32D9B9DCB0067BFA5 /* TransitionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661DA22D9B9DCB0067BFA5 /* TransitionTests.swift */; };
 		02661DA52D9BAC060067BFA5 /* TransitionQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661DA42D9BAC060067BFA5 /* TransitionQueueTests.swift */; };
 		02661DA72DA351A50067BFA5 /* SegueBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661DA62DA351A50067BFA5 /* SegueBuilderView.swift */; };
+		02661DA92DA4A3BD0067BFA5 /* AlertBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661DA82DA4A3BA0067BFA5 /* AlertBuilderView.swift */; };
 		026776522D895408009476E7 /* ModalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026776512D895408009476E7 /* ModalTests.swift */; };
 		0268C8D02D829BD00068896D /* AnyModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0268C8CF2D829BD00068896D /* AnyModal.swift */; };
 		0268C8D32D82A2B40068896D /* SwiftfulRecursiveUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0268C8D22D82A2B40068896D /* SwiftfulRecursiveUI */; };
@@ -78,6 +79,7 @@
 		02661DA22D9B9DCB0067BFA5 /* TransitionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionTests.swift; sourceTree = "<group>"; };
 		02661DA42D9BAC060067BFA5 /* TransitionQueueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionQueueTests.swift; sourceTree = "<group>"; };
 		02661DA62DA351A50067BFA5 /* SegueBuilderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegueBuilderView.swift; sourceTree = "<group>"; };
+		02661DA82DA4A3BA0067BFA5 /* AlertBuilderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertBuilderView.swift; sourceTree = "<group>"; };
 		026776512D895408009476E7 /* ModalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalTests.swift; sourceTree = "<group>"; };
 		0268C8CF2D829BD00068896D /* AnyModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyModal.swift; sourceTree = "<group>"; };
 		027D76632D63C52C00D24A22 /* AnyDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyDestination.swift; sourceTree = "<group>"; };
@@ -182,6 +184,7 @@
 				021CF2D12A9CDB4500BFB255 /* PopoverView.swift */,
 				024651CF2D7EB90D00545A5F /* ZoomTesting.swift */,
 				02661DA62DA351A50067BFA5 /* SegueBuilderView.swift */,
+				02661DA82DA4A3BA0067BFA5 /* AlertBuilderView.swift */,
 				02ADB6A72D3D763000F15EBD /* Routing */,
 				02CFF0DF2986B2A700E6ABCC /* MVVM (View Routing) */,
 				02CFF0E62986B6E100E6ABCC /* MVVM (ViewModel Routing) */,
@@ -413,6 +416,7 @@
 				027D76682D63C54700D24A22 /* SegueOption.swift in Sources */,
 				02CFF0ED2986BAEE00E6ABCC /* MyNextView.swift in Sources */,
 				02CFF0EA2986BA1000E6ABCC /* SampleViewModel.swift in Sources */,
+				02661DA92DA4A3BD0067BFA5 /* AlertBuilderView.swift in Sources */,
 				02661DA72DA351A50067BFA5 /* SegueBuilderView.swift in Sources */,
 				027D76642D63C52C00D24A22 /* AnyDestination.swift in Sources */,
 				02CFF1012986C29900E6ABCC /* HomeRouter.swift in Sources */,
