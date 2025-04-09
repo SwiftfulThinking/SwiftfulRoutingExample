@@ -50,7 +50,7 @@ extension View {
         switch segue {
         case .push:
             self
-        case .sheet(config: let config):
+        case .sheetConfig(config: let config):
             self
                 // If a selection is passed in, bind to it
                 .ifLetCondition(config.selection) { content, value in
@@ -80,7 +80,7 @@ extension View {
             
                 // Content interaction
                 .presentationContentInteraction(config.contentInteraction)
-        case .fullScreenCover(config: let config):
+        case .fullScreenCoverConfig(config: let config):
             self
                 // Add background color if needed
                 .applyEnvironmentBackground(option: config.background)

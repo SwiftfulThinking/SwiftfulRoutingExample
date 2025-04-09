@@ -133,7 +133,7 @@ final class RouterViewModel: ObservableObject {
     @Published var availableTransitionQueue: [String: [AnyTransitionDestination]] = [:]
     
     func insertRootView(view: AnyDestination) {
-        activeScreenStacks.insert(AnyDestinationStack(segue: .fullScreenCover(), screens: [view]), at: 0)
+        activeScreenStacks.insert(AnyDestinationStack(segue: .fullScreenCover, screens: [view]), at: 0)
     }
     
     func addScreensToQueue(routerId: String, destinations: [AnyDestination]) {
@@ -327,7 +327,7 @@ final class RouterViewModel: ObservableObject {
                     self.activeScreenStacks[appendingIndex].screens.insert(destination, at: 0)
                 }
             }
-        case .sheet, .fullScreenCover:
+        case .sheetConfig, .fullScreenCoverConfig:
             // If showing sheet or fullScreenCover,
             //  If currentStack is .push, add newStack next (index + 1)
             //  If currentStack is sheet or fullScreenCover, the next stack already a .push, add newStack after (index + 2)
@@ -981,7 +981,7 @@ struct RouterViewInternal<Content: View>: View, Router {
         // Add Sheet modifier. Add on background to supress OS warnings.
         .background(
             Text("")
-                .sheet(item: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, segue: .sheet(), onDidDismiss: {
+                .sheet(item: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, segue: .sheet, onDidDismiss: {
                     // This triggers if the user swipes down to dismiss the screen
                     // Now we must update activeScreenStacks to match that behavior
                     viewModel.dismissScreens(toEnvironmentId: routerId, animates: true)
@@ -994,7 +994,7 @@ struct RouterViewInternal<Content: View>: View, Router {
         // Add FullScreenCover modifier. Add on background to supress OS warnings.
         .background(
             Text("")
-                .fullScreenCover(item: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, segue: .fullScreenCover(), onDidDismiss: {
+                .fullScreenCover(item: Binding(stack: viewModel.activeScreenStacks, routerId: routerId, segue: .fullScreenCover, onDidDismiss: {
                     // This triggers if the user swipes down to dismiss the screen
                     // Now we must update activeScreenStacks to match that behavior
                     viewModel.dismissScreens(toEnvironmentId: routerId, animates: true)
@@ -1008,7 +1008,7 @@ struct RouterViewInternal<Content: View>: View, Router {
         .ifSatisfiesCondition(routerId == RouterViewModel.rootId, transform: { content in
             content
                 .onFirstAppear {
-                    let view = AnyDestination(id: routerId, segue: .fullScreenCover(), location: .insert, onDismiss: nil, destination: { _ in self })
+                    let view = AnyDestination(id: routerId, segue: .fullScreenCover, location: .insert, onDismiss: nil, destination: { _ in self })
                     viewModel.insertRootView(view: view)
                 }
         })
@@ -1356,7 +1356,7 @@ struct RoutingTest: View {
                 
                 let destination = AnyDestination(
 //                    id: T##String,
-                    segue: .sheet(),
+                    segue: .sheet,
 //                    location: T##SegueLocation,
 //                    animates: T##Bool,
 //                    onDismiss: T##(() -> Void)?##(() -> Void)?##() -> Void,

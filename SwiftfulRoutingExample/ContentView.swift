@@ -113,7 +113,7 @@ extension MyView {
             }
 
             Button("Sheet") {
-                router.showScreen(AnyDestination(segue: .sheet(), onDismiss: {
+                router.showScreen(AnyDestination(segue: .sheet, onDismiss: {
                     dismissAction(count + 1)
                 }, destination: { router in
                     MyView(router: router, count: count + 1)
@@ -160,7 +160,7 @@ extension MyView {
 
             if #available(iOS 14, *) {
                 Button("FullScreenCover") {
-                    router.showScreen(.fullScreenCover(), onDismiss: {
+                    router.showScreen(.fullScreenCover, onDismiss: {
                         dismissAction(count + 1)
                     }) { router in
                         MyView(router: router, count: count + 1)

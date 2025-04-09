@@ -51,11 +51,19 @@ public struct ResizableSheetConfig {
 
 public enum SegueOption: Equatable, CaseIterable, Hashable {
     case push
-    case fullScreenCover(config: FullScreenCoverConfig = FullScreenCoverConfig())
-    case sheet(config: ResizableSheetConfig = ResizableSheetConfig())
+    case fullScreenCoverConfig(config: FullScreenCoverConfig = FullScreenCoverConfig())
+    case sheetConfig(config: ResizableSheetConfig = ResizableSheetConfig())
+    
+    static var fullScreenCover: Self {
+        .fullScreenCoverConfig(config: FullScreenCoverConfig())
+    }
+    
+    static var sheet: Self {
+        .sheetConfig(config: ResizableSheetConfig())
+    }
     
     public static var allCases: [SegueOption] {
-        [.push, .fullScreenCover(), .sheet()]
+        [.push, .fullScreenCover, .sheet]
     }
     
 //    @available(iOS 14.0, *)
@@ -76,10 +84,10 @@ public enum SegueOption: Equatable, CaseIterable, Hashable {
         switch self {
         case .push:
             return ".push"
-        case .sheet:
-            return ".sheet()"
-        case .fullScreenCover:
-            return ".fullScreenCover()"
+        case .sheetConfig:
+            return ".sheet"
+        case .fullScreenCoverConfig:
+            return ".fullScreenCover"
 //        case .resizableSheet:
 //            return "resizableSheet"
         }
@@ -89,9 +97,9 @@ public enum SegueOption: Equatable, CaseIterable, Hashable {
         switch self {
         case .push:
             return "push"
-        case .sheet:
+        case .sheetConfig:
             return "sheet"
-        case .fullScreenCover:
+        case .fullScreenCoverConfig:
             return "fullScreenCover"
 //        case .resizableSheet:
 //            return "resizableSheet"
@@ -102,7 +110,7 @@ public enum SegueOption: Equatable, CaseIterable, Hashable {
         switch self {
         case .push:
             return false
-        case .sheet, .fullScreenCover:
+        case .sheetConfig, .fullScreenCoverConfig:
             return true
         }
     }
