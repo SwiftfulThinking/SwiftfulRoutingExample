@@ -51,7 +51,7 @@ import SwiftUI
 
 
 struct RouterView<Content: View>: View {
-    @State private var viewModel: RouterViewModel = RouterViewModel()
+    @StateObject private var viewModel: RouterViewModel = RouterViewModel()
     var addNavigationStack: Bool = true
     var logger: Bool = false
     var content: (AnyRouter) -> Content
@@ -63,7 +63,7 @@ struct RouterView<Content: View>: View {
             logger: logger,
             content: content
         )
-        .environment(viewModel)
+        .environmentObject(viewModel)
     }
 }
 
@@ -112,8 +112,7 @@ protocol Router: Sendable {
 
 
 @MainActor
-@Observable
-final class RouterViewModel {
+final class RouterViewModel: ObservableObject {
     static let rootId = "root"
 
     // make these private(set)?
@@ -121,17 +120,17 @@ final class RouterViewModel {
     // better printing
     
     
-    var activeScreenStacks: [AnyDestinationStack] = [AnyDestinationStack(segue: .push, screens: [])]
+    @Published var activeScreenStacks: [AnyDestinationStack] = [AnyDestinationStack(segue: .push, screens: [])]
     
-    var availableScreenQueue: [AnyDestination] = []
+    @Published var availableScreenQueue: [AnyDestination] = []
     
-    var activeAlert: [String: AnyAlert] = [:] // RouterId : Alert
+    @Published var activeAlert: [String: AnyAlert] = [:] // RouterId : Alert
     
-    var allModals: [String: [AnyModal]] = [:] // RouterId : [Modals]
+    @Published var allModals: [String: [AnyModal]] = [:] // RouterId : [Modals]
     
-    var allTransitions: [String: [AnyTransitionDestination]] = [RouterViewModel.rootId: [.root]] // RouterId : [Transitions]
-    var currentTransitions: [String: TransitionOption] = [RouterViewModel.rootId: .trailing]
-    var availableTransitionQueue: [String: [AnyTransitionDestination]] = [:]
+    @Published var allTransitions: [String: [AnyTransitionDestination]] = [RouterViewModel.rootId: [.root]] // RouterId : [Transitions]
+    @Published var currentTransitions: [String: TransitionOption] = [RouterViewModel.rootId: .trailing]
+    @Published var availableTransitionQueue: [String: [AnyTransitionDestination]] = [:]
     
     func insertRootView(view: AnyDestination) {
         activeScreenStacks.insert(AnyDestinationStack(segue: .fullScreenCover(), screens: [view]), at: 0)
@@ -932,7 +931,7 @@ final class RouterViewModel {
 @MainActor
 struct RouterViewInternal<Content: View>: View, Router {
     
-    @Environment(RouterViewModel.self) var viewModel
+    @EnvironmentObject var viewModel: RouterViewModel
     var routerId: String
     var addNavigationStack: Bool = false
     var logger: Bool = false
@@ -1036,13 +1035,13 @@ struct RouterViewInternal<Content: View>: View, Router {
         // Print screen stack if logging is enabled
         .ifSatisfiesCondition(logger && routerId == RouterViewModel.rootId, transform: { content in
             content
-                .onChange(of: viewModel.activeScreenStacks) { oldValue, newValue in
+                .onChange(of: viewModel.activeScreenStacks) { newValue in
                     printScreenStack(screenStack: newValue, screenQueue: nil)
                 }
-                .onChange(of: viewModel.availableScreenQueue) { oldValue, newValue in
+                .onChange(of: viewModel.availableScreenQueue) { newValue in
                     printScreenStack(screenStack: nil, screenQueue: newValue)
                 }
-                .onChange(of: viewModel.allModals[routerId] ?? []) { oldValue, newValue in
+                .onChange(of: viewModel.allModals[routerId] ?? []) { newValue in
                     printModalStack(modals: newValue)
                 }
         })
