@@ -20,27 +20,27 @@ extension EnvironmentValues {
 }
 
 /// Type-erased Router with convenience methods.
-struct AnyRouter: Router {
+struct AnyRouter: Sendable, Router {
     private let object: any Router
 
     init(object: any Router) {
         self.object = object
     }
     
-    func showScreen(destination: AnyDestination) {
+    @MainActor func showScreen(destination: AnyDestination) {
         object.showScreens(destinations: [destination])
     }
     
-    func showScreen(_ destination: AnyDestination) {
+    @MainActor func showScreen(_ destination: AnyDestination) {
         object.showScreens(destinations: [destination])
     }
     
     /// Note: AnyDestination.location will be overridden to support this method.
-    func showScreens(destinations: [AnyDestination]) {
+    @MainActor func showScreens(destinations: [AnyDestination]) {
         object.showScreens(destinations: destinations)
     }
     
-    func showScreen<T>(
+    @MainActor func showScreen<T>(
         id: String = UUID().uuidString,
         segue: SegueOption = .push,
         location: SegueLocation = .insert,
@@ -52,7 +52,7 @@ struct AnyRouter: Router {
         object.showScreens(destinations: [destination])
     }
     
-    func showScreen<T>(
+    @MainActor func showScreen<T>(
         id: String = UUID().uuidString,
         _ segue: SegueOption = .push,
         location: SegueLocation = .insert,
@@ -64,71 +64,71 @@ struct AnyRouter: Router {
         object.showScreens(destinations: [destination])
     }
     
-    func dismissScreen(animates: Bool = true) {
+    @MainActor func dismissScreen(animates: Bool = true) {
         object.dismissScreen(animates: animates)
     }
     
-    func dismissScreen(id: String, animates: Bool = true) {
+    @MainActor func dismissScreen(id: String, animates: Bool = true) {
         object.dismissScreen(id: id, animates: animates)
     }
     
-    func dismissScreens(upToScreenId: String, animates: Bool = true) {
+    @MainActor func dismissScreens(upToScreenId: String, animates: Bool = true) {
         object.dismissScreens(upToScreenId: upToScreenId, animates: animates)
     }
     
-    func dismissScreens(count: Int, animates: Bool = true) {
+    @MainActor func dismissScreens(count: Int, animates: Bool = true) {
         object.dismissScreens(count: count, animates: animates)
     }
     
-    func dismissPushStack(animates: Bool = true) {
+    @MainActor func dismissPushStack(animates: Bool = true) {
         object.dismissPushStack(animates: animates)
     }
     
-    func dismissEnvironment(animates: Bool = true) {
+    @MainActor func dismissEnvironment(animates: Bool = true) {
         object.dismissEnvironment(animates: animates)
     }
     
-    func dismissLastScreen(animates: Bool = true) {
+    @MainActor func dismissLastScreen(animates: Bool = true) {
         object.dismissLastScreen(animates: animates)
     }
     
-    func dismissLastPushStack(animates: Bool = true) {
+    @MainActor func dismissLastPushStack(animates: Bool = true) {
         object.dismissLastPushStack(animates: animates)
     }
     
-    func dismissLastEnvironment(animates: Bool = true) {
+    @MainActor func dismissLastEnvironment(animates: Bool = true) {
         object.dismissLastEnvironment(animates: animates)
     }
     
-    func dismissAllScreens(animates: Bool = true) {
+    @MainActor func dismissAllScreens(animates: Bool = true) {
         object.dismissAllScreens(animates: animates)
     }
 
-    func addScreenToQueue(destination: AnyDestination) {
+    @MainActor func addScreenToQueue(destination: AnyDestination) {
         object.addScreensToQueue(destinations: [destination])
     }
     
-    func addScreensToQueue(destinations: [AnyDestination]) {
+    @MainActor func addScreensToQueue(destinations: [AnyDestination]) {
         object.addScreensToQueue(destinations: destinations)
     }
     
-    func removeScreenFromQueue(id: String) {
+    @MainActor func removeScreenFromQueue(id: String) {
         object.removeScreensFromQueue(ids: [id])
     }
     
-    func removeScreensFromQueue(ids: [String]) {
+    @MainActor func removeScreensFromQueue(ids: [String]) {
         object.removeScreensFromQueue(ids: ids)
     }
     
-    func clearScreenQueue() {
+    @MainActor func clearScreenQueue() {
         object.clearScreenQueue()
     }
     
-    func showNextScreen() throws {
+    @MainActor func showNextScreen() throws {
         try object.showNextScreen()
     }
     
-    func showNextScreenOrDismiss(animateDismiss: Bool = true) throws {
+    @MainActor func showNextScreenOrDismiss(animateDismiss: Bool = true) throws {
         do {
             try object.showNextScreen()
         } catch {
@@ -136,7 +136,7 @@ struct AnyRouter: Router {
         }
     }
     
-    func showNextScreenOrDismissEnvironment(animateDismiss: Bool = true) throws {
+    @MainActor func showNextScreenOrDismissEnvironment(animateDismiss: Bool = true) throws {
         do {
             try object.showNextScreen()
         } catch {
@@ -144,7 +144,7 @@ struct AnyRouter: Router {
         }
     }
     
-    func showNextScreenOrDismissPushStack(animateDismiss: Bool = true) throws {
+    @MainActor func showNextScreenOrDismissPushStack(animateDismiss: Bool = true) throws {
         do {
             try object.showNextScreen()
         } catch {
@@ -155,7 +155,7 @@ struct AnyRouter: Router {
     
     // MARK: ALERTS
     
-    public func showAlert<T:View>(
+    @MainActor public func showAlert<T:View>(
         _ style: AlertStyle = .alert,
         location: AlertLocation = .topScreen,
         title: String,
@@ -166,16 +166,16 @@ struct AnyRouter: Router {
         object.showAlert(alert: alert)
     }
     
-    public func showAlert(_ style: AlertStyle = .alert, location: AlertLocation = .topScreen, title: String, subtitle: String? = nil) {
+    @MainActor public func showAlert(_ style: AlertStyle = .alert, location: AlertLocation = .topScreen, title: String, subtitle: String? = nil) {
         let alert = AnyAlert(style: style, location: location, title: title, subtitle: subtitle)
         object.showAlert(alert: alert)
     }
     
-    public func showAlert(alert: AnyAlert) {
+    @MainActor public func showAlert(alert: AnyAlert) {
         object.showAlert(alert: alert)
     }
     
-    public func showSimpleAlert(text: String, action: (() -> Void)? = nil) {
+    @MainActor public func showSimpleAlert(text: String, action: (() -> Void)? = nil) {
         showAlert(.alert, title: text) {
             Button("OK") {
                 action?()
@@ -183,13 +183,13 @@ struct AnyRouter: Router {
         }
     }
     
-    public func dismissAlert() {
+    @MainActor public func dismissAlert() {
         object.dismissAlert()
     }
 
     // MARK: MODALS
     
-    public func showModal<T>(
+    @MainActor public func showModal<T>(
         id: String = UUID().uuidString,
         transition: AnyTransition = .identity,
         animation: Animation = .smooth,
@@ -225,37 +225,37 @@ struct AnyRouter: Router {
 //            destination: destination)
 //    }
     
-    public func showModal(modal: AnyModal) {
+    @MainActor public func showModal(modal: AnyModal) {
         object.showModal(modal: modal)
     }
     
-    public func showModals(modals: [AnyModal]) {
+    @MainActor public func showModals(modals: [AnyModal]) {
         for modal in modals {
             object.showModal(modal: modal)
         }
     }
     
-    func dismissModal() {
+    @MainActor func dismissModal() {
         object.dismissModal()
     }
     
-    func dismissModal(id: String) {
+    @MainActor func dismissModal(id: String) {
         object.dismissModal(id: id)
     }
     
-    func dismissModals(upToModalId: String) {
+    @MainActor func dismissModals(upToModalId: String) {
         object.dismissModals(upToModalId: upToModalId)
     }
     
-    func dismissModals(count: Int) {
+    @MainActor func dismissModals(count: Int) {
         object.dismissModals(count: count)
     }
     
-    func dismissAllModals() {
+    @MainActor func dismissAllModals() {
         object.dismissAllModals()
     }
     
-    public func showTransition<T>(
+    @MainActor public func showTransition<T>(
         id: String = UUID().uuidString,
         _ transition: TransitionOption,
         onDismiss: (() -> Void)? = nil,
@@ -265,31 +265,31 @@ struct AnyRouter: Router {
         object.showTransition(transition: transition)
     }
     
-    public func showTransition(transition: AnyTransitionDestination) {
+    @MainActor public func showTransition(transition: AnyTransitionDestination) {
         object.showTransition(transition: transition)
     }
     
-    public func showTransitions(transitions: [AnyTransitionDestination]) {
+    @MainActor public func showTransitions(transitions: [AnyTransitionDestination]) {
         object.showTransitions(transitions: transitions)
     }
     
-    public func dismissTransition() throws {
+    @MainActor public func dismissTransition() throws {
         try object.dismissTransition()
     }
     
-    func dismissTransition(id: String) {
+    @MainActor func dismissTransition(id: String) {
         object.dismissTransition(id: id)
     }
     
-    public func dismissTransitions(upToScreenId: String) {
+    @MainActor public func dismissTransitions(upToScreenId: String) {
         object.dismissTransitions(upToScreenId: upToScreenId)
     }
     
-    public func dismissTransitions(count: Int) {
+    @MainActor public func dismissTransitions(count: Int) {
         object.dismissTransitions(count: count)
     }
     
-    public func dismissTransitionOrDismissScreen() {
+    @MainActor public func dismissTransitionOrDismissScreen() {
         do {
             try dismissTransition()
         } catch {
@@ -297,31 +297,31 @@ struct AnyRouter: Router {
         }
     }
     
-    public func dismissAllTransitions() {
+    @MainActor public func dismissAllTransitions() {
         object.dismissAllTransitions()
     }
 
-    public func addTransitionToQueue(transition: AnyTransitionDestination) {
+    @MainActor public func addTransitionToQueue(transition: AnyTransitionDestination) {
         object.addTransitionsToQueue(transitions: [transition])
     }
     
-    public func addTransitionsToQueue(transitions: [AnyTransitionDestination]) {
+    @MainActor public func addTransitionsToQueue(transitions: [AnyTransitionDestination]) {
         object.addTransitionsToQueue(transitions: transitions)
     }
     
-    public func removeTransitionFromQueue(id: String) {
+    @MainActor public func removeTransitionFromQueue(id: String) {
         object.removeTransitionsFromQueue(ids: [id])
     }
     
-    public func removeTransitionsFromQueue(ids: [String]) {
+    @MainActor public func removeTransitionsFromQueue(ids: [String]) {
         object.removeTransitionsFromQueue(ids: ids)
     }
     
-    public func clearTransitionsQueue() {
+    @MainActor public func clearTransitionsQueue() {
         object.clearTransitionsQueue()
     }
     
-    public func showNextTransition() throws {
+    @MainActor public func showNextTransition() throws {
         try object.showNextTransition()
     }
     

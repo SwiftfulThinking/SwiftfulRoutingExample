@@ -18,6 +18,7 @@ enum SegueLocation {
     case insertAfter(id: String)
 }
 
+@MainActor
 struct AnyDestination: Identifiable, Hashable {
     let id: String
     let segue: SegueOption
@@ -55,11 +56,11 @@ struct AnyDestination: Identifiable, Hashable {
         self.onDismiss = onDismiss
     }
     
-    public func hash(into hasher: inout Hasher) {
+    nonisolated public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
     
-    public static func == (lhs: AnyDestination, rhs: AnyDestination) -> Bool {
+    nonisolated public static func == (lhs: AnyDestination, rhs: AnyDestination) -> Bool {
         lhs.id == rhs.id
     }
     

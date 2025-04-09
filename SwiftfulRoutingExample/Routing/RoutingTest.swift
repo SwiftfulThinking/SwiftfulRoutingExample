@@ -68,46 +68,46 @@ struct RouterView<Content: View>: View {
 }
 
 //@MainActor
-protocol Router {
-    func showScreens(destinations: [AnyDestination])
-    func dismissScreen(animates: Bool)
-    func dismissScreen(id: String, animates: Bool)
-    func dismissScreens(upToScreenId: String, animates: Bool)
-    func dismissScreens(count: Int, animates: Bool)
-    func dismissPushStack(animates: Bool)
-    func dismissEnvironment(animates: Bool)
-    func dismissLastScreen(animates: Bool)
-    func dismissLastPushStack(animates: Bool)
-    func dismissLastEnvironment(animates: Bool)
-    func dismissAllScreens(animates: Bool)
+protocol Router: Sendable {
+    @MainActor func showScreens(destinations: [AnyDestination])
+    @MainActor func dismissScreen(animates: Bool)
+    @MainActor func dismissScreen(id: String, animates: Bool)
+    @MainActor func dismissScreens(upToScreenId: String, animates: Bool)
+    @MainActor func dismissScreens(count: Int, animates: Bool)
+    @MainActor func dismissPushStack(animates: Bool)
+    @MainActor func dismissEnvironment(animates: Bool)
+    @MainActor func dismissLastScreen(animates: Bool)
+    @MainActor func dismissLastPushStack(animates: Bool)
+    @MainActor func dismissLastEnvironment(animates: Bool)
+    @MainActor func dismissAllScreens(animates: Bool)
     
-    func addScreensToQueue(destinations: [AnyDestination])
-    func removeScreensFromQueue(ids: [String])
-    func clearScreenQueue()
-    func showNextScreen() throws
+    @MainActor func addScreensToQueue(destinations: [AnyDestination])
+    @MainActor func removeScreensFromQueue(ids: [String])
+    @MainActor func clearScreenQueue()
+    @MainActor func showNextScreen() throws
     
-    func showAlert(alert: AnyAlert)
-    func dismissAlert()
+    @MainActor func showAlert(alert: AnyAlert)
+    @MainActor func dismissAlert()
     
-    func showModal(modal: AnyModal)
-    func dismissModal()
-    func dismissModal(id: String)
-    func dismissModals(upToModalId: String)
-    func dismissModals(count: Int)
-    func dismissAllModals()
+    @MainActor func showModal(modal: AnyModal)
+    @MainActor func dismissModal()
+    @MainActor func dismissModal(id: String)
+    @MainActor func dismissModals(upToModalId: String)
+    @MainActor func dismissModals(count: Int)
+    @MainActor func dismissAllModals()
     
-    func showTransition(transition: AnyTransitionDestination)
-    func showTransitions(transitions: [AnyTransitionDestination])
-    func dismissTransition() throws
-    func dismissTransition(id: String)
-    func dismissTransitions(upToScreenId: String)
-    func dismissTransitions(count: Int)
-    func dismissAllTransitions()
+    @MainActor func showTransition(transition: AnyTransitionDestination)
+    @MainActor func showTransitions(transitions: [AnyTransitionDestination])
+    @MainActor func dismissTransition() throws
+    @MainActor func dismissTransition(id: String)
+    @MainActor func dismissTransitions(upToScreenId: String)
+    @MainActor func dismissTransitions(count: Int)
+    @MainActor func dismissAllTransitions()
     
-    func addTransitionsToQueue(transitions: [AnyTransitionDestination])
-    func removeTransitionsFromQueue(ids: [String])
-    func clearTransitionsQueue()
-    func showNextTransition() throws
+    @MainActor func addTransitionsToQueue(transitions: [AnyTransitionDestination])
+    @MainActor func removeTransitionsFromQueue(ids: [String])
+    @MainActor func clearTransitionsQueue()
+    @MainActor func showNextTransition() throws
 }
 
 
@@ -929,6 +929,7 @@ final class RouterViewModel {
     }
 }
 
+@MainActor
 struct RouterViewInternal<Content: View>: View, Router {
     
     @Environment(RouterViewModel.self) var viewModel

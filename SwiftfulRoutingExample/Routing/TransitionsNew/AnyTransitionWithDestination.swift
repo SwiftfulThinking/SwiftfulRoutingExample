@@ -228,6 +228,7 @@ struct CustomRemovalTransition: ViewModifier {
 
 extension AnyTransition {
     
+    @MainActor
     static func customRemoval(
         behavior: TransitionMemoryBehavior,
         direction: TransitionOption,

@@ -20,14 +20,15 @@ final class ExampleViewModel: ObservableObject {
     }
     
     func configure() async throws {
-        title = try await service.fetchTitle()
+//        title = try await service.fetchTitle()
     }
     
     func loadMoreInfo() async throws {
-        subtitle = try await service.fetchSubtitle()
+//        subtitle = try await service.fetchSubtitle()
     }
     
     func continueButtonPressed() async throws -> String {
-        try await service.fetchNextScreenTitle()
+//        try await service.fetchNextScreenTitle()
+        ""
     }
 }

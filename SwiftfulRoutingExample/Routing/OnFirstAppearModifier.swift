@@ -21,8 +21,9 @@ struct OnFirstAppearModifier: ViewModifier {
     }
 }
 
+@MainActor
 extension View {
-    func onFirstAppear(perform action: @escaping () -> Void) -> some View {
+    func onFirstAppear(perform action: @escaping @MainActor () -> Void) -> some View {
         self.modifier(OnFirstAppearModifier(action: action))
     }
 }
