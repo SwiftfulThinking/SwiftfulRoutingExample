@@ -99,7 +99,14 @@ struct OverviewView: View {
                     router.showScreen(destination)
                 }
                 Button("Transition Builder (keepPrevious)") {
-                    
+                    let destination = AnyDestination(
+                        segue: .push,
+                        transitionBehavior: .keepPrevious,
+                        destination: { router in
+                            TransitionBuilderView()
+                        }
+                    )
+                    router.showScreen(destination)
                 }
                 Button("Transition Examples (removePrevious)") {
                     let destination = AnyDestination(
@@ -113,7 +120,14 @@ struct OverviewView: View {
                     router.showScreen(destination)
                 }
                 Button("Transition Builder (removePrevious)") {
-                    
+                    let destination = AnyDestination(
+                        segue: .push,
+                        transitionBehavior: .removePrevious,
+                        destination: { router in
+                            TransitionBuilderView()
+                        }
+                    )
+                    router.showScreen(destination)
                 }
             } header: {
                 Text("Transitions")

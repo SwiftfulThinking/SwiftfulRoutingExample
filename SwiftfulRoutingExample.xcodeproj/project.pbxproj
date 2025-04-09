@@ -22,6 +22,7 @@
 		02661DA72DA351A50067BFA5 /* SegueBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661DA62DA351A50067BFA5 /* SegueBuilderView.swift */; };
 		02661DA92DA4A3BD0067BFA5 /* AlertBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661DA82DA4A3BA0067BFA5 /* AlertBuilderView.swift */; };
 		02661DAB2DA4AD680067BFA5 /* ModalBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661DAA2DA4AD680067BFA5 /* ModalBuilderView.swift */; };
+		02661DAD2DA5F3030067BFA5 /* TransitionBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661DAC2DA5F3030067BFA5 /* TransitionBuilderView.swift */; };
 		026776522D895408009476E7 /* ModalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026776512D895408009476E7 /* ModalTests.swift */; };
 		0268C8D02D829BD00068896D /* AnyModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0268C8CF2D829BD00068896D /* AnyModal.swift */; };
 		0268C8D32D82A2B40068896D /* SwiftfulRecursiveUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0268C8D22D82A2B40068896D /* SwiftfulRecursiveUI */; };
@@ -82,6 +83,7 @@
 		02661DA62DA351A50067BFA5 /* SegueBuilderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegueBuilderView.swift; sourceTree = "<group>"; };
 		02661DA82DA4A3BA0067BFA5 /* AlertBuilderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertBuilderView.swift; sourceTree = "<group>"; };
 		02661DAA2DA4AD680067BFA5 /* ModalBuilderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalBuilderView.swift; sourceTree = "<group>"; };
+		02661DAC2DA5F3030067BFA5 /* TransitionBuilderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionBuilderView.swift; sourceTree = "<group>"; };
 		026776512D895408009476E7 /* ModalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalTests.swift; sourceTree = "<group>"; };
 		0268C8CF2D829BD00068896D /* AnyModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyModal.swift; sourceTree = "<group>"; };
 		027D76632D63C52C00D24A22 /* AnyDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyDestination.swift; sourceTree = "<group>"; };
@@ -188,6 +190,7 @@
 				02661DA62DA351A50067BFA5 /* SegueBuilderView.swift */,
 				02661DA82DA4A3BA0067BFA5 /* AlertBuilderView.swift */,
 				02661DAA2DA4AD680067BFA5 /* ModalBuilderView.swift */,
+				02661DAC2DA5F3030067BFA5 /* TransitionBuilderView.swift */,
 				02ADB6A72D3D763000F15EBD /* Routing */,
 				02CFF0DF2986B2A700E6ABCC /* MVVM (View Routing) */,
 				02CFF0E62986B6E100E6ABCC /* MVVM (ViewModel Routing) */,
@@ -402,6 +405,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				02661DAD2DA5F3030067BFA5 /* TransitionBuilderView.swift in Sources */,
 				02CFF0E52986B68300E6ABCC /* ExampleViewModel.swift in Sources */,
 				02CFF0E12986B2D900E6ABCC /* ExampleView.swift in Sources */,
 				02CFF1032986C8D000E6ABCC /* ProgramaticSheetView.swift in Sources */,

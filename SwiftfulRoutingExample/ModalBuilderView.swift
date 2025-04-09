@@ -233,7 +233,7 @@ router.showModal(
     }
 }
 
-private enum SampleTransitionOption: String, CaseIterable, Hashable {
+enum SampleTransitionOption: String, CaseIterable, Hashable {
     case leading, trailing, top, bottom, opacity, scale, slide, identity
     
     var transition: AnyTransition {
@@ -279,7 +279,7 @@ private enum SampleTransitionOption: String, CaseIterable, Hashable {
     }
 }
 
-private enum SampleAnimationOption: String, CaseIterable, Hashable {
+enum SampleAnimationOption: String, CaseIterable, Hashable {
     case linear, easeIn, easeOut, easeInOut, spring, bouncy, snappy, smooth
     
     func animation(duration: Double) -> Animation {
@@ -325,7 +325,7 @@ private enum SampleAnimationOption: String, CaseIterable, Hashable {
     }
 }
 
-private enum SampleAlignmentOption: String, CaseIterable, Hashable {
+enum SampleAlignmentOption: String, CaseIterable, Hashable {
     case center, top, bottom, leading, trailing
     
     var alignment: Alignment {
@@ -360,6 +360,6 @@ private enum SampleAlignmentOption: String, CaseIterable, Hashable {
 }
 
 
-private enum SampleModalOption: String, CaseIterable, Hashable {
+enum SampleModalOption: String, CaseIterable, Hashable {
     case regular, sheet, pallete, fullScreen
 }
