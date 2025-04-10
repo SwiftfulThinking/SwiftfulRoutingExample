@@ -23,3 +23,12 @@ struct RouterView<Content: View>: View {
         .environmentObject(viewModel)
     }
 }
+
+@MainActor
+enum RoutingConfig {
+    static var logger: (any RoutingLogger)?
+    
+    static func enableLogging(_ logger: some RoutingLogger) {
+        self.logger = logger
+    }
+}
