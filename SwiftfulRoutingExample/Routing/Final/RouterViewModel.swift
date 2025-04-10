@@ -46,123 +46,163 @@ final class RouterViewModel: ObservableObject {
     
 }
 
+// MARK: EVENTS
+
+extension RouterViewModel {
+    
+    enum Event: RoutingLogEvent {
+        case routerIdNotFound(id: String)
+        
+        var eventName: String {
+            switch self {
+            case .routerIdNotFound:             return "Routing_RouterIdNotFound"
+            }
+        }
+        
+        var parameters: [String : Any]? {
+            switch self {
+            case .routerIdNotFound(id: let id):
+                return [
+                    "router_id": id
+                ]
+//            default:
+//                return nil
+            }
+        }
+        
+        var type: RoutingLogType {
+            switch self {
+            case .routerIdNotFound:
+                return .warning
+            }
+        }
+    }
+
+}
+
 // MARK: SEGUE METHODS
 
 extension RouterViewModel {
     
     private func showScreen(routerId: String, destination: AnyDestination) {
-        // Get the index of the currentStack this is being called from
         
+        // 1. Get the index within the activeScreenStacks that we will edit
         let stackIndex: Int
         switch destination.location {
         case .insert:
-            guard let index = activeScreenStacks.lastIndex(where: { stack in
-                return stack.screens.contains(where: { $0.id == routerId })
-            }) else {
-                print("🚨 Error showScreen: NOT FOUND!")
+            guard let index = activeScreenStacks.lastIndexWhereChildStackContains(routerId: routerId) else {
+                logger.trackEvent(event: Event.routerIdNotFound(id: routerId))
                 return
             }
+
             stackIndex = index
         case .insertAfter(id: let requestedRouterId):
-            guard let index = activeScreenStacks.lastIndex(where: { stack in
-                return stack.screens.contains(where: { $0.id == requestedRouterId })
-            }) else {
-                print("🚨 Error showScreen: NOT FOUND!")
+            guard let index = activeScreenStacks.lastIndexWhereChildStackContains(routerId: requestedRouterId) else {
+                logger.trackEvent(event: Event.routerIdNotFound(id: requestedRouterId))
                 return
             }
+
             stackIndex = index
         case .append:
             guard let index = activeScreenStacks.indices.last else {
-                print("🚨 Error showScreen: NOT FOUND!")
+                logger.trackEvent(event: Event.routerIdNotFound(id: "last_id"))
                 return
             }
+            
             stackIndex = index
         }
         
-
+        // The stack we will edit
         let currentStack = activeScreenStacks[stackIndex]
+        
+        // Every new screen has a new transition array.
+        // We append .root to account for the first screen that will already exist as
+        // the screen renders for the first time (ie. the destination).
         allTransitions[destination.id] = [.root]
+        
+        
+        // We have to append the destination differently depending on the segue
+        // For more details, see AnyDestinationStack.swift for documentation.
         
         switch destination.segue {
         case .push:
-            // If pushing to the next screen,
-            //  If currentStack is already .push, append to it
-            //  Otherwise, currentStack is therefore sheet/fullScreenCover and there should be a push stack (index +1)
-            //  Otherwise, find the next .push stack and append to that
+            // If pushing to the next screen...
+            //  If currentStack is already a .push stack, then append to it
+            //  Otherwise, currentStack is therefore a sheet/fullScreenCover and the associated push stack should be (index + 1)
 
+            // The index where we will attempt to add the new screen
             let appendingIndex: Int = currentStack.segue == .push ? (stackIndex) : (stackIndex + 1)
             
+            // Existing screens in this stack (may be empty)
             let existingScreens = activeScreenStacks[appendingIndex].screens
-            switch destination.location {
-            case .insert:
-                // If there are no screens yet, we can append
-                if existingScreens.isEmpty {
+            
+            // In addition to the segue type, the developer can customize the insertion location
+            // Depending on the location, we alter where exactly we insert
+            // The appendingIndex is our anchor but may not be the final index.
+            
+            func insertPushScreenIntoExistingArray(requestedRouterId: String) {
+                // If there are no screens yet, append at the default location.
+                guard !existingScreens.isEmpty else {
                     triggerAction(withAnimation: destination.animates) {
                         self.activeScreenStacks[appendingIndex].screens.append(destination)
                     }
                     return
                 }
                 
-                // If there are existing screens and we find the requested screen
-                if let index = existingScreens.firstIndex(where: { $0.id == routerId }) {
-                    // If it is not last, insert
-                    if existingScreens.indices.contains(index + 1) {
-                        triggerAction(withAnimation: destination.animates) {
-                            self.activeScreenStacks[appendingIndex].screens.insert(destination, at: index + 1)
-                        }
-                        return
-                    } else {
-                        triggerAction(withAnimation: destination.animates) {
-                            self.activeScreenStacks[appendingIndex].screens.append(destination)
-                        }
-                        return
+                // Get the screen index of the current router, so that we can insert after it
+                guard let index = existingScreens.firstIndex(where: { $0.id == requestedRouterId }) else {
+                    // However, if the index does not exist, then we can assume the requested screen
+                    // was the .sheet or .fullScreenCover before this stack
+                    // Therefore the next screen above the requested screen in the push stack at index 0
+
+                    triggerAction(withAnimation: destination.animates) {
+                        self.activeScreenStacks[appendingIndex].screens.insert(destination, at: 0)
                     }
+                    return
                 }
                 
-                // Else, requested screen was the sheet or fullScreenCover before this stack (ie: index 0)
-                triggerAction(withAnimation: destination.animates) {
-                    self.activeScreenStacks[appendingIndex].screens.insert(destination, at: 0)
+                
+                // If the screenIndex is not last, we can use the insert method
+                if existingScreens.indices.contains(index + 1) {
+                    triggerAction(withAnimation: destination.animates) {
+                        self.activeScreenStacks[appendingIndex].screens.insert(destination, at: index + 1)
+                    }
+                    return
+                    
+                // If the screenIndex is last, we can use the append method
+                } else {
+                    triggerAction(withAnimation: destination.animates) {
+                        self.activeScreenStacks[appendingIndex].screens.append(destination)
+                    }
+                    return
                 }
+            }
+
+            
+            switch destination.location {
+            case .insert:
+                // Insert the screen into the array based on the routerId
+                insertPushScreenIntoExistingArray(requestedRouterId: routerId)
+                
+            case .insertAfter(let requestedRouterId):
+                // Insert the screen into the array based on the requestedRouterId
+                // Note: Same as .insert case, except using requestedRouterId instead of routerId
+                insertPushScreenIntoExistingArray(requestedRouterId: requestedRouterId)
+
             case .append:
+                // If user selects append, we add to the end of the push stack,
+                // regardless of where it has been called from!
+
                 triggerAction(withAnimation: destination.animates) {
                     self.activeScreenStacks[appendingIndex].screens.append(destination)
                 }
-            case .insertAfter(let requestedRouterId):
-                // If there are no screens yet, we can append
-                if existingScreens.isEmpty {
-                    triggerAction(withAnimation: destination.animates) {
-                        self.activeScreenStacks[appendingIndex].screens.append(destination)
-                    }
-                    return
-                }
-                
-                // If there are existing screens and we find the requested screen
-                if let index = existingScreens.firstIndex(where: { $0.id == requestedRouterId }) {
-                    // If it is not last, insert
-                    if existingScreens.indices.contains(index + 1) {
-                        triggerAction(withAnimation: destination.animates) {
-                            self.activeScreenStacks[appendingIndex].screens.insert(destination, at: index + 1)
-                        }
-                        return
-                    } else {
-                        triggerAction(withAnimation: destination.animates) {
-                            self.activeScreenStacks[appendingIndex].screens.append(destination)
-                        }
-                        return
-                    }
-                }
-                
-                // Else, requested screen was the sheet or fullScreenCover before this stack (ie: index 0)
-                triggerAction(withAnimation: destination.animates) {
-                    self.activeScreenStacks[appendingIndex].screens.insert(destination, at: 0)
-                }
             }
         case .sheetConfig, .fullScreenCoverConfig:
-            // If showing sheet or fullScreenCover,
-            //  If currentStack is .push, add newStack next (index + 1)
-            //  If currentStack is sheet or fullScreenCover, the next stack already a .push, add newStack after (index + 2)
+            // If showing sheet or fullScreenCover...
+            //  If currentStack is a .push stack, then add a new stack for the environment next (index + 1)
+            //  If currentStack is .sheet or .fullScreenCover stack, then the next stack is already a .push, and we add newStack after that (index + 2)
             //
-            // When appending a new sheet or fullScreenCover, also append a .push stack for the new NavigationStack to bind to
+            // When appending a new sheet or fullScreenCover, always append a following .push stack for the new NavigationStack on that environment to bind to
             //
             
             let newStack = AnyDestinationStack(segue: destination.segue, screens: [destination])
@@ -174,7 +214,7 @@ extension RouterViewModel {
             }
         }
     }
-    
+        
     func showScreens(routerId: String, destinations: [AnyDestination]) {
         var routerIdUpdated = routerId
         

@@ -7,6 +7,28 @@
 
 import SwiftUI
 //import SwiftfulRouting
+import SwiftfulLogging
+
+extension RoutingLogType {
+    
+    var type: LogType {
+        switch self {
+        case .info:
+            return .info
+        case .analytic:
+            return .analytic
+        case .warning:
+            return .warning
+        case .severe:
+            return .severe
+        }
+    }
+}
+extension LogManager: RoutingLogger {
+    public func trackEvent(event: any RoutingLogEvent) {
+        trackEvent(eventName: event.eventName, parameters: event.parameters, type: event.type.type)
+    }
+}
 
 @main
 struct SwiftfulRoutingExampleApp: App {
@@ -17,6 +39,9 @@ struct SwiftfulRoutingExampleApp: App {
         // There's a bug on iOS 17 where sheet may not load with large title, even if modifiers are set, which causes some tests to fail
         // https://stackoverflow.com/questions/77253122/swiftui-navigationstack-title-loads-inline-instead-of-large-when-sheet-is-pres
         UINavigationBar.appearance().prefersLargeTitles = true
+        
+        let logManager = LogManager(services: [ConsoleService(printParameters: true)])
+        enableLogging(logger: logManager)
     }
     
     private var isUITesting: Bool {

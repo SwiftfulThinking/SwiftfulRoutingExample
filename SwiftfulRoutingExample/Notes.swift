@@ -28,3 +28,6 @@
 ///   - addNavigationStack: Whether to wrap the root content in a `NavigationStack`. Defaults to `true`.
 ///   - logger: Enables debug logging for router events. Defaults to `false`.
 ///   - content: A closure that provides the root content view, receiving an `AnyRouter` instance for navigation control.
+
+
+//  Otherwise, find the next .push stack and append to that

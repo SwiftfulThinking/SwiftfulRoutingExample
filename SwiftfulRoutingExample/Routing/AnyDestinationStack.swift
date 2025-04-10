@@ -11,6 +11,16 @@ struct AnyDestinationStack: Equatable {
     var screens: [AnyDestination]
 }
 
+extension Array where Element == AnyDestinationStack {
+    
+    func lastIndexWhereChildStackContains(routerId: String) -> Int? {
+        self.lastIndex { stack in
+            return stack.screens.contains(where: { $0.id == routerId })
+        }
+    }
+    
+}
+
 /*
  
  AnyDestinationStack is an array that will contain either:

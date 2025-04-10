@@ -27,6 +27,7 @@
 		02661DB22DA741300067BFA5 /* RouterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661DB12DA741300067BFA5 /* RouterView.swift */; };
 		02661DB42DA74C800067BFA5 /* RouterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661DB32DA74C800067BFA5 /* RouterViewModel.swift */; };
 		02661DB72DA74D710067BFA5 /* RoutingLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661DB62DA74D710067BFA5 /* RoutingLogger.swift */; };
+		02661DBA2DA74F920067BFA5 /* SwiftfulLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 02661DB92DA74F920067BFA5 /* SwiftfulLogging */; };
 		026776522D895408009476E7 /* ModalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026776512D895408009476E7 /* ModalTests.swift */; };
 		0268C8D02D829BD00068896D /* AnyModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0268C8CF2D829BD00068896D /* AnyModal.swift */; };
 		0268C8D32D82A2B40068896D /* SwiftfulRecursiveUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0268C8D22D82A2B40068896D /* SwiftfulRecursiveUI */; };
@@ -133,6 +134,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				02661DBA2DA74F920067BFA5 /* SwiftfulLogging in Frameworks */,
 				0268C8D32D82A2B40068896D /* SwiftfulRecursiveUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -345,6 +347,7 @@
 			name = SwiftfulRoutingExample;
 			packageProductDependencies = (
 				0268C8D22D82A2B40068896D /* SwiftfulRecursiveUI */,
+				02661DB92DA74F920067BFA5 /* SwiftfulLogging */,
 			);
 			productName = SwiftfulRoutingExample;
 			productReference = 028A8966281F9228004E3DA4 /* SwiftfulRoutingExample.app */;
@@ -398,6 +401,7 @@
 			mainGroup = 028A895D281F9228004E3DA4;
 			packageReferences = (
 				0268C8D12D82A2B40068896D /* XCRemoteSwiftPackageReference "SwiftfulRecursiveUI" */,
+				02661DB82DA74F920067BFA5 /* XCRemoteSwiftPackageReference "SwiftfulLogging" */,
 			);
 			productRefGroup = 028A8967281F9228004E3DA4 /* Products */;
 			projectDirPath = "";
@@ -627,7 +631,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"SwiftfulRoutingExample/Preview Content\"";
-				DEVELOPMENT_TEAM = 89QY97R26H;
+				DEVELOPMENT_TEAM = 9JN8RSJMX3;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SwiftfulRoutingExample/Info.plist;
@@ -635,7 +639,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -657,7 +661,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"SwiftfulRoutingExample/Preview Content\"";
-				DEVELOPMENT_TEAM = 89QY97R26H;
+				DEVELOPMENT_TEAM = 9JN8RSJMX3;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SwiftfulRoutingExample/Info.plist;
@@ -665,7 +669,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -748,6 +752,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		02661DB82DA74F920067BFA5 /* XCRemoteSwiftPackageReference "SwiftfulLogging" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftfulThinking/SwiftfulLogging";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.2;
+			};
+		};
 		0268C8D12D82A2B40068896D /* XCRemoteSwiftPackageReference "SwiftfulRecursiveUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SwiftfulThinking/SwiftfulRecursiveUI";
@@ -759,6 +771,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		02661DB92DA74F920067BFA5 /* SwiftfulLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 02661DB82DA74F920067BFA5 /* XCRemoteSwiftPackageReference "SwiftfulLogging" */;
+			productName = SwiftfulLogging;
+		};
 		0268C8D22D82A2B40068896D /* SwiftfulRecursiveUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 0268C8D12D82A2B40068896D /* XCRemoteSwiftPackageReference "SwiftfulRecursiveUI" */;

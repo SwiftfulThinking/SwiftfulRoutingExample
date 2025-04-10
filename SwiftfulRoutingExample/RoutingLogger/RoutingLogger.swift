@@ -4,8 +4,7 @@
 //
 //  Created by Nick Sarno on 11/11/24.
 //
-
-@MainActor private var logger: (any RoutingLogger)?
+@MainActor var logger: (any RoutingLogger) = MockRoutingLogger()
 
 // SwiftfulRouting.enableLogging(logger: logger)
 @MainActor public func enableLogging(logger newValue: RoutingLogger) {
@@ -15,6 +14,25 @@
 @MainActor
 public protocol RoutingLogger {
     func trackEvent(event: RoutingLogEvent)
+}
+
+struct MockRoutingLogger: RoutingLogger {
+    
+    func trackEvent(event: any RoutingLogEvent) {
+        #if DEBUG
+        switch event.type {
+        case .info:
+            break
+        case .analytic:
+            break
+        case .warning:
+            print("⚠️ SwiftfulRouting -> \(event.eventName)")
+        case .severe:
+            print("🚨 SwiftfulRouting -> \(event.eventName)")
+        }
+        #endif
+    }
+    
 }
 
 public protocol RoutingLogEvent {
