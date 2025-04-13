@@ -28,6 +28,11 @@
 		02661DB42DA74C800067BFA5 /* RouterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661DB32DA74C800067BFA5 /* RouterViewModel.swift */; };
 		02661DB72DA74D710067BFA5 /* RoutingLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661DB62DA74D710067BFA5 /* RoutingLogger.swift */; };
 		02661DBA2DA74F920067BFA5 /* SwiftfulLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 02661DB92DA74F920067BFA5 /* SwiftfulLogging */; };
+		0266206E2DAC6E910067BFA5 /* RouterProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0266206D2DAC6E910067BFA5 /* RouterProtocol.swift */; };
+		026620702DAC6EBC0067BFA5 /* RouterViewInternal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0266206F2DAC6EBC0067BFA5 /* RouterViewInternal.swift */; };
+		026620742DAC6F310067BFA5 /* Binding+EXT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026620732DAC6F2E0067BFA5 /* Binding+EXT.swift */; };
+		026620762DAC6F570067BFA5 /* Set+EXT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026620752DAC6F550067BFA5 /* Set+EXT.swift */; };
+		026620792DAC6F970067BFA5 /* AlertViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026620782DAC6F970067BFA5 /* AlertViewModifier.swift */; };
 		026776522D895408009476E7 /* ModalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026776512D895408009476E7 /* ModalTests.swift */; };
 		0268C8D02D829BD00068896D /* AnyModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0268C8CF2D829BD00068896D /* AnyModal.swift */; };
 		0268C8D32D82A2B40068896D /* SwiftfulRecursiveUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0268C8D22D82A2B40068896D /* SwiftfulRecursiveUI */; };
@@ -93,6 +98,11 @@
 		02661DB12DA741300067BFA5 /* RouterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterView.swift; sourceTree = "<group>"; };
 		02661DB32DA74C800067BFA5 /* RouterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterViewModel.swift; sourceTree = "<group>"; };
 		02661DB62DA74D710067BFA5 /* RoutingLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoutingLogger.swift; sourceTree = "<group>"; };
+		0266206D2DAC6E910067BFA5 /* RouterProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterProtocol.swift; sourceTree = "<group>"; };
+		0266206F2DAC6EBC0067BFA5 /* RouterViewInternal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouterViewInternal.swift; sourceTree = "<group>"; };
+		026620732DAC6F2E0067BFA5 /* Binding+EXT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Binding+EXT.swift"; sourceTree = "<group>"; };
+		026620752DAC6F550067BFA5 /* Set+EXT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Set+EXT.swift"; sourceTree = "<group>"; };
+		026620782DAC6F970067BFA5 /* AlertViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertViewModifier.swift; sourceTree = "<group>"; };
 		026776512D895408009476E7 /* ModalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalTests.swift; sourceTree = "<group>"; };
 		0268C8CF2D829BD00068896D /* AnyModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyModal.swift; sourceTree = "<group>"; };
 		027D76632D63C52C00D24A22 /* AnyDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyDestination.swift; sourceTree = "<group>"; };
@@ -162,7 +172,11 @@
 		02661DB02DA741290067BFA5 /* Final */ = {
 			isa = PBXGroup;
 			children = (
+				026620772DAC6F900067BFA5 /* ViewModifiers */,
+				026620722DAC6F280067BFA5 /* Extensions */,
+				0266206D2DAC6E910067BFA5 /* RouterProtocol.swift */,
 				02661DB12DA741300067BFA5 /* RouterView.swift */,
+				0266206F2DAC6EBC0067BFA5 /* RouterViewInternal.swift */,
 				02661DB32DA74C800067BFA5 /* RouterViewModel.swift */,
 			);
 			path = Final;
@@ -174,6 +188,23 @@
 				02661DB62DA74D710067BFA5 /* RoutingLogger.swift */,
 			);
 			path = RoutingLogger;
+			sourceTree = "<group>";
+		};
+		026620722DAC6F280067BFA5 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				026620732DAC6F2E0067BFA5 /* Binding+EXT.swift */,
+				026620752DAC6F550067BFA5 /* Set+EXT.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		026620772DAC6F900067BFA5 /* ViewModifiers */ = {
+			isa = PBXGroup;
+			children = (
+				026620782DAC6F970067BFA5 /* AlertViewModifier.swift */,
+			);
+			path = ViewModifiers;
 			sourceTree = "<group>";
 		};
 		0268C8CE2D829BC80068896D /* ModalsNew */ = {
@@ -437,11 +468,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				026620702DAC6EBC0067BFA5 /* RouterViewInternal.swift in Sources */,
+				0266206E2DAC6E910067BFA5 /* RouterProtocol.swift in Sources */,
 				02661DAD2DA5F3030067BFA5 /* TransitionBuilderView.swift in Sources */,
 				02CFF0E52986B68300E6ABCC /* ExampleViewModel.swift in Sources */,
 				02CFF0E12986B2D900E6ABCC /* ExampleView.swift in Sources */,
+				026620792DAC6F970067BFA5 /* AlertViewModifier.swift in Sources */,
 				02661DB22DA741300067BFA5 /* RouterView.swift in Sources */,
 				02CFF1032986C8D000E6ABCC /* ProgramaticSheetView.swift in Sources */,
+				026620742DAC6F310067BFA5 /* Binding+EXT.swift in Sources */,
 				02661DB72DA74D710067BFA5 /* RoutingLogger.swift in Sources */,
 				02CFF0FF2986C20B00E6ABCC /* HomeInteractor.swift in Sources */,
 				02661C0A2D8A7E450067BFA5 /* AnyTransitionWithDestination.swift in Sources */,
@@ -466,6 +501,7 @@
 				0268C8D02D829BD00068896D /* AnyModal.swift in Sources */,
 				D1A7AEBA2C778380006AF666 /* ContentTransitionView.swift in Sources */,
 				02CFF0F92986BEEE00E6ABCC /* BasicViewModel.swift in Sources */,
+				026620762DAC6F570067BFA5 /* Set+EXT.swift in Sources */,
 				02CFF0E82986B6F200E6ABCC /* SampleView.swift in Sources */,
 				02C673CA2D7803D7001C1A62 /* RecursiveRoutingView.swift in Sources */,
 				02661DB42DA74C800067BFA5 /* RouterViewModel.swift in Sources */,
