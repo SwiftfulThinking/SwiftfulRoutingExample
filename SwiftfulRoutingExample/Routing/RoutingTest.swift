@@ -8,6 +8,14 @@
 import SwiftUI
 
 protocol Router: Sendable {
+    
+    @MainActor var activeScreens: [AnyDestinationStack] { get }
+    @MainActor var activeScreenQueue: [AnyDestination] { get }
+    @MainActor var activeAlert: AnyAlert? { get }
+    @MainActor var activeModals: [AnyModal] { get }
+    @MainActor var activeTransitions: [AnyTransitionDestination] { get }
+    @MainActor var activeTransitionQueue: [AnyTransitionDestination] { get }
+    
     @MainActor func showScreens(destinations: [AnyDestination])
     @MainActor func dismissScreen(animates: Bool)
     @MainActor func dismissScreen(id: String, animates: Bool)
@@ -22,12 +30,13 @@ protocol Router: Sendable {
     
     @MainActor func addScreensToQueue(destinations: [AnyDestination])
     @MainActor func removeScreensFromQueue(ids: [String])
-    @MainActor func clearScreenQueue()
-    @MainActor func showNextScreen() throws
+    @MainActor func removeAllScreensFromQueue()
+    @MainActor func showNextScreen()
     
     @MainActor func showAlert(alert: AnyAlert)
     @MainActor func dismissAlert()
-    
+    @MainActor func dismissAllAlerts()
+
     @MainActor func showModal(modal: AnyModal)
     @MainActor func dismissModal()
     @MainActor func dismissModal(id: String)
@@ -37,16 +46,16 @@ protocol Router: Sendable {
     
     @MainActor func showTransition(transition: AnyTransitionDestination)
     @MainActor func showTransitions(transitions: [AnyTransitionDestination])
-    @MainActor func dismissTransition() throws
+    @MainActor func dismissTransition()
     @MainActor func dismissTransition(id: String)
-    @MainActor func dismissTransitions(upToScreenId: String)
+    @MainActor func dismissTransitions(upToId: String)
     @MainActor func dismissTransitions(count: Int)
     @MainActor func dismissAllTransitions()
     
     @MainActor func addTransitionsToQueue(transitions: [AnyTransitionDestination])
     @MainActor func removeTransitionsFromQueue(ids: [String])
-    @MainActor func clearTransitionsQueue()
-    @MainActor func showNextTransition() throws
+    @MainActor func removeAllTransitionsFromQueue()
+    @MainActor func showNextTransition()
 }
 
 @MainActor
@@ -216,6 +225,30 @@ struct RouterViewInternal<Content: View>: View, Router {
         }
     }
     
+    var activeScreens: [AnyDestinationStack] {
+        viewModel.activeScreenStacks
+    }
+    
+    var activeScreenQueue: [AnyDestination] {
+        viewModel.availableScreenQueue
+    }
+    
+    var activeAlert: AnyAlert? {
+        viewModel.activeAlert[routerId]
+    }
+    
+    var activeModals: [AnyModal] {
+        viewModel.allModals[routerId]?.filter({ !$0.isRemoved }) ?? []
+    }
+    
+    var activeTransitions: [AnyTransitionDestination] {
+        viewModel.allTransitions[routerId] ?? []
+    }
+    
+    var activeTransitionQueue: [AnyTransitionDestination] {
+        viewModel.availableTransitionQueue[routerId] ?? []
+    }
+    
     func showScreens(destinations: [AnyDestination]) {
         viewModel.showScreens(routerId: routerId, destinations: destinations)
     }
@@ -272,12 +305,12 @@ struct RouterViewInternal<Content: View>: View, Router {
         viewModel.removeScreensFromQueue(screenIds: ids)
     }
     
-    func clearScreenQueue() {
-        viewModel.clearScreenQueue()
+    func removeAllScreensFromQueue() {
+        viewModel.removeAllScreensFromQueue()
     }
     
-    func showNextScreen() throws {
-        try viewModel.showNextScreen(routerId: routerId)
+    func showNextScreen() {
+        viewModel.showNextScreen(routerId: routerId)
     }
     
     func showAlert(alert: AnyAlert) {
@@ -286,6 +319,10 @@ struct RouterViewInternal<Content: View>: View, Router {
     
     func dismissAlert() {
         viewModel.dismissAlert(routerId: routerId)
+    }
+    
+    func dismissAllAlerts() {
+        viewModel.dismissAllAlerts()
     }
     
     func showModal(modal: AnyModal) {
@@ -320,16 +357,16 @@ struct RouterViewInternal<Content: View>: View, Router {
         viewModel.showTransitions(routerId: routerId, transitions: transitions)
     }
     
-    func dismissTransition() throws {
-        try viewModel.dismissTransition(routerId: routerId)
+    func dismissTransition() {
+        viewModel.dismissTransition(routerId: routerId)
     }
     
     func dismissTransition(id: String) {
-        viewModel.dismissTransitions(routerId: routerId, id: id)
+        viewModel.dismissTransitions(routerId: routerId, transitionId: id)
     }
     
-    func dismissTransitions(upToScreenId: String) {
-        viewModel.dismissTransitions(routerId: routerId, toScreenId: upToScreenId)
+    func dismissTransitions(upToId id: String) {
+        viewModel.dismissTransitions(routerId: routerId, toTransitionId: id)
     }
     
     func dismissTransitions(count: Int) {
@@ -348,12 +385,12 @@ struct RouterViewInternal<Content: View>: View, Router {
         viewModel.removeTransitionsFromQueue(routerId: routerId, transitionIds: ids)
     }
     
-    func clearTransitionsQueue() {
-        viewModel.clearTransitionsQueue(routerId: routerId)
+    func removeAllTransitionsFromQueue() {
+        viewModel.removeAllTransitionsFromQueue(routerId: routerId)
     }
     
-    func showNextTransition() throws {
-        try viewModel.showNextTransition(routerId: routerId)
+    func showNextTransition() {
+        viewModel.showNextTransition(routerId: routerId)
     }
 }
 

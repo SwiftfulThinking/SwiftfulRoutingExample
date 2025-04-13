@@ -6,12 +6,15 @@
 //
 import SwiftUI
 
+// add analytic logs to show and dismiss?
+// add convenience mthods like "hasTransitions" or "counts"
+
 @MainActor
 final class RouterViewModel: ObservableObject {
     static let rootId = "root"
     
     // Active screen stack heirarchy. See AnyDestinationStack.swift for documentation.
-    @Published private(set) var activeScreenStacks: [AnyDestinationStack] = [AnyDestinationStack(segue: .fullScreenCover, screens: [])]
+    @Published private(set) var activeScreenStacks: [AnyDestinationStack] = [AnyDestinationStack(segue: .push, screens: [])]
     
     // Available screens in queue, accessible via .showNextScreen()
     @Published private(set) var availableScreenQueue: [AnyDestination] = []
@@ -28,14 +31,14 @@ final class RouterViewModel: ObservableObject {
     // All transitions for all child screens. Each screen can have multiple transitions.
     // Transitions are removed from the array when dismissed.
     // [routerId : [Transitions]]
-    @Published private(set)var allTransitions: [String: [AnyTransitionDestination]] = [RouterViewModel.rootId: [.root]]
+    @Published private(set) var allTransitions: [String: [AnyTransitionDestination]] = [RouterViewModel.rootId: [.root]]
     
     // The current TransitionOption on each screen.
     // While a transition is rendered, its .transition may change based on the next/previous transition.
-    @Published private(set)var currentTransitions: [String: TransitionOption] = [RouterViewModel.rootId: .trailing]
+    @Published private(set) var currentTransitions: [String: TransitionOption] = [RouterViewModel.rootId: .trailing]
     
     // Available transitions in queue, accessible via .showNextTransition()
-    @Published private(set)var availableTransitionQueue: [String: [AnyTransitionDestination]] = [:]
+    @Published private(set) var availableTransitionQueue: [String: [AnyTransitionDestination]] = [:]
     
     // Only called once onFirstAppear in the root router.
     // This replaces starting activeScreenStacks value.
@@ -51,31 +54,98 @@ final class RouterViewModel: ObservableObject {
 extension RouterViewModel {
     
     enum Event: RoutingLogEvent {
-        case routerIdNotFound(id: String)
-        
+        case showScreen_routerIdNotFound(id: String)
+        case screenQueue_routerIdNotFound(id: String)
+        case dismissScreen_routerIdNotFound(id: String)
+        case dismissLastScreen_noScreenToDismiss
+        case dismissScreensCount_noScreenToDismiss(countRequested: Int, countDismissed: Int)
+        case dismissEnvironment_noEnvironmentToDismiss(id: String)
+        case dismissPushStack_noPushStack(id: String)
+        case dismissLastModal_noModals(routerId: String)
+        case dismissModal_modalNotFound(routerId: String, modalId: String)
+        case dismissModalsAbove_noneFound(routerId: String, modalId: String)
+        case dismissModalsCount_noneToDismiss(countRequested: Int, countDismissed: Int)
+        case dismissTransition_notFound(routerId: String)
+        case dismissTransitions_notFound(routerId: String, transitionId: String)
+        case dismissTransitionsTo_notFound(routerId: String, transitionId: String)
+        case dismissTransitionsTo_empty(routerId: String, transitionId: String)
+        case dismissTransitionsCount_none(routerId: String, count: Int)
+        case dismissTransitionsCount_notFound(routerId: String, count: Int)
+        case dismissTransitionsCount_empty(routerId: String, count: Int)
+        case dismissAllTransitions_none(routerId: String)
+        case dismissAllTransitions_empty(routerId: String)
+        case showNextScreen_emptyQueue(routerId: String)
+        case showNextTransition_emptyQueue(routerId: String)
+
         var eventName: String {
             switch self {
-            case .routerIdNotFound:             return "Routing_RouterIdNotFound"
+            case .showScreen_routerIdNotFound:                          return "Routing_ShowScreen_RouterIdNotFound"
+            case .screenQueue_routerIdNotFound:                         return "Routing_ScreenQueue_RouterIdNotFound"
+            case .dismissScreen_routerIdNotFound:                       return "Routing_DismissScreen_RouterIdNotFound"
+            case .dismissLastScreen_noScreenToDismiss:                  return "Routing_DismissLastScreen_ScreenNotFound"
+            case .dismissScreensCount_noScreenToDismiss:                return "Routing_DismissScreenScount_CountNotFound"
+            case .dismissEnvironment_noEnvironmentToDismiss:            return "Routing_DismissEnvironment_EnvNotFound"
+            case .dismissPushStack_noPushStack:                         return "Routing_DismissPushStack_StackNotFound"
+            case .dismissLastModal_noModals:                            return "Routing_DismissLastModal_NoneFound"
+            case .dismissModal_modalNotFound:                           return "Routing_DismissModal_NotFound"
+            case .dismissModalsAbove_noneFound:                         return "Routing_DismissModalsAbove_NoneFound"
+            case .dismissModalsCount_noneToDismiss:                     return "Routing_DismissModalsCount_CountNotFound"
+            case .dismissTransition_notFound:                           return "Routing_DismissTransition_NotFound"
+            case .dismissTransitions_notFound:                          return "Routing_DismissTransitions_NotFound"
+            case .dismissTransitionsTo_notFound:                        return "Routing_DismissTransitionsTo_NotFound"
+            case .dismissTransitionsTo_empty:                           return "Routing_DismissTransitionsTo_EmptyArray"
+            case .dismissTransitionsCount_none:                         return "Routing_DismissTransitionsCount_None"
+            case .dismissTransitionsCount_notFound:                     return "Routing_DismissTransitionsCount_NotFound"
+            case .dismissTransitionsCount_empty:                        return "Routing_DismissTransitionsCount_Empty"
+            case .dismissAllTransitions_none:                           return "Routing_DismissAllTransitions_None"
+            case .dismissAllTransitions_empty:                          return "Routing_DismissAllTransitions_Empty"
+            case .showNextScreen_emptyQueue:                            return "Routing_ShowNextScreen_EmptyQueue"
+            case .showNextTransition_emptyQueue:                        return "Routing_ShowNextTransition_EmptyQueue"
             }
         }
         
         var parameters: [String : Any]? {
             switch self {
-            case .routerIdNotFound(id: let id):
+            case .showScreen_routerIdNotFound(id: let id), .screenQueue_routerIdNotFound(id: let id), .dismissScreen_routerIdNotFound(id: let id), .dismissEnvironment_noEnvironmentToDismiss(id: let id), .dismissPushStack_noPushStack(id: let id), .dismissLastModal_noModals(routerId: let id), .dismissTransition_notFound(routerId: let id), .dismissAllTransitions_none(routerId: let id), .dismissAllTransitions_empty(routerId: let id), .showNextScreen_emptyQueue(routerId: let id), .showNextTransition_emptyQueue(routerId: let id):
                 return [
                     "router_id": id
                 ]
-//            default:
-//                return nil
+            case .dismissModal_modalNotFound(routerId: let routerId, modalId: let modalId), .dismissModalsAbove_noneFound(routerId: let routerId, modalId: let modalId):
+                return [
+                    "router_id": routerId,
+                    "modal_id": modalId
+                ]
+            case .dismissTransitions_notFound(routerId: let routerId, transitionId: let transitionId), .dismissTransitionsTo_notFound(routerId: let routerId, transitionId: let transitionId), .dismissTransitionsTo_empty(routerId: let routerId, transitionId: let transitionId):
+                return [
+                    "router_id": routerId,
+                    "transition_id": transitionId
+                ]
+            case .dismissScreensCount_noScreenToDismiss(countRequested: let requested, countDismissed: let dismissed), .dismissModalsCount_noneToDismiss(countRequested: let requested, countDismissed: let dismissed):
+                return [
+                    "dismiss_requested_count": requested,
+                    "dismiss_success_count": dismissed
+                ]
+            case .dismissTransitionsCount_none(routerId: let routerId, count: let count), .dismissTransitionsCount_notFound(routerId: let routerId, count: let count), .dismissTransitionsCount_empty(routerId: let routerId, count: let count):
+                return [
+                    "router_id": routerId,
+                    "dismiss_requested_count": count
+                ]
+            default:
+                return nil
             }
         }
         
         var type: RoutingLogType {
             switch self {
-            case .routerIdNotFound:
+            default:
                 return .warning
             }
         }
+    }
+
+    enum RoutingError: Error {
+        case noScreensInQueue
+        case noTransitionsInQueue
     }
 
 }
@@ -84,6 +154,37 @@ extension RouterViewModel {
 
 extension RouterViewModel {
     
+    // MARK: SEGUE - PUBLIC
+        
+    // Immediately show the destination screens in order
+    func showScreens(routerId: String, destinations: [AnyDestination]) {
+        Task {
+            var lastRouterId = routerId
+            var lastSegue: SegueOption? = nil
+            
+            for destination in destinations {
+                if lastSegue?.presentsNewEnvironment == true {
+                    // If there is a .push after a new environment, the OS needs a slight delay before it will animate (idk why)
+                    // Also needs a delay if 2 new environments back to back
+                    // However, it works without delay if there is no animation
+                    if (destination.segue == .push || destination.segue.presentsNewEnvironment) && destination.animates  {
+                        try? await Task.sleep(for: .seconds(0.55))
+                    }
+                }
+                
+                // Segue to destination
+                showScreen(routerId: lastRouterId, destination: destination)
+                
+                // After each loop, that screen is presented, so next showScreen should be the presented screen's routerId
+                lastRouterId = destination.id
+                lastSegue = destination.segue
+            }
+        }
+    }
+
+    // MARK: SEGUE - PRIVATE
+    
+    // Immediately show the destination screen
     private func showScreen(routerId: String, destination: AnyDestination) {
         
         // 1. Get the index within the activeScreenStacks that we will edit
@@ -91,21 +192,21 @@ extension RouterViewModel {
         switch destination.location {
         case .insert:
             guard let index = activeScreenStacks.lastIndexWhereChildStackContains(routerId: routerId) else {
-                logger.trackEvent(event: Event.routerIdNotFound(id: routerId))
+                logger.trackEvent(event: Event.showScreen_routerIdNotFound(id: routerId))
                 return
             }
 
             stackIndex = index
         case .insertAfter(id: let requestedRouterId):
             guard let index = activeScreenStacks.lastIndexWhereChildStackContains(routerId: requestedRouterId) else {
-                logger.trackEvent(event: Event.routerIdNotFound(id: requestedRouterId))
+                logger.trackEvent(event: Event.showScreen_routerIdNotFound(id: requestedRouterId))
                 return
             }
 
             stackIndex = index
         case .append:
             guard let index = activeScreenStacks.indices.last else {
-                logger.trackEvent(event: Event.routerIdNotFound(id: "last_id"))
+                logger.trackEvent(event: Event.showScreen_routerIdNotFound(id: "last_id"))
                 return
             }
             
@@ -214,34 +315,8 @@ extension RouterViewModel {
             }
         }
     }
-        
-    func showScreens(routerId: String, destinations: [AnyDestination]) {
-        var routerIdUpdated = routerId
-        
-        Task {
-            var lastSegue: SegueOption? = nil
-            
-            for destination in destinations {
-                if lastSegue?.presentsNewEnvironment == true {
-                    // If there is a .push after a new environment, the OS needs a slight delay before it will animate (idk why)
-                    // Also if 2 new environments back to back
-                    // But works without delay if there is no animation
-                    if (destination.segue == .push || destination.segue.presentsNewEnvironment) && destination.animates  {
-                        try? await Task.sleep(for: .seconds(0.55))
-                    }
-                }
-                
-                showScreen(routerId: routerIdUpdated, destination: destination)
-                
-                // After each loop, that screen is presented, so next showScreen should be the presented screen's routerId
-                routerIdUpdated = destination.id
-                lastSegue = destination.segue
-            }
-        }
-    }
     
-
-    
+    // Utility functino to trigger action with or without SwiftUI animation
     private func triggerAction(withAnimation: Bool, action: @escaping () -> Void) {
         if withAnimation {
             action()
@@ -253,101 +328,96 @@ extension RouterViewModel {
             }
         }
     }
-
     
 }
 
-
+// MARK: SEGUE QUEUE
 
 extension RouterViewModel {
     
-    
-    
-    
+    // Add screens to segue queue
     func addScreensToQueue(routerId: String, destinations: [AnyDestination]) {
         var insertCounts: [String: Int] = [
             routerId: 0
         ]
+        
         for destination in destinations {
             switch destination.location {
             case .append:
+                // Append screen to end of queue
                 availableScreenQueue.append(destination)
             case .insert:
-                // Here we insert screens, but
+                // Insert screen to queue at routerId
+                //
+                // Here we insert screens, but we need to maintain the order of destinations array
+                //
                 // For example:
-                // If the original is [A, B, C]
-                // And then insert 2 screens herein
-                // Result should be [1, 2, A, B, C]
-                // So we can't just .insert 2 at 0
+                //  If the original is [A, B, C]
+                //  And then insert 2 screens at root
+                //  Result should be [1, 2, A, B, C]
+                //
+                //  We cannot call .insert(contentsOf:, at: 0) because each item in loop may be different
+                //  We cannot call .insert(at: 0) twice, because it will reverse the order
+                //  So, we must call .insert(at: x) twice and move the pointer after each loop
+                //
                 let index = insertCounts[routerId] ?? 0
                 availableScreenQueue.insert(destination, at: index)
                 insertCounts[routerId] = index + 1
             case .insertAfter(id: let requestedId):
+                // Same as above, except use requestedId
+                
+                // Try to find requestedId within the screen queue
                 if let requestedIsInQueueIndex = availableScreenQueue.firstIndex(where: { $0.id == requestedId }) {
                     let index = Int(requestedIsInQueueIndex) + 1 + (insertCounts[requestedId] ?? 0)
                     availableScreenQueue.insert(destination, at: index)
                     insertCounts[requestedId] = index + 1
+                    
+                    // Otherwise, track an error and do not append the screen
                 } else {
-                    let index = insertCounts[routerId] ?? 0
-                    availableScreenQueue.insert(destination, at: index)
-                    insertCounts[routerId] = index + 1
+                    logger.trackEvent(event: Event.screenQueue_routerIdNotFound(id: requestedId))
+                    
+                    // Note: previous iteration would fall-back to append screen to based on routerId
+                    // However, this is more confusing for the developer when using showNextScreen()
+                    // Better to not append and send a warning message.
+                    //
+                    // let index = insertCounts[routerId] ?? 0
+                    // availableScreenQueue.insert(destination, at: index)
+                    // insertCounts[routerId] = index + 1
                 }
             }
         }
     }
     
+    // Remove screens from screen queue
     func removeScreensFromQueue(screenIds: [String]) {
         for screenId in screenIds {
             availableScreenQueue.removeAll(where: { $0.id == screenId })
         }
     }
     
-    func clearScreenQueue() {
+    // Remove all screens from screen queue
+    func removeAllScreensFromQueue() {
         availableScreenQueue.removeAll()
     }
     
-    enum ScreenQueueError: Error {
-        case noScreensInQueue
-    }
-    
-    enum TransitionQueueError: Error {
-        case noTransitionsInQueue
-    }
-    
-    func showNextScreen(routerId: String) throws {
+    // Show the next screen in queue, if available
+    func showNextScreen(routerId: String) {
         guard let nextScreen = availableScreenQueue.first else {
-            throw ScreenQueueError.noScreensInQueue
+            logger.trackEvent(event: Event.showNextScreen_emptyQueue(routerId: routerId))
+            return
         }
         
         showScreen(routerId: routerId, destination: nextScreen)
         availableScreenQueue.removeFirst()
     }
     
-    
-    // Simplify the first one
-    // Combine both of these
-    // Clean up the logic
-    //
-    // Add other dismiss methods (all, environment, count)
-    
-    // Currently dismisses screen
-    
-    // Change to dismiss only the screen in question
-    
-    // add dismissLastScreen()
-    // add dismissScreens(count: 2)
-    // add dismissScreens(ids: [])
-    // add dismissScreen(id: [])
-    // add dismissScreen()
+}
 
-    
-    // Dismiss push - DONE
-    // Dismiss push, push, push - DONE
-    // Dismiss sheet - DONE
-    // Dismiss sheet, sheet, sheet
-    // Dismiss any combo
+// MARK: SEGUE DISMISS
 
-    /// Removes all stacks after stackIndex. Keeps stacks up-to and including the stackIndex.
+extension RouterViewModel {
+    
+    // Removes all stacks after stackIndex. Keeps stacks up-to and including the stackIndex.
     private func removeAllStacksAsNeeded(stacks: [AnyDestinationStack], stackIndex: Int) -> (keep: [AnyDestinationStack], remove: [AnyDestinationStack]) {
         
         // Ensure the index is within bounds
@@ -358,20 +428,25 @@ extension RouterViewModel {
         
         let currentStack = stacks[stackIndex]
         if currentStack.screens.count > 1 {
+            // If there is more than 1 screen on this stack
+            // Remove all screens after the currentStack
             // Do not remove the currentStack
             
-            let keep = Array(stacks[...stackIndex]) // Includes up to and including the stackIndex
-            let remove = Array(stacks[(stackIndex + 1)...]) // Includes all after stackIndex
+            let keep = Array(stacks[...stackIndex])            // Includes up to and including the stackIndex
+            let remove = Array(stacks[(stackIndex + 1)...])    // Includes all after stackIndex
             return (keep, remove)
         } else {
-            // Remove the currentStack
-            let keep = Array(stacks[..<stackIndex]) // Includes stacks before the current stackIndex
-            let remove = Array(stacks[stackIndex...]) // Includes the current stack and all after it
+            // If there is 1 or less screens on this stack
+            // Remove all screens after and including the currentStack
+            // Will remove the currentStack
+
+            let keep = Array(stacks[..<stackIndex])            // Includes stacks before the current stackIndex
+            let remove = Array(stacks[stackIndex...])          // Includes the current stack and all after it
             return (keep, remove)
         }
     }
     
-    /// Remove screen at screenIndex and all screens after screenIndex. Keeps all screens before the screenIndex.
+    // Remove screen at screenIndex and all screens after screenIndex. Keeps all screens before the screenIndex.
     private func removeScreensAsNeeded(stack: AnyDestinationStack, screenIndex: Int) -> (keep: AnyDestinationStack, remove: [AnyDestination]) {
         let screens: [AnyDestination] = stack.screens
         
@@ -380,18 +455,18 @@ extension RouterViewModel {
             // If the index is out of bounds, keep all screens and remove none
             return (keep: stack, remove: [])
         }
-
+        
         // Split the screens array into keep and remove parts
         let keepScreens = Array(screens[..<screenIndex]) // Keep all screens before screenIndex
         let removeScreens = Array(screens[screenIndex...]) // Remove the current screen and all after it
-
+        
         // Create a new stack with the remaining screens
         let keepStack = AnyDestinationStack(segue: stack.segue, screens: keepScreens)
-
+        
         return (keep: keepStack, remove: removeScreens)
     }
-
-    /// Dismiss screen at routeId and all screens in front of it.
+    
+    // Dismiss screen at routeId and all screens in front of it.
     func dismissScreen(routeId: String, animates: Bool) {
         guard routeId != RouterViewModel.rootId else { return }
         
@@ -427,7 +502,7 @@ extension RouterViewModel {
                 triggerAction(withAnimation: animates) {
                     self.activeScreenStacks = keep
                 }
-
+                
                 // Trigger screen onDismiss closures, if available
                 for screen in screensToDismiss.reversed() {
                     screen.onDismiss?()
@@ -438,11 +513,23 @@ extension RouterViewModel {
             }
         }
         
-        print("🚨 RouteId not found in active view heirarchy (\(routeId))")
+        // Error: could not dismiss screen
+        logger.trackEvent(event: Event.dismissScreen_routerIdNotFound(id: routeId))
     }
     
+    // Dismiss all screens in front of routeId
     func dismissScreens(toEnvironmentId routeId: String, animates: Bool) {
+        // This is called "onDismiss" of a .sheet or .fullScreenCover (dismissing the environment in front of routeId)
+        // It is called internally and not by the user
+        // When an environment dismisses, everthing in front of it should be dismissed
+        //
+        // Note: if the user used a dismissScreen() to dismiss, then the screens may already be removed
+        // However, if the user swiped down a sheet manually, this method will catch the discrepency and update the stacks accordingly
+
+        // Find the stack that contains the routeId
         if let stackIndex = activeScreenStacks.firstIndex(where: { $0.screens.contains(where: { $0.id == routeId }) }) {
+            
+            // If there are stacks in front of stackIndex, dismiss them
             if activeScreenStacks.indices.contains(stackIndex + 1) {
                 let nextStack = activeScreenStacks[stackIndex + 1]
                 if let lastScreen = nextStack.screens.last {
@@ -451,27 +538,25 @@ extension RouterViewModel {
                 }
             }
             
+            // Fall-back, if it is the last stack, dismiss to this stack
+            // Shouldn't do anything but is a safety mechanism?
             if let lastScreen = activeScreenStacks[stackIndex].screens.last {
                 dismissScreens(to: lastScreen.id, animates: animates)
                 return
             }
         }
         
-        // This is NOT a problem if it triggers.
-        // This method is build to support swipe gesture dismiss.
-        // However, if the user is programatically dismissing, the screens would already be dismissed herein, when this gets called anyway.
-        // Therefore, it is OK to fail (it's like a safety mechanism to keep).
-//        print("🚨 Dismiss to routeId: \(routeId) not found in active view heirarchy.")
+        // It is NOT a problem if this method finishes without dismissing screens.
+        // This occurs if user programatically dismissed screens.
+        // This method is primarily for users manually swipeing to dismiss.
     }
     
-    /// Dismiss all screens in front of routeId, leaving routeId as the active screen.
+    // Dismiss all screens in front of routeId and leave routeId as the remaining active screen.
     func dismissScreens(to routeId: String, animates: Bool) {
         // The parameter routeId should be the remaining screen after dismissing all screens in front of it
         // So we call dismissScreen(routeId:) with the next screen's routeId
         
-//        print("TRIGGERING ON :\(routeId)")
-//        print(activeScreenStacks)
-        let allScreens = activeScreenStacks.flatMap({ $0.screens })
+        let allScreens = activeScreenStacks.allScreens
         if let screenIndex = allScreens.firstIndex(where: { $0.id == routeId }) {
             if allScreens.indices.contains(screenIndex + 1) {
                 let nextRoute = allScreens[screenIndex + 1]
@@ -480,27 +565,24 @@ extension RouterViewModel {
             }
         }
         
-        // This is NOT a problem if it triggers.
-        // This method is build to support swipe gesture dismiss.
-        // However, if the user is programatically dismissing, the screens would already be dismissed herein, when this gets called anyway.
-        // Therefore, it is OK to fail (it's like a safety mechanism to keep).
-//        print("🚨 Dismiss to routeId: \(routeId) not found in active view heirarchy.")
+        // It is NOT a problem if this method finishes without dismissing screens.
     }
     
     /// Dismiss the last screen presented.
     func dismissLastScreen(animates: Bool) {
-        let allScreens = activeScreenStacks.flatMap({ $0.screens })
+        let allScreens = activeScreenStacks.allScreens
         if let lastScreen = allScreens.last {
             dismissScreen(routeId: lastScreen.id, animates: animates)
             return
         }
         
-        print("🚨 There are no screens to dismiss in the active view heirarchy.")
+        logger.trackEvent(event: Event.dismissLastScreen_noScreenToDismiss)
     }
     
     /// Dismiss the last x screens presented.
     func dismissScreens(count: Int, animates: Bool) {
-        let allScreensReversed = activeScreenStacks.flatMap({ $0.screens }).reversed()
+        // Dismiss screens in reverse order (stacking with the last screen)
+        let allScreensReversed = activeScreenStacks.allScreens.reversed()
         
         var counter: Int = 0
         for screen in allScreensReversed {
@@ -512,10 +594,10 @@ extension RouterViewModel {
             }
         }
         
-        print("🚨 There are no screens to dismiss in the active view heirarchy.")
+        logger.trackEvent(event: Event.dismissScreensCount_noScreenToDismiss(countRequested: count, countDismissed: counter))
     }
     
-    /// Dismiss the closest .sheet or .fullScreenCover below the routeId.
+    // Dismiss the closest .sheet or .fullScreenCover below the routeId.
     func dismissEnvironment(routeId: String, animates: Bool) {
         var didFindScreen: Bool = false
         for stack in activeScreenStacks.reversed() {
@@ -528,9 +610,11 @@ extension RouterViewModel {
                 return
             }
         }
+        
+        logger.trackEvent(event: Event.dismissEnvironment_noEnvironmentToDismiss(id: routeId))
     }
     
-    /// Dismiss the last .sheet or .fullScreenCover presented.
+    // Dismiss the last .sheet or .fullScreenCover presented.
     func dismissLastEnvironment(animates: Bool) {
         let lastEnvironmentStack = activeScreenStacks.last(where: { $0.segue.presentsNewEnvironment })
         if let route = lastEnvironmentStack?.screens.first {
@@ -538,10 +622,10 @@ extension RouterViewModel {
             return
         }
         
-        print("🚨 There is no dismissable environment in view heirarchy.")
+        logger.trackEvent(event: Event.dismissEnvironment_noEnvironmentToDismiss(id: "last_environment"))
     }
     
-    /// Dismiss all .push routes on the current NavigationStack, up-to but not including any .sheet or .fullScreenCover.
+    // Dismiss all .push routes on the current NavigationStack, up-to but not including any .sheet or .fullScreenCover.
     func dismissPushStack(routeId: String, animates: Bool) {
         for (stackIndex, stack) in activeScreenStacks.enumerated().reversed() {
             if stack.screens.contains(where: { $0.id == routeId }) {
@@ -564,9 +648,11 @@ extension RouterViewModel {
                 }
             }
         }
+        
+        logger.trackEvent(event: Event.dismissPushStack_noPushStack(id: routeId))
     }
     
-    /// Dismiss all .push routes on the last NavigationStack, up-to but not including any .sheet or .fullScreenCover.
+    // Dismiss all .push routes on the last NavigationStack, up-to but not including any .sheet or .fullScreenCover.
     func dismissLastPushStack(animates: Bool) {
         let lastPushStack = activeScreenStacks.last(where: { $0.segue == .push })
         if let route = lastPushStack?.screens.first {
@@ -574,25 +660,35 @@ extension RouterViewModel {
             return
         }
         
-        print("🚨 There is no dismissable push stack in view heirarchy.")
+        logger.trackEvent(event: Event.dismissPushStack_noPushStack(id: "last_stack"))
     }
     
-    /// Dismiss all screens back to root.
+    // Dismiss all screens back to root.
     func dismissAllScreens(animates: Bool) {
         dismissScreens(to: RouterViewModel.rootId, animates: animates)
     }
+    
+}
 
+// MARK: ALERT METHODS
+
+extension RouterViewModel {
+    
     func showAlert(routerId: String, alert: AnyAlert) {
         var routerId = routerId
+        
+        // If location is .topScreen, present alert on the last screen displayed
         if alert.location == .topScreen {
-            if let lastScreen = activeScreenStacks.flatMap({ $0.screens }).last {
+            if let lastScreen = activeScreenStacks.allScreens.last {
                 routerId = lastScreen.id
             }
         }
         
         if activeAlert[routerId] == nil {
+            // Display alert
             self.activeAlert[routerId] = alert
         } else {
+            // Dismiss current alert and display new alert (should not occur)
             self.activeAlert.removeValue(forKey: routerId)
             
             Task {
@@ -602,11 +698,27 @@ extension RouterViewModel {
         }
     }
     
+    // Dismiss any alert displayed on routerId
     func dismissAlert(routerId: String) {
         self.activeAlert.removeValue(forKey: routerId)
     }
     
+    // Dismiss all alerts from all screens
+    func dismissAllAlerts() {
+        for (key, _) in activeAlert {
+            self.activeAlert.removeValue(forKey: key)
+        }
+    }
+    
+}
+
+// MARK: MODAL METHODS
+
+extension RouterViewModel {
+    
+    // Show modal on routerId
     func showModal(routerId: String, modal: AnyModal) {
+        // Every routerId needs an array if it doesn't have one already
         if allModals[routerId] == nil {
             allModals[routerId] = []
         }
@@ -614,6 +726,7 @@ extension RouterViewModel {
         allModals[routerId]!.append(modal)
     }
     
+    // Dismiss the last modal on routerId
     func dismissLastModal(onRouterId routerId: String) {
         let allModals = (allModals[routerId] ?? []).filter({ !$0.isRemoved })
         if let lastModal = allModals.last {
@@ -621,7 +734,7 @@ extension RouterViewModel {
             return
         }
         
-        print("🚨 1 There are no modals to dismiss in the active view heirarchy.")
+        logger.trackEvent(event: Event.dismissLastModal_noModals(routerId: routerId))
     }
     
     func dismissModal(routerId: String, modalId: String) {
@@ -630,30 +743,41 @@ extension RouterViewModel {
             allModals[routerId]?[index].onDismiss?()
             
             // Dismiss the modal UI
+            // Note: when we 'remove' a modal, we keep the modal in the data array but set isRemoved = true
+            // This allows a smooth transition and doesn't corrupt other displayed modals
+            // ie. multiple modals can display simultaneously and editing the array indexes would re-render them all.
             allModals[routerId]?[index].convertToEmptyRemovedModal()
-//            allModals[routerId]?.remove(at: index)
             return
         }
         
-        print("🚨 Modal to dismiss not found.")
+        logger.trackEvent(event: Event.dismissModal_modalNotFound(routerId: routerId, modalId: modalId))
     }
     
+    // Dismiss all modals above, but not including, the modalId.
     func dismissModals(routerId: String, to modalId: String) {
         // The parameter modalId should be the remaining modal after dismissing all modals in front of it
         // So we call dismissModal(modalId:) with the next screen's routeId
-
+        
         let allModals = allModals[routerId] ?? []
         if let modalIndex = allModals.lastIndex(where: { $0.id == modalId }) {
             // get all modals AFTER modalIndex
             let modalsToDismiss = allModals[(modalIndex + 1)...]
-            for modal in modalsToDismiss.reversed() {
-                if !modal.isRemoved {
-                    dismissModal(routerId: routerId, modalId: modal.id)
+            if !modalsToDismiss.isEmpty {
+                
+                // Dismiss them in reverse order, starting with the last one (ie. the top-most one)
+                for modal in modalsToDismiss.reversed() {
+                    if !modal.isRemoved {
+                        dismissModal(routerId: routerId, modalId: modal.id)
+                    }
                 }
+                return
             }
         }
+        
+        logger.trackEvent(event: Event.dismissModalsAbove_noneFound(routerId: routerId, modalId: modalId))
     }
     
+    // Dismiss last x modals
     func dismissModals(routerId: String, count: Int) {
         let allModalsReversed = (allModals[routerId] ?? []).reversed()
         
@@ -663,13 +787,16 @@ extension RouterViewModel {
                 counter += 1
                 dismissModal(routerId: routerId, modalId: modal.id)
             }
-
+            
             if counter == count {
                 return
             }
         }
+        
+        logger.trackEvent(event: Event.dismissModalsCount_noneToDismiss(countRequested: count, countDismissed: counter))
     }
     
+    // Dismiss all modals on routerId
     func dismissAllModals(routerId: String) {
         let allModalsReversed = (allModals[routerId] ?? []).reversed()
         
@@ -680,37 +807,93 @@ extension RouterViewModel {
         }
     }
     
+}
+ 
+// MARK: TRANSITION METHODS
+
+extension RouterViewModel {
+    
+    // Show transitino on routerId
     func showTransition(routerId: String, transition: AnyTransitionDestination) {
+        // Set the current transition before triggering the UI update
+        // This can change the existing screen's "removal" transition, based on the incomign screens transition
         self.currentTransitions[routerId] = transition.transition
         
         Task { @MainActor in
+            // The OS needs a slight delay to update the existing screen's transition
             try? await Task.sleep(nanoseconds: 1_000_000)
             
-            // allTransitions[routerId] should never be nil
-            // since it's added in showScreen
+            // Trigger the UI update
+            // allTransitions[routerId] should never be nil since it's added in showScreen
             self.allTransitions[routerId]?.append(transition)
         }
     }
     
+    // Show array of transitions simultanously on routerId
     func showTransitions(routerId: String, transitions: [AnyTransitionDestination]) {
+        // Removal of existing screen is based on the last transition requested (ie. the top-most transition)
         guard let lastTransition = transitions.last?.transition else { return }
+        
+        // Same as above (showTransition)
         
         self.currentTransitions[routerId] = lastTransition
         
         Task { @MainActor in
             try? await Task.sleep(nanoseconds: 1_000_000)
-            
-            // allTransitions[routerId] should never be nil
-            // since it's added in showScreen
             self.allTransitions[routerId]?.append(contentsOf: transitions)
         }
     }
     
-    func dismissTransition(routerId: String) throws {
+}
+
+// MARK: TRANSITION QUEUE
+
+extension RouterViewModel {
+    
+    // Add transitions to queue
+    func addTransitionsToQueue(routerId: String, transitions: [AnyTransitionDestination]) {
+        if availableTransitionQueue[routerId] == nil {
+            availableTransitionQueue[routerId] = []
+        }
+        
+        availableTransitionQueue[routerId]?.append(contentsOf: transitions)
+    }
+    
+    // Remove requested transitions from queue
+    func removeTransitionsFromQueue(routerId: String, transitionIds: [String]) {
+        for transitionId in transitionIds {
+            availableTransitionQueue[routerId]?.removeAll(where: { $0.id == transitionId })
+        }
+    }
+    
+    // Remove all transitions from queue
+    func removeAllTransitionsFromQueue(routerId: String) {
+        availableTransitionQueue[routerId]?.removeAll()
+    }
+
+    // Show next transition from queue, if available
+    func showNextTransition(routerId: String) {
+        guard let nextTransition = availableTransitionQueue[routerId]?.first else {
+            logger.trackEvent(event: Event.showNextTransition_emptyQueue(routerId: routerId))
+            return
+        }
+        
+        showTransition(routerId: routerId, transition: nextTransition)
+        availableTransitionQueue[routerId]?.removeFirst()
+    }
+}
+
+// MARK: TRANSITION DISMISS
+
+extension RouterViewModel {
+    
+    // Dismiss last transition on routerId
+    func dismissTransition(routerId: String) {
         let transitions = allTransitions[routerId] ?? []
         
         guard let index = transitions.indices.last, transitions.indices.contains(index - 1) else {
             // no transition to dismiss
+            logger.trackEvent(event: Event.dismissTransition_notFound(routerId: routerId))
             return
         }
         
@@ -719,50 +902,60 @@ extension RouterViewModel {
         
         // Task is needed for UI
         Task { @MainActor in
+            // Not required but doesn't hurt?
+            try? await Task.sleep(nanoseconds: 1_000_000)
+            
             // Trigger onDismiss for screen
             defer {
                 transitions[index].onDismiss?()
             }
             
-            // Trigger UI update
+            // For transitions, we remove it from the array completely to trigger the UI update
             self.allTransitions[routerId]?.remove(at: index)
         }
     }
     
-    func dismissTransitions(routerId: String, id: String) {
+    // Dismiss transition at transitionId and all transitions in front of it
+    func dismissTransitions(routerId: String, transitionId: String) {
         // Dismiss to the screen before id
         guard
             let transitions = allTransitions[routerId],
-            let requestedIndex = transitions.firstIndex(where: {  $0.id == id }) else {
+            let requestedIndex = transitions.firstIndex(where: {  $0.id == transitionId }) else {
+            logger.trackEvent(event: Event.dismissTransitions_notFound(routerId: routerId, transitionId: transitionId))
             return
         }
         
+        // If there are no transitions before requestedIndex
+        // Then fall-back to dismiss back to root
         var resultingScreenId = RouterViewModel.rootId
         if transitions.indices.contains(requestedIndex - 1) {
             resultingScreenId = transitions[requestedIndex - 1].id
         }
         
-        dismissTransitions(routerId: routerId, toScreenId: resultingScreenId)
+        dismissTransitions(routerId: routerId, toTransitionId: resultingScreenId)
     }
     
-    func dismissTransitions(routerId: String, toScreenId: String) {
+    // Dismiss transitions after, but not including, toTransitionId
+    func dismissTransitions(routerId: String, toTransitionId: String) {
         let transitions = allTransitions[routerId] ?? []
         
-        guard let lastIndex = transitions.indices.last, transitions.indices.contains(lastIndex - 1) else {
-            print("no transition to dismiss")
-            return
-        }
-        
-        guard let screenIndex = transitions.firstIndex(where: { $0.id == toScreenId }) else {
-            print("Could not find screen in transitions")
+        guard
+            // Get the last transition (array shoudl not be empty)
+            let lastIndex = transitions.indices.last,
+            // Array must contain more than 1 item, otherwise nothing to dismiss
+            transitions.indices.contains(lastIndex - 1),
+            // Find screen to dismiss to
+            let screenIndex = transitions.firstIndex(where: { $0.id == toTransitionId })
+        else {
+            logger.trackEvent(event: Event.dismissTransitionsTo_notFound(routerId: routerId, transitionId: toTransitionId))
             return
         }
         
         let screensToDismissStartingIndex = (screenIndex + 1)
         let screensToDismiss = Array(transitions[screensToDismissStartingIndex...])
-
+        
         guard !screensToDismiss.isEmpty else {
-            print("No screens to dismiss")
+            logger.trackEvent(event: Event.dismissTransitionsTo_empty(routerId: routerId, transitionId: toTransitionId))
             return
         }
         
@@ -771,6 +964,9 @@ extension RouterViewModel {
         
         // Task is needed for UI
         Task { @MainActor in
+            // Not required but doesn't hurt?
+            try? await Task.sleep(nanoseconds: 1_000_000)
+            
             defer {
                 for screen in screensToDismiss.reversed() {
                     // Trigger onDismiss for screens
@@ -783,11 +979,12 @@ extension RouterViewModel {
         }
     }
     
+    // Dismiss x transitions
     func dismissTransitions(routerId: String, count: Int) {
         let transitions = allTransitions[routerId] ?? []
         
         guard let lastIndex = transitions.indices.last, transitions.indices.contains(lastIndex - 1) else {
-            print("no transition to dismiss")
+            logger.trackEvent(event: Event.dismissTransitionsCount_none(routerId: routerId, count: count))
             return
         }
         
@@ -803,7 +1000,7 @@ extension RouterViewModel {
         }
         
         guard var screensToDismissStartingIndex else {
-            print("Count not find screens to dismiss to count")
+            logger.trackEvent(event: Event.dismissTransitionsCount_notFound(routerId: routerId, count: count))
             return
         }
         
@@ -811,9 +1008,9 @@ extension RouterViewModel {
         screensToDismissStartingIndex = max(1, screensToDismissStartingIndex)
         
         let screensToDismiss = Array(transitions[screensToDismissStartingIndex...])
-
+        
         guard !screensToDismiss.isEmpty else {
-            print("No screens to dismiss")
+            logger.trackEvent(event: Event.dismissTransitionsCount_empty(routerId: routerId, count: count))
             return
         }
         
@@ -822,6 +1019,9 @@ extension RouterViewModel {
         
         // Task is needed for UI
         Task { @MainActor in
+            // Not required but doesn't hurt?
+            try? await Task.sleep(nanoseconds: 1_000_000)
+            
             defer {
                 for screen in screensToDismiss.reversed() {
                     // Trigger onDismiss for screens
@@ -834,19 +1034,20 @@ extension RouterViewModel {
         }
     }
     
+    // Dismiss all transitions
     func dismissAllTransitions(routerId: String) {
         let transitions = allTransitions[routerId] ?? []
         
         guard let lastIndex = transitions.indices.last, transitions.indices.contains(lastIndex - 1) else {
-            print("no transition to dismiss")
+            logger.trackEvent(event: Event.dismissAllTransitions_none(routerId: routerId))
             return
         }
-                
+        
         let screensToDismissStartingIndex = 1
         let screensToDismiss = Array(transitions[screensToDismissStartingIndex...])
-
+        
         guard !screensToDismiss.isEmpty else {
-            print("No screens to dismiss")
+            logger.trackEvent(event: Event.dismissAllTransitions_empty(routerId: routerId))
             return
         }
         
@@ -855,6 +1056,9 @@ extension RouterViewModel {
         
         // Task is needed for UI
         Task { @MainActor in
+            // Not required but doesn't hurt?
+            try? await Task.sleep(nanoseconds: 1_000_000)
+            
             defer {
                 for screen in screensToDismiss.reversed() {
                     // Trigger onDismiss for screens
@@ -867,30 +1071,4 @@ extension RouterViewModel {
         }
     }
     
-    func addTransitionsToQueue(routerId: String, transitions: [AnyTransitionDestination]) {
-        if availableTransitionQueue[routerId] == nil {
-            availableTransitionQueue[routerId] = []
-        }
-        
-        availableTransitionQueue[routerId]?.append(contentsOf: transitions)
-    }
-    
-    func removeTransitionsFromQueue(routerId: String, transitionIds: [String]) {
-        for transitionId in transitionIds {
-            availableTransitionQueue[routerId]?.removeAll(where: { $0.id == transitionId })
-        }
-    }
-    
-    func clearTransitionsQueue(routerId: String) {
-        availableTransitionQueue[routerId]?.removeAll()
-    }
-    
-    func showNextTransition(routerId: String) throws {
-        guard let nextTransition = availableTransitionQueue[routerId]?.first else {
-            throw TransitionQueueError.noTransitionsInQueue
-        }
-        
-        showTransition(routerId: routerId, transition: nextTransition)
-        availableTransitionQueue[routerId]?.removeFirst()
-    }
 }

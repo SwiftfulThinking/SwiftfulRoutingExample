@@ -598,12 +598,12 @@ struct RecursiveRoutingView: View {
         .accessibilityIdentifier("Button_QueueRemove2")
 
         Button("Clear screen queue") {
-            router.clearScreenQueue()
+            router.removeAllScreensFromQueue()
         }
         .accessibilityIdentifier("Button_QueueClear")
 
         Button("Try to show next screen") {
-            try? router.showNextScreen()
+            router.showNextScreen()
         }
         .accessibilityIdentifier("Button_QueueNext")
     }
@@ -1077,7 +1077,7 @@ struct RecursiveRoutingView: View {
                         .fill(Color.green)
                         .ignoresSafeArea()
                         .onTapGesture {
-                            try? router.dismissTransition()
+                            router.dismissTransition()
                         }
                 }
 //                router.showTransition(transition: transition)
@@ -1089,7 +1089,7 @@ struct RecursiveRoutingView: View {
                         .fill(Color.orange)
                         .ignoresSafeArea()
                         .onTapGesture {
-                            try? router.dismissTransition()
+                            router.dismissTransition()
                         }
                 }
 //                router.showTransition(transition: transition2)
@@ -1101,7 +1101,7 @@ struct RecursiveRoutingView: View {
                         .fill(Color.red)
                         .ignoresSafeArea()
                         .onTapGesture {
-                            try? router.dismissTransition()
+                            router.dismissTransition()
                         }
                 }
 //                router.showTransition(transition: transition3)
@@ -1112,11 +1112,11 @@ struct RecursiveRoutingView: View {
 //                router.dismissTransitions(toScreenId: "transition_1")
 //                router.dismissTransitions(count: 100)
 //                router.dismissAllTransitions()
-                try? router.dismissTransition()
+                router.dismissTransition()
                 try? await Task.sleep(for: .seconds(1))
-                try? router.dismissTransition()
+                router.dismissTransition()
                 try? await Task.sleep(for: .seconds(1))
-                try? router.dismissTransition()
+                router.dismissTransition()
             }
         }
 //        .accessibilityIdentifier("Button_DismissModal")
@@ -1157,7 +1157,7 @@ struct RecursiveRoutingView: View {
     @ViewBuilder
     var dismissTransitionButtons: some View {
         Button("Dismiss transition") {
-            try? router.dismissTransition()
+            router.dismissTransition()
         }
         .accessibilityIdentifier("Button_DismissTransition")
 
@@ -1167,7 +1167,7 @@ struct RecursiveRoutingView: View {
         .accessibilityIdentifier("Button_DismissTransitionId1")
 
         Button("Dismiss up to transition 1") {
-            router.dismissTransitions(upToScreenId: "1")
+            router.dismissTransitions(upToId: "1")
         }
         .accessibilityIdentifier("Button_DismissupToTransition1")
 
@@ -1274,12 +1274,12 @@ struct RecursiveRoutingView: View {
         .accessibilityIdentifier("Button_TransitionQueueRemove2")
 
         Button("Clear screen queue") {
-            router.clearTransitionsQueue()
+            router.removeAllTransitionsFromQueue()
         }
         .accessibilityIdentifier("Button_TransitionQueueClear")
 
         Button("Try to show next screen") {
-            try? router.showNextTransition()
+            router.showNextTransition()
         }
         .accessibilityIdentifier("Button_TransitionQueueNext")
     }

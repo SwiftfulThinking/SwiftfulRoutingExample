@@ -19,6 +19,9 @@ extension Array where Element == AnyDestinationStack {
         }
     }
     
+    var allScreens: [AnyDestination] {
+        flatMap({ $0.screens })
+    }
 }
 
 /*

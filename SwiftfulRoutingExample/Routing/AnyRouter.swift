@@ -27,6 +27,50 @@ struct AnyRouter: Sendable, Router {
         self.object = object
     }
     
+    @MainActor var activeScreens: [AnyDestinationStack] {
+        object.activeScreens
+    }
+    
+    @MainActor var activeScreenQueue: [AnyDestination] {
+        object.activeScreenQueue
+    }
+    
+    @MainActor var hasScreenInQueue: Bool {
+        !object.activeScreenQueue.isEmpty
+    }
+    
+    @MainActor var activeAlert: AnyAlert? {
+        object.activeAlert
+    }
+    
+    @MainActor var hasActiveAlert: Bool {
+        activeAlert != nil
+    }
+    
+    @MainActor var activeModals: [AnyModal] {
+        object.activeModals
+    }
+    
+    @MainActor var hasActiveModal: Bool {
+        !object.activeModals.isEmpty
+    }
+    
+    @MainActor var activeTransitions: [AnyTransitionDestination] {
+        object.activeTransitions
+    }
+    
+    @MainActor var hasActiveTransition: Bool {
+        !object.activeTransitions.isEmpty
+    }
+    
+    @MainActor var activeTransitionQueue: [AnyTransitionDestination] {
+        object.activeTransitionQueue
+    }
+    
+    @MainActor var hasTransitionInQueue: Bool {
+        !object.activeTransitionQueue.isEmpty
+    }
+    
     @MainActor func showScreen(destination: AnyDestination) {
         object.showScreens(destinations: [destination])
     }
@@ -120,17 +164,25 @@ struct AnyRouter: Sendable, Router {
         object.removeScreensFromQueue(ids: ids)
     }
     
-    @MainActor func clearScreenQueue() {
-        object.clearScreenQueue()
+    @MainActor func removeAllScreensFromQueue() {
+        object.removeAllScreensFromQueue()
     }
     
-    @MainActor func showNextScreen() throws {
-        try object.showNextScreen()
+    @MainActor func showNextScreen() {
+        object.showNextScreen()
     }
     
-    @MainActor func showNextScreenOrDismiss(animateDismiss: Bool = true) throws {
+    @MainActor func tryShowNextScreen() throws {
+        guard hasScreenInQueue else {
+            throw AnyRouterError.noScreensInQueue
+        }
+        
+        object.showNextScreen()
+    }
+    
+    @MainActor func showNextScreenOrDismissScreen(animateDismiss: Bool = true) {
         do {
-            try object.showNextScreen()
+            try tryShowNextScreen()
         } catch {
             object.dismissScreen(animates: animateDismiss)
         }
@@ -138,7 +190,7 @@ struct AnyRouter: Sendable, Router {
     
     @MainActor func showNextScreenOrDismissEnvironment(animateDismiss: Bool = true) throws {
         do {
-            try object.showNextScreen()
+            try tryShowNextScreen()
         } catch {
             object.dismissEnvironment(animates: animateDismiss)
         }
@@ -146,7 +198,7 @@ struct AnyRouter: Sendable, Router {
     
     @MainActor func showNextScreenOrDismissPushStack(animateDismiss: Bool = true) throws {
         do {
-            try object.showNextScreen()
+            try tryShowNextScreen()
         } catch {
             object.dismissPushStack(animates: animateDismiss)
         }
@@ -185,6 +237,10 @@ struct AnyRouter: Sendable, Router {
     
     @MainActor public func dismissAlert() {
         object.dismissAlert()
+    }
+    
+    @MainActor public func dismissAllAlerts() {
+        object.dismissAllAlerts()
     }
 
     // MARK: MODALS
@@ -273,16 +329,16 @@ struct AnyRouter: Sendable, Router {
         object.showTransitions(transitions: transitions)
     }
     
-    @MainActor public func dismissTransition() throws {
-        try object.dismissTransition()
+    @MainActor public func dismissTransition() {
+        object.dismissTransition()
     }
     
     @MainActor func dismissTransition(id: String) {
         object.dismissTransition(id: id)
     }
     
-    @MainActor public func dismissTransitions(upToScreenId: String) {
-        object.dismissTransitions(upToScreenId: upToScreenId)
+    @MainActor public func dismissTransitions(upToId: String) {
+        object.dismissTransitions(upToId: upToId)
     }
     
     @MainActor public func dismissTransitions(count: Int) {
@@ -290,9 +346,9 @@ struct AnyRouter: Sendable, Router {
     }
     
     @MainActor public func dismissTransitionOrDismissScreen() {
-        do {
-            try dismissTransition()
-        } catch {
+        if hasActiveTransition {
+            dismissTransition()
+        } else {
             dismissScreen()
         }
     }
@@ -317,12 +373,37 @@ struct AnyRouter: Sendable, Router {
         object.removeTransitionsFromQueue(ids: ids)
     }
     
-    @MainActor public func clearTransitionsQueue() {
-        object.clearTransitionsQueue()
+    @MainActor public func removeAllTransitionsFromQueue() {
+        object.removeAllTransitionsFromQueue()
     }
     
-    @MainActor public func showNextTransition() throws {
-        try object.showNextTransition()
+    @MainActor public func showNextTransition() {
+        object.showNextTransition()
+    }
+    
+    @MainActor public func tryShowNextTransition() throws {
+        guard hasTransitionInQueue else {
+            throw AnyRouterError.noTransitionsInQueue
+        }
+        
+        object.showNextTransition()
+    }
+    
+    @MainActor public func showNextTransitionOrNextScreenOrDismissScreen() throws {
+        do {
+            try tryShowNextTransition()
+        } catch {
+            do {
+                try tryShowNextScreen()
+            } catch {
+                dismissScreen()
+            }
+        }
+    }
+    
+    enum AnyRouterError: Error {
+        case noTransitionsInQueue
+        case noScreensInQueue
     }
     
 //    
@@ -346,6 +427,31 @@ struct MockRouter: Router {
     init() {
         
     }
+    
+    var activeScreens: [AnyDestinationStack] {
+        []
+    }
+    
+    var activeScreenQueue: [AnyDestination] {
+        []
+    }
+    
+    var activeAlert: AnyAlert? {
+        nil
+    }
+    
+    var activeModals: [AnyModal] {
+        []
+    }
+    
+    var activeTransitions: [AnyTransitionDestination] {
+        []
+    }
+    
+    var activeTransitionQueue: [AnyTransitionDestination] {
+        []
+    }
+
     
     func showScreens(destinations: [AnyDestination]) {
         printError()
@@ -399,11 +505,11 @@ struct MockRouter: Router {
         printError()
     }
     
-    func clearScreenQueue() {
+    func removeAllScreensFromQueue() {
         printError()
     }
     
-    func showNextScreen() throws {
+    func showNextScreen() {
         printError()
     }
     
@@ -412,6 +518,10 @@ struct MockRouter: Router {
     }
     
     func dismissAlert() {
+        printError()
+    }
+    
+    func dismissAllAlerts() {
         printError()
     }
     
@@ -447,7 +557,7 @@ struct MockRouter: Router {
         printError()
     }
     
-    func dismissTransition() throws {
+    func dismissTransition() {
         printError()
     }
     
@@ -455,7 +565,7 @@ struct MockRouter: Router {
         printError()
     }
     
-    func dismissTransitions(upToScreenId: String) {
+    func dismissTransitions(upToId: String) {
         printError()
     }
     
@@ -475,78 +585,12 @@ struct MockRouter: Router {
         printError()
     }
     
-    func clearTransitionsQueue() {
+    func removeAllTransitionsFromQueue() {
         printError()
     }
     
-    func showNextTransition() throws {
+    func showNextTransition() {
         printError()
     }
-    
-    
     
 }
-
-
-//struct MockRouter: Router {
-//    
-
-//    
-//    func enterScreenFlow(_ routes: [AnyRoute]) {
-//        printError()
-//    }
-//    
-//    func showNextScreen() throws {
-//        printError()
-//    }
-//    
-//    func dismissScreen() {
-//        printError()
-//    }
-//    
-//    func dismissScreens(to id: String) {
-//        printError()
-//    }
-//    
-//    func dismissEnvironment() {
-//        printError()
-//    }
-//    
-//    func dismissScreenStack() {
-//        printError()
-//    }
-//    
-//    func pushScreenStack(destinations: [PushRoute]) {
-//        printError()
-//    }
-//
-//    func showResizableSheet<V>(sheetDetents: Set<PresentationDetentTransformable>, selection: Binding<PresentationDetentTransformable>?, showDragIndicator: Bool, onDismiss: (() -> Void)?, destination: @escaping (AnyRouter) -> V) where V : View {
-//        printError()
-//    }
-//    
-//    func showAlert<T>(_ option: DialogOption, title: String, subtitle: String?, alert: @escaping () -> T, buttonsiOS13: [Alert.Button]?) where T : View {
-//        printError()
-//    }
-//    
-//    func dismissAlert() {
-//        printError()
-//    }
-//    
-//    func showModal<V>(id: String = UUID().uuidString, transition: AnyTransition, animation: Animation, alignment: Alignment, backgroundColor: Color?, dismissOnBackgroundTap: Bool, ignoreSafeArea: Bool, destination: @escaping () -> V) where V : View {
-//        printError()
-//    }
-//    
-//    func dismissModal(id: String? = nil) {
-//        printError()
-//    }
-//    
-//    func dismissAllModals() {
-//        printError()
-//    }
-//    
-//    func showSafari(_ url: @escaping () -> URL) {
-//        printError()
-//    }
-//    
-//    
-//}
