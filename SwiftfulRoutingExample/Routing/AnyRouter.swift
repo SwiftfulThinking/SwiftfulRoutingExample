@@ -85,26 +85,14 @@ struct AnyRouter: Sendable, Router {
     }
     
     @MainActor func showScreen<T>(
+        _ segue: SegueOption = .push,
         id: String = UUID().uuidString,
-        segue: SegueOption = .push,
         location: SegueLocation = .insert,
         onDismiss: (() -> Void)? = nil,
         animates: Bool = true,
         destination: @escaping (AnyRouter) -> T
     ) where T : View {
         let destination = AnyDestination(id: id, segue: segue, location: location, animates: animates, onDismiss: onDismiss, destination: destination)
-        object.showScreens(destinations: [destination])
-    }
-    
-    @MainActor func showScreen<T>(
-        id: String = UUID().uuidString,
-        _ segue: SegueOption = .push,
-        location: SegueLocation = .insert,
-        onDismiss: (() -> Void)? = nil,
-        animates: Bool = true,
-        destination: @escaping (AnyRouter) -> T
-    ) where T : View {
-        let destination = AnyDestination(id: id, segue: segue, location: location, onDismiss: onDismiss, destination: destination)
         object.showScreens(destinations: [destination])
     }
     

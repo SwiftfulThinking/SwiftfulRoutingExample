@@ -74,12 +74,9 @@ router.showScreen(
     
     private var actionButton: some View {
         Button(action: {
-            router.showScreen(
-                segue: segue,
-                animates: animates,
-                destination: { router in
-                    destinationView
-                }
+            router.showScreen(segue, animates: animates, destination: { router in
+                destinationView
+            }
             )
         }, label: {
             Text("Perform Segue")

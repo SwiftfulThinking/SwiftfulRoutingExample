@@ -16,7 +16,7 @@ struct ZoomTesting: View {
             SourceView()
                 .matchedTransitionSource(id: "abc", in: namespace)
                 .onTapGesture {
-                    router.showScreen(id: "abc", segue: .push) { router2 in
+                    router.showScreen(.push, id: "abc") { router2 in
                         DetailView()
                             .navigationTransition(.zoom(sourceID: "abc", in: namespace))
                     }
