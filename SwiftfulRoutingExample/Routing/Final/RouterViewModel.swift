@@ -6,8 +6,10 @@
 //
 import SwiftUI
 
+// add analytics for regular prints - 
 // add analytic logs to show and dismiss?
-// add convenience mthods like "hasTransitions" or "counts"
+// add convenience mthods like "hasTransitions" or "counts" - DONE
+// add module support
 
 @MainActor
 final class RouterViewModel: ObservableObject {
@@ -76,6 +78,13 @@ extension RouterViewModel {
         case dismissAllTransitions_empty(routerId: String)
         case showNextScreen_emptyQueue(routerId: String)
         case showNextTransition_emptyQueue(routerId: String)
+        
+        // Info logging
+        case screenStackUpdated(newValue: String)
+        case screenQueueUpdated(newValue: String)
+        case modalStackUpdated(routerId: String, newValue: String)
+        case transitionStackUpdated(routerId: String, newValue: String)
+        case transitionQueueUpdated(routerId: String, newValue: String)
 
         var eventName: String {
             switch self {
@@ -101,6 +110,11 @@ extension RouterViewModel {
             case .dismissAllTransitions_empty:                          return "Routing_DismissAllTransitions_Empty"
             case .showNextScreen_emptyQueue:                            return "Routing_ShowNextScreen_EmptyQueue"
             case .showNextTransition_emptyQueue:                        return "Routing_ShowNextTransition_EmptyQueue"
+            case .screenStackUpdated:                                   return "Routing_ScreenStack_Updated"
+            case .screenQueueUpdated:                                   return "Routing_ScreenQueue_Updated"
+            case .modalStackUpdated:                                    return "Routing_ModalStack_Updated"
+            case .transitionStackUpdated:                               return "Routing_TransitionStack_Updated"
+            case .transitionQueueUpdated:                               return "Routing_TransitionQueue_Updated"
             }
         }
         
@@ -130,6 +144,29 @@ extension RouterViewModel {
                     "router_id": routerId,
                     "dismiss_requested_count": count
                 ]
+            case .screenStackUpdated(newValue: let newValue):
+                return [
+                    "screen_stack": newValue
+                ]
+            case .screenQueueUpdated(newValue: let newValue):
+                return [
+                    "screen_queue": newValue
+                ]
+            case .modalStackUpdated(routerId: let routerId, newValue: let newValue):
+                return [
+                    "router_id": routerId,
+                    "modal_stack": newValue
+                ]
+            case .transitionStackUpdated(routerId: let routerId, newValue: let newValue):
+                return [
+                    "router_id": routerId,
+                    "transition_stack": newValue
+                ]
+            case .transitionQueueUpdated(routerId: let routerId, newValue: let newValue):
+                return [
+                    "router_id": routerId,
+                    "transition_queue": newValue
+                ]
             default:
                 return nil
             }
@@ -137,6 +174,8 @@ extension RouterViewModel {
         
         var type: RoutingLogType {
             switch self {
+            case .screenStackUpdated, .screenQueueUpdated, .modalStackUpdated, .transitionStackUpdated, .transitionQueueUpdated:
+                return .info
             default:
                 return .warning
             }
@@ -1071,4 +1110,79 @@ extension RouterViewModel {
         }
     }
     
+}
+
+// MARK: LOGGING
+
+extension RouterViewModel {
+    
+    func printScreenStack(screenStack: [AnyDestinationStack]?) {
+        var value: String = ""
+        
+        // For each AnyDestinationStack
+        let screenStack = screenStack ?? activeScreenStacks
+        for (arrayIndex, item) in screenStack.enumerated() {
+            value += "\nstack \(arrayIndex): \(item.segue.stringValue)"
+            
+            if item.screens.isEmpty {
+                value += "\n    no screens"
+            } else {
+                for (screenIndex, screen) in item.screens.enumerated() {
+                    value += "\n    screen \(screenIndex): \(screen.id)"
+                }
+            }
+        }
+        value += "\n"
+        logger.trackEvent(event: Event.screenStackUpdated(newValue: value))
+    }
+    
+    func printScreenQueue(screenQueue: [AnyDestination]) {
+        var value = ""
+
+        if screenQueue.isEmpty {
+            value += "\n    no queue"
+        } else {
+            for (arrayIndex, item) in screenQueue.enumerated() {
+                value += "\n    queue \(arrayIndex): \(item.id)"
+            }
+        }
+        value += "\n"
+        logger.trackEvent(event: Event.screenQueueUpdated(newValue: value))
+    }
+    
+    func printModalStack(routerId: String, modals: [AnyModal]) {
+        var value = ""
+
+        for modal in modals {
+            value += "\n    modal \(modal.id)"
+        }
+        
+        value += "\n"
+        logger.trackEvent(event: Event.modalStackUpdated(routerId: routerId, newValue: value))
+    }
+
+    func printTransitionStack(routerId: String, transitions: [AnyTransitionDestination]) {
+        var value = ""
+
+        for transition in transitions {
+            value += "\n    transition \(transition.id)"
+        }
+        
+        value += "\n"
+        logger.trackEvent(event: Event.transitionStackUpdated(routerId: routerId, newValue: value))
+    }
+    
+    func printTransitionQueue(routerId: String, transitionQueue: [AnyTransitionDestination]) {
+        var value = ""
+
+        if transitionQueue.isEmpty {
+            value += "\n    no queue"
+        } else {
+            for (arrayIndex, item) in transitionQueue.enumerated() {
+                value += "\n    queue \(arrayIndex): \(item.id)"
+            }
+        }
+        value += "\n"
+        logger.trackEvent(event: Event.transitionQueueUpdated(routerId: routerId, newValue: value))
+    }
 }

@@ -12,23 +12,12 @@ struct RouterViewInternal<Content: View>: View, Router {
     @EnvironmentObject var viewModel: RouterViewModel
     var routerId: String
     var addNavigationStack: Bool = false
-    var logger: Bool = false
     var content: (AnyRouter) -> Content
 
     private var currentRouter: AnyRouter {
         AnyRouter(object: self)
     }
     
-    private var parentDestination: AnyDestination? {
-        guard let index = viewModel.activeScreenStacks.lastIndex(where: { stack in
-            return stack.screens.contains(where: { $0.id == routerId })
-        }) else {
-            return nil
-        }
-        
-        return viewModel.activeScreenStacks[index].screens.first(where: { $0.id == routerId })
-    }
-
     var body: some View {
         // Wrap starting content for Transition support
         TransitionSupportView2(
@@ -110,69 +99,44 @@ struct RouterViewInternal<Content: View>: View, Router {
             )
         )
         
+        #if DEBUG
         // Print screen stack if logging is enabled
-        .ifSatisfiesCondition(logger && routerId == RouterViewModel.rootId, transform: { content in
+        .ifSatisfiesCondition(routerId == RouterViewModel.rootId, transform: { content in
             content
                 .onChange(of: viewModel.activeScreenStacks) { newValue in
-                    printScreenStack(screenStack: newValue, screenQueue: nil)
+                    viewModel.printScreenStack(screenStack: newValue)
                 }
                 .onChange(of: viewModel.availableScreenQueue) { newValue in
-                    printScreenStack(screenStack: nil, screenQueue: newValue)
-                }
-                .onChange(of: viewModel.allModals[routerId] ?? []) { newValue in
-                    printModalStack(modals: newValue)
+                    viewModel.printScreenQueue(screenQueue: newValue)
                 }
         })
+        
+        // logging on every router
+        .onChange(of: viewModel.allModals[routerId] ?? []) { newValue in
+            viewModel.printModalStack(routerId: routerId, modals: newValue)
+        }
+        .onChange(of: viewModel.allTransitions[routerId] ?? []) { newValue in
+            viewModel.printTransitionStack(routerId: routerId, transitions: newValue)
+        }
+        .onChange(of: viewModel.availableTransitionQueue[routerId] ?? []) { newValue in
+            viewModel.printTransitionQueue(routerId: routerId, transitionQueue: newValue)
+        }
+        #endif
         
         // Add to environment for convenience
         .environment(\.router, currentRouter)
     }
     
-    private func printModalStack(modals: [AnyModal]) {
-        if !modals.isEmpty {
-            print("🕊️ SwiftfulRouting Modal Stack 🕊️")
-
-            for modal in modals {
-                print("modal \(modal.id)")
-            }
-            
-            print("\n")
+    private var parentDestination: AnyDestination? {
+        guard let index = viewModel.activeScreenStacks.lastIndex(where: { stack in
+            return stack.screens.contains(where: { $0.id == routerId })
+        }) else {
+            return nil
         }
-    }
-    
-    private func printScreenStack(screenStack: [AnyDestinationStack]?, screenQueue: [AnyDestination]?) {
-        print("🕊️ SwiftfulRouting Screen Stacks 🕊️")
         
-        // For each AnyDestinationStack
-        let screenStack = screenStack ?? viewModel.activeScreenStacks
-        for (arrayIndex, item) in screenStack.enumerated() {
-            print("stack \(arrayIndex): \(item.segue.stringValue)")
-            
-            if item.screens.isEmpty {
-                print("    no screens")
-            } else {
-                for (screenIndex, screen) in item.screens.enumerated() {
-                    print("    screen \(screenIndex): \(screen.id)")
-                }
-            }
-        }
-        print("\n")
-
-        let screenQueue = screenQueue ?? viewModel.availableScreenQueue
-        if !screenQueue.isEmpty {
-            print("🪺 SwiftfulRouting Screen Queue 🪺")
-
-            if screenQueue.isEmpty {
-                print("    no queue")
-            } else {
-                for (arrayIndex, item) in screenQueue.enumerated() {
-                    print("queue \(arrayIndex): \(item.id)")
-                }
-            }
-            print("\n")
-        }
+        return viewModel.activeScreenStacks[index].screens.first(where: { $0.id == routerId })
     }
-    
+            
     var activeScreens: [AnyDestinationStack] {
         viewModel.activeScreenStacks
     }

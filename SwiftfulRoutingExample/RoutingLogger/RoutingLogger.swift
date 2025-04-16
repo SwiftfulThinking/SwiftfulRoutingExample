@@ -4,11 +4,16 @@
 //
 //  Created by Nick Sarno on 11/11/24.
 //
-@MainActor var logger: (any RoutingLogger) = MockRoutingLogger()
+@MainActor var logger: (any RoutingLogger) = MockRoutingLogger(logLevel: .warning, printParameters: false)
 
 // SwiftfulRouting.enableLogging(logger: logger)
 @MainActor public func enableLogging(logger newValue: RoutingLogger) {
     logger = newValue
+}
+
+// SwiftfulRouting.enableLogging(level: .info)
+@MainActor public func enableLogging(level newValue: RoutingLogType, printParameters: Bool = false) {
+    logger = MockRoutingLogger(logLevel: newValue, printParameters: printParameters)
 }
 
 @MainActor
@@ -18,17 +23,24 @@ public protocol RoutingLogger {
 
 struct MockRoutingLogger: RoutingLogger {
     
+    var logLevel: RoutingLogType
+    var printParameters: Bool
+    
     func trackEvent(event: any RoutingLogEvent) {
         #if DEBUG
-        switch event.type {
-        case .info:
-            break
-        case .analytic:
-            break
-        case .warning:
-            print("⚠️ SwiftfulRouting -> \(event.eventName)")
-        case .severe:
-            print("🚨 SwiftfulRouting -> \(event.eventName)")
+        if event.type.rawValue >= logLevel.rawValue {
+            var value = "\(event.type.emoji) \(event.eventName)"
+            
+            if printParameters, let params = event.parameters, !params.isEmpty {
+                let sortedKeys = params.keys.sorted()
+                for key in sortedKeys {
+                    if let paramValue = params[key] {
+                        value += "\n  (key: \"\(key)\", value: \(paramValue))"
+                    }
+                }
+            }
+
+            print(value)
         }
         #endif
     }

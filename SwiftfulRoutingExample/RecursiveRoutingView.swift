@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView2: View {
     var body: some View {
-        RouterView(addNavigationStack: true, logger: true) { router in
+        RouterView { router in
             RecursiveRoutingView(router: router, screenNumber: 0, viewState: viewState)
         }
     }
@@ -172,7 +172,9 @@ struct RecursiveRoutingView: View {
                 Section("Dismiss transition actions") {
                     dismissTransitionButtons
                 }
-    
+                Section("Transition queue") {
+                    transitionQueueButtons
+                }
             case .testingTransitions:
                 transitionButtons
                 dismissTransitionButtons
@@ -1278,7 +1280,7 @@ struct RecursiveRoutingView: View {
         }
         .accessibilityIdentifier("Button_TransitionQueueClear")
 
-        Button("Try to show next screen") {
+        Button("Try to show next transition") {
             router.showNextTransition()
         }
         .accessibilityIdentifier("Button_TransitionQueueNext")

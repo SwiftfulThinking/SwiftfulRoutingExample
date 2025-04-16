@@ -40,8 +40,9 @@ struct SwiftfulRoutingExampleApp: App {
         // https://stackoverflow.com/questions/77253122/swiftui-navigationstack-title-loads-inline-instead-of-large-when-sheet-is-pres
         UINavigationBar.appearance().prefersLargeTitles = true
         
-        let logManager = LogManager(services: [ConsoleService(printParameters: true)])
-        enableLogging(logger: logManager)
+//        let logManager = LogManager(services: [ConsoleService(printParameters: true)])
+//        enableLogging(logger: logManager)
+        enableLogging(level: .info, printParameters: true)
     }
     
     private var isUITesting: Bool {
@@ -53,7 +54,7 @@ struct SwiftfulRoutingExampleApp: App {
             if isUITesting {
                 ContentView2()
             } else {
-                RouterView(addNavigationStack: true, logger: true) { router in
+                RouterView { router in
                     OverviewView()
                 }
             }
