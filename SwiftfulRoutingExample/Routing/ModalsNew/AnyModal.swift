@@ -88,6 +88,13 @@ struct AnyModal: Identifiable, Equatable {
         onDismiss = nil
         isRemoved = true
     }
+    
+    var eventParameters: [String: Any] {
+        [
+            "destination_id": id,
+            "destination_is_removed": isRemoved,
+        ]
+    }
 }
 
 /*

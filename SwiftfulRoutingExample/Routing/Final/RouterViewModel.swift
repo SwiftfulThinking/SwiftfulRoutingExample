@@ -92,6 +92,8 @@ extension RouterViewModel {
         case screenDismiss(screen: AnyDestination)
         case alertShow(alert: AnyAlert)
         case alertDismiss(alert: AnyAlert)
+        case modalShow(modal: AnyModal)
+        case modalDismiss(modal: AnyModal)
 
 
         var eventName: String {
@@ -127,6 +129,8 @@ extension RouterViewModel {
             case .screenDismiss:                                        return "Routing_Screen_Dismiss"
             case .alertShow:                                            return "Routing_Alert_Appear"
             case .alertDismiss:                                         return "Routing_Alert_Dismiss"
+            case .modalShow:                                            return "Routing_Modal_Appear"
+            case .modalDismiss:                                         return "Routing_Modal_Dismiss"
             }
         }
         
@@ -183,6 +187,8 @@ extension RouterViewModel {
                 return screen.eventParameters
             case .alertShow(alert: let alert), .alertDismiss(alert: let alert):
                 return alert.eventParameters
+            case .modalShow(modal: let modal), .modalDismiss(modal: let modal):
+                return modal.eventParameters
             default:
                 return nil
             }
@@ -192,7 +198,7 @@ extension RouterViewModel {
             switch self {
             case .screenStackUpdated, .screenQueueUpdated, .modalStackUpdated, .transitionStackUpdated, .transitionQueueUpdated:
                 return .info
-            case .screenShow, .screenDismiss, .alertShow, .alertDismiss:
+            case .screenShow, .screenDismiss, .alertShow, .alertDismiss, .modalShow, .modalDismiss:
                 return .analytic
             default:
                 return .warning
@@ -787,6 +793,7 @@ extension RouterViewModel {
         }
         
         allModals[routerId]!.append(modal)
+        logger.trackEvent(event: Event.modalShow(modal: modal))
     }
     
     // Dismiss the last modal on routerId
@@ -801,15 +808,17 @@ extension RouterViewModel {
     }
     
     func dismissModal(routerId: String, modalId: String) {
-        if let index = allModals[routerId]?.lastIndex(where: { $0.id == modalId && !$0.isRemoved }) {
+        if let index = allModals[routerId]?.lastIndex(where: { $0.id == modalId && !$0.isRemoved }), let modal = allModals[routerId]?[index] {
             // Trigger onDismiss for the modal
-            allModals[routerId]?[index].onDismiss?()
+            modal.onDismiss?()
             
             // Dismiss the modal UI
             // Note: when we 'remove' a modal, we keep the modal in the data array but set isRemoved = true
             // This allows a smooth transition and doesn't corrupt other displayed modals
             // ie. multiple modals can display simultaneously and editing the array indexes would re-render them all.
             allModals[routerId]?[index].convertToEmptyRemovedModal()
+            
+            logger.trackEvent(event: Event.modalDismiss(modal: modal))
             return
         }
         
