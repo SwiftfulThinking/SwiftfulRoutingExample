@@ -91,8 +91,12 @@ struct AnyModal: Identifiable, Equatable {
     
     var eventParameters: [String: Any] {
         [
-            "destination_id": id,
-            "destination_is_removed": isRemoved,
+            "modal_id": id,
+            "modal_is_removed": isRemoved,
+            "modal_dismiss_bg_tap": dismissOnBackgroundTap,
+            "modal_has_background_color": backgroundColor != nil,
+            "modal_has_background_effect": backgroundEffect != nil,
+            "modal_has_on_dismiss": onDismiss != nil,
         ]
     }
 }

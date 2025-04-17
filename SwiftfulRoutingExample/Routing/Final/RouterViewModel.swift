@@ -94,6 +94,8 @@ extension RouterViewModel {
         case alertDismiss(alert: AnyAlert)
         case modalShow(modal: AnyModal)
         case modalDismiss(modal: AnyModal)
+        case transitionShow(transition: AnyTransitionDestination)
+        case transitionDismiss(transition: AnyTransitionDestination)
 
 
         var eventName: String {
@@ -131,6 +133,8 @@ extension RouterViewModel {
             case .alertDismiss:                                         return "Routing_Alert_Dismiss"
             case .modalShow:                                            return "Routing_Modal_Appear"
             case .modalDismiss:                                         return "Routing_Modal_Dismiss"
+            case .transitionShow:                                       return "Routing_Transition_Appear"
+            case .transitionDismiss:                                    return "Routing_Transition_Dismiss"
             }
         }
         
@@ -189,6 +193,8 @@ extension RouterViewModel {
                 return alert.eventParameters
             case .modalShow(modal: let modal), .modalDismiss(modal: let modal):
                 return modal.eventParameters
+            case .transitionShow(transition: let transition), .transitionDismiss(transition: let transition):
+                return transition.eventParameters
             default:
                 return nil
             }
@@ -198,7 +204,7 @@ extension RouterViewModel {
             switch self {
             case .screenStackUpdated, .screenQueueUpdated, .modalStackUpdated, .transitionStackUpdated, .transitionQueueUpdated:
                 return .info
-            case .screenShow, .screenDismiss, .alertShow, .alertDismiss, .modalShow, .modalDismiss:
+            case .screenShow, .screenDismiss, .alertShow, .alertDismiss, .modalShow, .modalDismiss, .transitionShow, .transitionDismiss:
                 return .analytic
             default:
                 return .warning
@@ -898,21 +904,23 @@ extension RouterViewModel {
             // Trigger the UI update
             // allTransitions[routerId] should never be nil since it's added in showScreen
             self.allTransitions[routerId]?.append(transition)
+            logger.trackEvent(event: Event.transitionShow(transition: transition))
         }
     }
     
     // Show array of transitions simultanously on routerId
     func showTransitions(routerId: String, transitions: [AnyTransitionDestination]) {
         // Removal of existing screen is based on the last transition requested (ie. the top-most transition)
-        guard let lastTransition = transitions.last?.transition else { return }
+        guard let lastTransition = transitions.last else { return }
         
         // Same as above (showTransition)
         
-        self.currentTransitions[routerId] = lastTransition
+        self.currentTransitions[routerId] = lastTransition.transition
         
         Task { @MainActor in
             try? await Task.sleep(nanoseconds: 1_000_000)
             self.allTransitions[routerId]?.append(contentsOf: transitions)
+            logger.trackEvent(event: Event.transitionShow(transition: lastTransition))
         }
     }
     
@@ -969,21 +977,33 @@ extension RouterViewModel {
             return
         }
         
+        triggerAndRemoveTransitions(
+            routerId: routerId,
+            newCurrentTransition: transitions[index].transition.reversed,
+            screensToDismiss: [transitions[index]],
+            removeTransitionsAtRange: index..<index + 1
+        )
+    }
+    
+    private func triggerAndRemoveTransitions(routerId: String, newCurrentTransition: TransitionOption, screensToDismiss: [AnyTransitionDestination], removeTransitionsAtRange: Range<Int>) {
         // Set current transition
-        self.currentTransitions[routerId] = transitions[index].transition.reversed
+        self.currentTransitions[routerId] = newCurrentTransition
         
         // Task is needed for UI
         Task { @MainActor in
             // Not required but doesn't hurt?
             try? await Task.sleep(nanoseconds: 1_000_000)
             
-            // Trigger onDismiss for screen
             defer {
-                transitions[index].onDismiss?()
+                for screen in screensToDismiss.reversed() {
+                    // Trigger onDismiss for screens
+                    screen.onDismiss?()
+                    logger.trackEvent(event: Event.transitionDismiss(transition: screen))
+                }
             }
             
-            // For transitions, we remove it from the array completely to trigger the UI update
-            self.allTransitions[routerId]?.remove(at: index)
+            // Trigger UI update
+            self.allTransitions[routerId]?.removeSubrange(removeTransitionsAtRange)
         }
     }
     
@@ -1031,24 +1051,12 @@ extension RouterViewModel {
             return
         }
         
-        // Set current transition
-        self.currentTransitions[routerId] = transitions[lastIndex].transition.reversed
-        
-        // Task is needed for UI
-        Task { @MainActor in
-            // Not required but doesn't hurt?
-            try? await Task.sleep(nanoseconds: 1_000_000)
-            
-            defer {
-                for screen in screensToDismiss.reversed() {
-                    // Trigger onDismiss for screens
-                    screen.onDismiss?()
-                }
-            }
-            
-            // Trigger UI update
-            self.allTransitions[routerId]?.removeSubrange(screensToDismissStartingIndex...)
-        }
+        triggerAndRemoveTransitions(
+            routerId: routerId,
+            newCurrentTransition: transitions[lastIndex].transition.reversed,
+            screensToDismiss: screensToDismiss,
+            removeTransitionsAtRange: screensToDismissStartingIndex..<transitions.endIndex
+        )
     }
     
     // Dismiss x transitions
@@ -1086,24 +1094,12 @@ extension RouterViewModel {
             return
         }
         
-        // Set current transition
-        self.currentTransitions[routerId] = transitions[lastIndex].transition.reversed
-        
-        // Task is needed for UI
-        Task { @MainActor in
-            // Not required but doesn't hurt?
-            try? await Task.sleep(nanoseconds: 1_000_000)
-            
-            defer {
-                for screen in screensToDismiss.reversed() {
-                    // Trigger onDismiss for screens
-                    screen.onDismiss?()
-                }
-            }
-            
-            // Trigger UI update
-            self.allTransitions[routerId]?.removeSubrange(screensToDismissStartingIndex...)
-        }
+        triggerAndRemoveTransitions(
+            routerId: routerId,
+            newCurrentTransition: transitions[lastIndex].transition.reversed,
+            screensToDismiss: screensToDismiss,
+            removeTransitionsAtRange: screensToDismissStartingIndex..<transitions.endIndex
+        )
     }
     
     // Dismiss all transitions
@@ -1123,24 +1119,12 @@ extension RouterViewModel {
             return
         }
         
-        // Set current transition
-        self.currentTransitions[routerId] = transitions[lastIndex].transition.reversed
-        
-        // Task is needed for UI
-        Task { @MainActor in
-            // Not required but doesn't hurt?
-            try? await Task.sleep(nanoseconds: 1_000_000)
-            
-            defer {
-                for screen in screensToDismiss.reversed() {
-                    // Trigger onDismiss for screens
-                    screen.onDismiss?()
-                }
-            }
-            
-            // Trigger UI update
-            self.allTransitions[routerId]?.removeSubrange(screensToDismissStartingIndex...)
-        }
+        triggerAndRemoveTransitions(
+            routerId: routerId,
+            newCurrentTransition: transitions[lastIndex].transition.reversed,
+            screensToDismiss: screensToDismiss,
+            removeTransitionsAtRange: screensToDismissStartingIndex..<transitions.endIndex
+        )
     }
     
 }

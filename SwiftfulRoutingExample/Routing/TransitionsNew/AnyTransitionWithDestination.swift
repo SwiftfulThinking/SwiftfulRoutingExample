@@ -27,6 +27,15 @@ struct AnyTransitionDestination: Identifiable, Equatable {
     public static func == (lhs: AnyTransitionDestination, rhs: AnyTransitionDestination) -> Bool {
         lhs.id == rhs.id
     }
+    
+    var eventParameters: [String: Any] {
+        [
+            "destination_id": id,
+            "destination_transition": transition.rawValue,
+            "destination_allow_swipe_back": allowsSwipeBack,
+            "destination_has_on_dismiss": onDismiss != nil,
+        ]
+    }
 }
 
 enum TransitionMemoryBehavior: String {

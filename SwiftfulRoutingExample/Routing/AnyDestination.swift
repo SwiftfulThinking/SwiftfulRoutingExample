@@ -138,11 +138,11 @@ struct AnyAlert: Identifiable {
     
     var eventParameters: [String: Any] {
         [
-            "destination_id": id,
-            "destination_style": style.rawValue,
-            "destination_location": location.rawValue,
-            "destination_title": title,
-            "destination_subtitle": subtitle ?? "",
+            "alert_id": id,
+            "alert_style": style.rawValue,
+            "alert_location": location.rawValue,
+            "alert_title": title,
+            "alert_subtitle": subtitle ?? "",
         ]
     }
 }
