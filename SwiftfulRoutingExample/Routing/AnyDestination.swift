@@ -95,7 +95,7 @@ enum AlertStyle: String, CaseIterable, Hashable {
     }
 }
 
-enum AlertLocation {
+enum AlertLocation: String {
     case currentScreen, topScreen
 }
 
@@ -134,5 +134,15 @@ struct AnyAlert: Identifiable {
         self.buttons = AnyView(
             Button("OK", action: { })
         )
+    }
+    
+    var eventParameters: [String: Any] {
+        [
+            "destination_id": id,
+            "destination_style": style.rawValue,
+            "destination_location": location.rawValue,
+            "destination_title": title,
+            "destination_subtitle": subtitle ?? "",
+        ]
     }
 }

@@ -90,6 +90,8 @@ extension RouterViewModel {
         // Analytics
         case screenShow(screen: AnyDestination)
         case screenDismiss(screen: AnyDestination)
+        case alertShow(alert: AnyAlert)
+        case alertDismiss(alert: AnyAlert)
 
 
         var eventName: String {
@@ -123,6 +125,8 @@ extension RouterViewModel {
             case .transitionQueueUpdated:                               return "Routing_TransitionQueue_Updated"
             case .screenShow:                                           return "Routing_Screen_Appear"
             case .screenDismiss:                                        return "Routing_Screen_Dismiss"
+            case .alertShow:                                            return "Routing_Alert_Appear"
+            case .alertDismiss:                                         return "Routing_Alert_Dismiss"
             }
         }
         
@@ -177,6 +181,8 @@ extension RouterViewModel {
                 ]
             case .screenShow(screen: let screen), .screenDismiss(screen: let screen):
                 return screen.eventParameters
+            case .alertShow(alert: let alert), .alertDismiss(alert: let alert):
+                return alert.eventParameters
             default:
                 return nil
             }
@@ -186,7 +192,7 @@ extension RouterViewModel {
             switch self {
             case .screenStackUpdated, .screenQueueUpdated, .modalStackUpdated, .transitionStackUpdated, .transitionQueueUpdated:
                 return .info
-            case .screenShow, .screenDismiss:
+            case .screenShow, .screenDismiss, .alertShow, .alertDismiss:
                 return .analytic
             default:
                 return .warning
@@ -733,29 +739,37 @@ extension RouterViewModel {
             }
         }
         
-        if activeAlert[routerId] == nil {
-            // Display alert
-            self.activeAlert[routerId] = alert
-        } else {
+        if let existingAlert = activeAlert[routerId] {
             // Dismiss current alert and display new alert (should not occur)
             self.activeAlert.removeValue(forKey: routerId)
+            logger.trackEvent(event: Event.alertDismiss(alert: existingAlert))
             
             Task {
                 try? await Task.sleep(for: .seconds(0.1))
                 self.activeAlert[routerId] = alert
             }
+        } else {
+            // Display alert
+            self.activeAlert[routerId] = alert
         }
+        
+        logger.trackEvent(event: Event.alertShow(alert: alert))
     }
     
     // Dismiss any alert displayed on routerId
     func dismissAlert(routerId: String) {
-        self.activeAlert.removeValue(forKey: routerId)
+        if let existingAlert = activeAlert[routerId] {
+            // Dismiss current alert and display new alert (should not occur)
+            self.activeAlert.removeValue(forKey: routerId)
+            logger.trackEvent(event: Event.alertDismiss(alert: existingAlert))
+        }
     }
     
     // Dismiss all alerts from all screens
     func dismissAllAlerts() {
-        for (key, _) in activeAlert {
+        for (key, alert) in activeAlert {
             self.activeAlert.removeValue(forKey: key)
+            logger.trackEvent(event: Event.alertDismiss(alert: alert))
         }
     }
     
