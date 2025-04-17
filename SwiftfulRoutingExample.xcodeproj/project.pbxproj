@@ -36,6 +36,7 @@
 		026776522D895408009476E7 /* ModalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026776512D895408009476E7 /* ModalTests.swift */; };
 		0268C8D02D829BD00068896D /* AnyModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0268C8CF2D829BD00068896D /* AnyModal.swift */; };
 		0268C8D32D82A2B40068896D /* SwiftfulRecursiveUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0268C8D22D82A2B40068896D /* SwiftfulRecursiveUI */; };
+		026B8FDB2DB09CAA000F4C5C /* ModuleSupportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026B8FDA2DB09CAA000F4C5C /* ModuleSupportView.swift */; };
 		027D76642D63C52C00D24A22 /* AnyDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027D76632D63C52C00D24A22 /* AnyDestination.swift */; };
 		027D76662D63C53600D24A22 /* OnFirstAppearModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027D76652D63C53600D24A22 /* OnFirstAppearModifier.swift */; };
 		027D76682D63C54700D24A22 /* SegueOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 027D76672D63C54700D24A22 /* SegueOption.swift */; };
@@ -105,6 +106,7 @@
 		026620782DAC6F970067BFA5 /* AlertViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertViewModifier.swift; sourceTree = "<group>"; };
 		026776512D895408009476E7 /* ModalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalTests.swift; sourceTree = "<group>"; };
 		0268C8CF2D829BD00068896D /* AnyModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyModal.swift; sourceTree = "<group>"; };
+		026B8FDA2DB09CAA000F4C5C /* ModuleSupportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleSupportView.swift; sourceTree = "<group>"; };
 		027D76632D63C52C00D24A22 /* AnyDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyDestination.swift; sourceTree = "<group>"; };
 		027D76652D63C53600D24A22 /* OnFirstAppearModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnFirstAppearModifier.swift; sourceTree = "<group>"; };
 		027D76672D63C54700D24A22 /* SegueOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegueOption.swift; sourceTree = "<group>"; };
@@ -172,6 +174,7 @@
 		02661DB02DA741290067BFA5 /* Final */ = {
 			isa = PBXGroup;
 			children = (
+				026B8FD92DB09C9B000F4C5C /* Modules */,
 				026620772DAC6F900067BFA5 /* ViewModifiers */,
 				026620722DAC6F280067BFA5 /* Extensions */,
 				0266206D2DAC6E910067BFA5 /* RouterProtocol.swift */,
@@ -214,6 +217,14 @@
 				02661C042D8A70150067BFA5 /* VisualEffectViewRepresentable.swift */,
 			);
 			path = ModalsNew;
+			sourceTree = "<group>";
+		};
+		026B8FD92DB09C9B000F4C5C /* Modules */ = {
+			isa = PBXGroup;
+			children = (
+				026B8FDA2DB09CAA000F4C5C /* ModuleSupportView.swift */,
+			);
+			path = Modules;
 			sourceTree = "<group>";
 		};
 		028A895D281F9228004E3DA4 = {
@@ -492,6 +503,7 @@
 				027D76682D63C54700D24A22 /* SegueOption.swift in Sources */,
 				02CFF0ED2986BAEE00E6ABCC /* MyNextView.swift in Sources */,
 				02661DAF2DA740AC0067BFA5 /* Notes.swift in Sources */,
+				026B8FDB2DB09CAA000F4C5C /* ModuleSupportView.swift in Sources */,
 				02CFF0EA2986BA1000E6ABCC /* SampleViewModel.swift in Sources */,
 				02661DA92DA4A3BD0067BFA5 /* AlertBuilderView.swift in Sources */,
 				02661DA72DA351A50067BFA5 /* SegueBuilderView.swift in Sources */,

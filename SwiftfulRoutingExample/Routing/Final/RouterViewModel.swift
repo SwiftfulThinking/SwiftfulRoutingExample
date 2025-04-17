@@ -41,7 +41,7 @@ final class RouterViewModel: ObservableObject {
     
     // Available transitions in queue, accessible via .showNextTransition()
     @Published private(set) var availableTransitionQueue: [String: [AnyTransitionDestination]] = [:]
-    
+        
     // Only called once onFirstAppear in the root router.
     // This replaces starting activeScreenStacks value.
     // It MUST be called after the screen appears, since it is adding the View itself to the array.

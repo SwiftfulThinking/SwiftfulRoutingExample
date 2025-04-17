@@ -54,7 +54,7 @@ struct SwiftfulRoutingExampleApp: App {
             if isUITesting {
                 ContentView2()
             } else {
-                RouterView { router in
+                RouterView(addModuleSupport: true) { router in
                     OverviewView()
                 }
             }
