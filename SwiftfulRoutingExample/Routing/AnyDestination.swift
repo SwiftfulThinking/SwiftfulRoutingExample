@@ -16,6 +16,17 @@ enum SegueLocation {
     case append
     /// Insert screen after the location injected screen's router
     case insertAfter(id: String)
+    
+    var stringValue: String {
+        switch self {
+        case .insert:
+            return "insert"
+        case .append:
+            return "append"
+        case .insertAfter:
+            return "insert_after"
+        }
+    }
 }
 
 @MainActor
@@ -64,6 +75,16 @@ struct AnyDestination: Identifiable, Hashable {
         lhs.id == rhs.id
     }
     
+    var eventParameters: [String: Any] {
+        [
+            "destination_id": id,
+            "destination_segue": segue.stringValue,
+            "destination_location": location.stringValue,
+            "destination_animates": animates,
+            "destination_has_on_dismiss": onDismiss != nil,
+            "destination_transition_behavior": transitionBehavior.rawValue,
+        ]
+    }
 }
 
 enum AlertStyle: String, CaseIterable, Hashable {

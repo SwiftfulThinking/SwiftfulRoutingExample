@@ -47,6 +47,7 @@ struct MockRoutingLogger: RoutingLogger {
     
 }
 
+@MainActor
 public protocol RoutingLogEvent {
     var eventName: String { get }
     var parameters: [String: Any]? { get }

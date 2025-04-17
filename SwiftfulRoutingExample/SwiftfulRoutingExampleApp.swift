@@ -42,7 +42,7 @@ struct SwiftfulRoutingExampleApp: App {
         
 //        let logManager = LogManager(services: [ConsoleService(printParameters: true)])
 //        enableLogging(logger: logManager)
-        enableLogging(level: .info, printParameters: true)
+        enableLogging(level: .analytic, printParameters: true)
     }
     
     private var isUITesting: Bool {

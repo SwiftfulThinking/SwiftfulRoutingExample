@@ -55,6 +55,7 @@ final class RouterViewModel: ObservableObject {
 
 extension RouterViewModel {
     
+    @MainActor
     enum Event: RoutingLogEvent {
         case showScreen_routerIdNotFound(id: String)
         case screenQueue_routerIdNotFound(id: String)
@@ -85,6 +86,11 @@ extension RouterViewModel {
         case modalStackUpdated(routerId: String, newValue: String)
         case transitionStackUpdated(routerId: String, newValue: String)
         case transitionQueueUpdated(routerId: String, newValue: String)
+        
+        // Analytics
+        case screenShow(screen: AnyDestination)
+        case screenDismiss(screen: AnyDestination)
+
 
         var eventName: String {
             switch self {
@@ -115,6 +121,8 @@ extension RouterViewModel {
             case .modalStackUpdated:                                    return "Routing_ModalStack_Updated"
             case .transitionStackUpdated:                               return "Routing_TransitionStack_Updated"
             case .transitionQueueUpdated:                               return "Routing_TransitionQueue_Updated"
+            case .screenShow:                                           return "Routing_Screen_Appear"
+            case .screenDismiss:                                        return "Routing_Screen_Dismiss"
             }
         }
         
@@ -167,6 +175,8 @@ extension RouterViewModel {
                     "router_id": routerId,
                     "transition_queue": newValue
                 ]
+            case .screenShow(screen: let screen), .screenDismiss(screen: let screen):
+                return screen.eventParameters
             default:
                 return nil
             }
@@ -176,15 +186,12 @@ extension RouterViewModel {
             switch self {
             case .screenStackUpdated, .screenQueueUpdated, .modalStackUpdated, .transitionStackUpdated, .transitionQueueUpdated:
                 return .info
+            case .screenShow, .screenDismiss:
+                return .analytic
             default:
                 return .warning
             }
         }
-    }
-
-    enum RoutingError: Error {
-        case noScreensInQueue
-        case noTransitionsInQueue
     }
 
 }
@@ -353,6 +360,8 @@ extension RouterViewModel {
                 self.activeScreenStacks.insert(contentsOf: [newStack, blankStack], at: appendingIndex)
             }
         }
+        
+        logger.trackEvent(event: Event.screenShow(screen: destination))
     }
     
     // Utility functino to trigger action with or without SwiftUI animation
@@ -545,6 +554,7 @@ extension RouterViewModel {
                 // Trigger screen onDismiss closures, if available
                 for screen in screensToDismiss.reversed() {
                     screen.onDismiss?()
+                    logger.trackEvent(event: Event.screenDismiss(screen: screen))
                 }
                 
                 // Stop loop

@@ -29,7 +29,7 @@ struct AnyTransitionDestination: Identifiable, Equatable {
     }
 }
 
-enum TransitionMemoryBehavior {
+enum TransitionMemoryBehavior: String {
     case removePrevious
     case keepPrevious
     
