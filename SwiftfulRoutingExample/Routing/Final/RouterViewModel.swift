@@ -47,6 +47,7 @@ final class RouterViewModel: ObservableObject {
     // It MUST be called after the screen appears, since it is adding the View itself to the array.
     func insertRootView(view: AnyDestination) {
         activeScreenStacks.insert(AnyDestinationStack(segue: .fullScreenCover, screens: [view]), at: 0)
+        logger.trackEvent(event: Event.screenShow(screen: view))
     }
     
 }
@@ -891,7 +892,7 @@ extension RouterViewModel {
 
 extension RouterViewModel {
     
-    // Show transitino on routerId
+    // Show transition on routerId
     func showTransition(routerId: String, transition: AnyTransitionDestination) {
         // Set the current transition before triggering the UI update
         // This can change the existing screen's "removal" transition, based on the incomign screens transition

@@ -12,20 +12,20 @@ import SwiftfulRecursiveUI
 
 struct ModuleSupportView<Content:View>: View {
     
+    @StateObject private var viewModel = ModuleViewModel()
+
     let addNavigationStack: Bool
-    let modules: [AnyTransitionDestination]
     @ViewBuilder var content: (AnyRouter) -> Content
-    let currentTransition: TransitionOption
 
     @State private var viewFrame: CGRect = UIScreen.main.bounds
 
     var body: some View {
         ZStack {
-            LazyZStack(allowSimultaneous: false, selection: modules.last, items: modules) { data in
-                let dataIndex: Double = Double(modules.firstIndex(where: { $0.id == data.id }) ?? 99)
+            LazyZStack(allowSimultaneous: false, selection: viewModel.modules.last, items: viewModel.modules) { data in
+                let dataIndex: Double = Double(viewModel.modules.firstIndex(where: { $0.id == data.id }) ?? 99)
 
                 return Group {
-                    if data == modules.first {
+                    if data == viewModel.modules.first {
                         RouterViewModelWrapper {
                             RouterViewInternal(
                                 routerId: RouterViewModel.rootId,
@@ -47,15 +47,20 @@ struct ModuleSupportView<Content:View>: View {
                 }
                 .transition(
                     .asymmetric(
-                        insertion: currentTransition.insertion,
-                        removal: .customRemoval(behavior: .removePrevious, direction: currentTransition.reversed, frame: viewFrame)
+                        insertion: viewModel.currentTransition.insertion,
+                        removal: .customRemoval(
+                            behavior: .removePrevious,
+                            direction: viewModel.currentTransition.reversed,
+                            frame: viewFrame
+                        )
                     )
                 )
                 .zIndex(dataIndex)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .animation(currentTransition.animation, value: (modules.last?.id ?? "") + currentTransition.rawValue)
+        .animation(viewModel.currentTransition.animation, value: (viewModel.modules.last?.id ?? "") + viewModel.currentTransition.rawValue)
+        .environmentObject(viewModel)
     }
 }
 

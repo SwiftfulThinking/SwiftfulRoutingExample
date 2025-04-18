@@ -394,7 +394,45 @@ struct AnyRouter: Sendable, Router {
         case noScreensInQueue
     }
     
-//    
+    @MainActor public func showModule<T>(
+        id: String = UUID().uuidString,
+        _ transition: TransitionOption,
+        onDismiss: (() -> Void)? = nil,
+        destination: @escaping (AnyRouter) -> T
+    ) where T : View {
+        let module = AnyTransitionDestination(id: id, transition: transition, destination: destination)
+        object.showModule(module: module)
+    }
+    
+    @MainActor public func showModule(module: AnyTransitionDestination) {
+        object.showModule(module: module)
+    }
+    
+    @MainActor public func showModules(modules: [AnyTransitionDestination]) {
+        object.showModules(modules: modules)
+    }
+    
+    @MainActor public func dismissModule() {
+        object.dismissModule()
+    }
+    
+    @MainActor public func dismissModule(id: String) {
+        object.dismissModule(id: id)
+    }
+    
+    @MainActor public func dismissModules(upToId: String) {
+        object.dismissModules(upToId: upToId)
+    }
+    
+    @MainActor public func dismissModules(count: Int) {
+        object.dismissModules(count: count)
+    }
+    
+    @MainActor public func dismissAllModules() {
+        object.dismissAllModules()
+    }
+    
+//
 //    /// Open URL in Safari app. To open url in in-app browser, use showSheet with a WebView.
 //    func showSafari(_ url: @escaping () -> URL) {
 //        object.showSafari(url)
@@ -581,4 +619,31 @@ struct MockRouter: Router {
         printError()
     }
     
+    func showModule(module: AnyTransitionDestination) {
+        printError()
+    }
+    
+    func showModules(modules: [AnyTransitionDestination]) {
+        printError()
+    }
+    
+    func dismissModule() {
+        printError()
+    }
+    
+    func dismissModule(id: String) {
+        printError()
+    }
+    
+    func dismissModules(upToId: String) {
+        printError()
+    }
+    
+    func dismissModules(count: Int) {
+        printError()
+    }
+    
+    func dismissAllModules() {
+        printError()
+    }
 }

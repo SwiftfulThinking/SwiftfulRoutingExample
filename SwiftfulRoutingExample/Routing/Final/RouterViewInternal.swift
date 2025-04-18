@@ -10,6 +10,7 @@ import SwiftUI
 struct RouterViewInternal<Content: View>: View, Router {
     
     @EnvironmentObject var viewModel: RouterViewModel
+    @EnvironmentObject var moduleViewModel: ModuleViewModel
     var routerId: String
     var addNavigationStack: Bool = false
     var content: (AnyRouter) -> Content
@@ -303,5 +304,33 @@ struct RouterViewInternal<Content: View>: View, Router {
     
     func showNextTransition() {
         viewModel.showNextTransition(routerId: routerId)
+    }
+    
+    func showModule(module: AnyTransitionDestination) {
+        moduleViewModel.showModule(module: module)
+    }
+    
+    func showModules(modules: [AnyTransitionDestination]) {
+        moduleViewModel.showModules(modules: modules)
+    }
+    
+    func dismissModule() {
+        moduleViewModel.dismissModule()
+    }
+    
+    func dismissModule(id: String) {
+        moduleViewModel.dismissModules(moduleId: id)
+    }
+    
+    func dismissModules(upToId: String) {
+        moduleViewModel.dismissModules(toModuleId: upToId)
+    }
+    
+    func dismissModules(count: Int) {
+        moduleViewModel.dismissModules(count: count)
+    }
+    
+    func dismissAllModules() {
+        moduleViewModel.dismissAllModules()
     }
 }

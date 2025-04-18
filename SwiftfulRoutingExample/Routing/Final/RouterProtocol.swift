@@ -54,4 +54,13 @@ protocol Router: Sendable {
     @MainActor func removeTransitionsFromQueue(ids: [String])
     @MainActor func removeAllTransitionsFromQueue()
     @MainActor func showNextTransition()
+    
+    @MainActor func showModule(module: AnyTransitionDestination)
+    @MainActor func showModules(modules: [AnyTransitionDestination])
+    @MainActor func dismissModule()
+    @MainActor func dismissModule(id: String)
+    @MainActor func dismissModules(upToId: String)
+    @MainActor func dismissModules(count: Int)
+    @MainActor func dismissAllModules()
+
 }
