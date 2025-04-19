@@ -9,6 +9,8 @@ import SwiftUI
 @MainActor
 struct RouterViewInternal<Content: View>: View, Router {
     
+    @Environment(\.openURL) var openURL
+
     @EnvironmentObject var viewModel: RouterViewModel
     @EnvironmentObject var moduleViewModel: ModuleViewModel
     var routerId: String
@@ -322,5 +324,11 @@ struct RouterViewInternal<Content: View>: View, Router {
     
     func dismissAllModules() {
         moduleViewModel.dismissAllModules()
+    }
+    
+    func showSafari(_ url: @escaping () -> URL) {
+        let url = url()
+        openURL(url)
+        logger.trackEvent(event: RouterViewModel.Event.showSafari(url: url))
     }
 }

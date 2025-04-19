@@ -63,4 +63,5 @@ protocol Router: Sendable {
     @MainActor func dismissModules(count: Int)
     @MainActor func dismissAllModules()
 
+    @MainActor func showSafari(_ url: @escaping () -> URL)
 }

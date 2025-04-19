@@ -432,11 +432,11 @@ struct AnyRouter: Sendable, Router {
         object.dismissAllModules()
     }
     
-//
-//    /// Open URL in Safari app. To open url in in-app browser, use showSheet with a WebView.
-//    func showSafari(_ url: @escaping () -> URL) {
-//        object.showSafari(url)
-//    }
+
+    /// Open URL in Safari app. To open url in in-app browser, use showSheet with a WebView.
+    func showSafari(_ url: @escaping () -> URL) {
+        object.showSafari(url)
+    }
 
 }
 
@@ -644,6 +644,10 @@ struct MockRouter: Router {
     }
     
     func dismissAllModules() {
+        printError()
+    }
+    
+    func showSafari(_ url: @escaping () -> URL) {
         printError()
     }
 }

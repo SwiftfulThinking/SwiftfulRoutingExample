@@ -100,6 +100,7 @@ extension RouterViewModel {
         case modalDismiss(modal: AnyModal)
         case transitionShow(transition: AnyTransitionDestination)
         case transitionDismiss(transition: AnyTransitionDestination)
+        case showSafari(url: URL)
 
 
         var eventName: String {
@@ -139,6 +140,7 @@ extension RouterViewModel {
             case .modalDismiss:                                         return "Routing_Modal_Dismiss"
             case .transitionShow:                                       return "Routing_Transition_Appear"
             case .transitionDismiss:                                    return "Routing_Transition_Dismiss"
+            case .showSafari:                                           return "Routing_Safari_Show"
             }
         }
         
@@ -203,6 +205,10 @@ extension RouterViewModel {
                 return modal.eventParameters
             case .transitionShow(transition: let transition), .transitionDismiss(transition: let transition):
                 return transition.eventParameters
+            case .showSafari(url: let url):
+                return [
+                    "url_string": url.absoluteString
+                ]
             default:
                 return nil
             }
