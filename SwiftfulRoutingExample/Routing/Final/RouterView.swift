@@ -22,6 +22,8 @@ extension UserDefaults {
 @MainActor
 final class ModuleViewModel: ObservableObject {
     
+    @Published private(set) var rootModuleIdFromDeveloper: String? = nil
+
     // All modules
     // Modules are removed from the array when dismissed.
     @Published private(set) var modules: [AnyTransitionDestination] = [.root]
@@ -215,6 +217,18 @@ extension ModuleViewModel {
             removeModulesAtRange: screensToDismissStartingIndex..<modules.endIndex
         )
     }
+    
+    func printModuleStack(modules: [AnyTransitionDestination]) {
+        var value = ""
+
+        for module in modules {
+            value += "\n    module \(module.id)"
+        }
+        
+        value += "\n"
+        logger.trackEvent(event: Event.moduleStackUpdated(newValue: value))
+    }
+
 }
 
 extension ModuleViewModel {
@@ -294,6 +308,7 @@ extension ModuleViewModel {
 
 struct RouterView<Content: View>: View {
     
+    var id: String = RouterViewModel.rootId
     var addNavigationStack: Bool = true
     var addModuleSupport: Bool = false
     @ViewBuilder var content: (AnyRouter) -> Content
@@ -302,6 +317,7 @@ struct RouterView<Content: View>: View {
         Group {
             if addModuleSupport {
                 ModuleSupportView(
+                    rootRouterId: id,
                     addNavigationStack: addNavigationStack,
                     content: content
                 )
@@ -309,6 +325,7 @@ struct RouterView<Content: View>: View {
                 RouterViewModelWrapper {
                     RouterViewInternal(
                         routerId: RouterViewModel.rootId,
+                        rootRouterId: id,
                         addNavigationStack: addNavigationStack,
                         content: content
                     )
@@ -326,5 +343,14 @@ struct RouterViewModelWrapper<Content: View>: View {
     var body: some View {
         content
             .environmentObject(viewModel)
+
+            #if DEBUG
+            .onChange(of: viewModel.activeScreenStacks) { newValue in
+                viewModel.printScreenStack(screenStack: newValue)
+            }
+            .onChange(of: viewModel.availableScreenQueue) { newValue in
+                viewModel.printScreenQueue(screenQueue: newValue)
+            }
+            #endif
     }
 }

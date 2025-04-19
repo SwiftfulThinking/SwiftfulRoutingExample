@@ -14,7 +14,9 @@ struct ModuleSupportView<Content:View>: View {
     
     @StateObject private var viewModel = ModuleViewModel()
 
+    var rootRouterId: String
     let addNavigationStack: Bool
+    
     @ViewBuilder var content: (AnyRouter) -> Content
 
     @State private var viewFrame: CGRect = UIScreen.main.bounds
@@ -29,6 +31,7 @@ struct ModuleSupportView<Content:View>: View {
                         RouterViewModelWrapper {
                             RouterViewInternal(
                                 routerId: RouterViewModel.rootId,
+                                rootRouterId: rootRouterId,
                                 addNavigationStack: addNavigationStack,
                                 content: content
                             )
@@ -37,6 +40,7 @@ struct ModuleSupportView<Content:View>: View {
                         RouterViewModelWrapper {
                             RouterViewInternal(
                                 routerId: RouterViewModel.rootId,
+                                rootRouterId: rootRouterId,
                                 addNavigationStack: addNavigationStack,
                                 content: { router in
                                     AnyView(data.destination(router))
@@ -61,6 +65,12 @@ struct ModuleSupportView<Content:View>: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .animation(viewModel.currentTransition.animation, value: (viewModel.modules.last?.id ?? "") + viewModel.currentTransition.rawValue)
         .environmentObject(viewModel)
+        
+        #if DEBUG
+        .onChange(of: viewModel.modules ?? []) { newValue in
+            viewModel.printModuleStack(modules: newValue)
+        }
+        #endif
     }
 }
 

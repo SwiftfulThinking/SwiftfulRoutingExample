@@ -300,8 +300,8 @@ struct AnyRouter: Sendable, Router {
     }
     
     @MainActor public func showTransition<T>(
-        id: String = UUID().uuidString,
         _ transition: TransitionOption,
+        id: String = UUID().uuidString,
         onDismiss: (() -> Void)? = nil,
         destination: @escaping (AnyRouter) -> T
     ) where T : View {
@@ -395,8 +395,8 @@ struct AnyRouter: Sendable, Router {
     }
     
     @MainActor public func showModule<T>(
-        id: String = UUID().uuidString,
         _ transition: TransitionOption,
+        id: String = UUID().uuidString,
         onDismiss: (() -> Void)? = nil,
         destination: @escaping (AnyRouter) -> T
     ) where T : View {

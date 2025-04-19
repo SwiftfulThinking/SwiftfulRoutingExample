@@ -31,7 +31,7 @@ enum SegueLocation {
 
 @MainActor
 struct AnyDestination: Identifiable, Hashable {
-    let id: String
+    private(set) var id: String
     let segue: SegueOption
     let location: SegueLocation
     let animates: Bool
@@ -60,6 +60,7 @@ struct AnyDestination: Identifiable, Hashable {
         self.destination = AnyView(
             RouterViewInternal(
                 routerId: id,
+                rootRouterId: nil,
                 addNavigationStack: segue != .push,
                 content: destination
             )
@@ -73,6 +74,10 @@ struct AnyDestination: Identifiable, Hashable {
     
     nonisolated public static func == (lhs: AnyDestination, rhs: AnyDestination) -> Bool {
         lhs.id == rhs.id
+    }
+    
+    mutating func updateScreenId(newValue: String) {
+        id = newValue
     }
     
     var eventParameters: [String: Any] {

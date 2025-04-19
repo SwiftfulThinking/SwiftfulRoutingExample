@@ -15,6 +15,8 @@ import SwiftUI
 final class RouterViewModel: ObservableObject {
     static let rootId = "root"
     
+    @Published private(set) var rootRouterIdFromDeveloper: String? = nil
+    
     // Active screen stack heirarchy. See AnyDestinationStack.swift for documentation.
     @Published private(set) var activeScreenStacks: [AnyDestinationStack] = [AnyDestinationStack(segue: .push, screens: [])]
     
@@ -45,9 +47,10 @@ final class RouterViewModel: ObservableObject {
     // Only called once onFirstAppear in the root router.
     // This replaces starting activeScreenStacks value.
     // It MUST be called after the screen appears, since it is adding the View itself to the array.
-    func insertRootView(view: AnyDestination) {
+    func insertRootView(rootRouterId: String?, view: AnyDestination) {
         activeScreenStacks.insert(AnyDestinationStack(segue: .fullScreenCover, screens: [view]), at: 0)
-        logger.trackEvent(event: Event.screenShow(screen: view))
+        rootRouterIdFromDeveloper = rootRouterId
+        logger.trackEvent(event: Event.screenShow(screen: view, rootRouterId: rootRouterIdFromDeveloper))
     }
     
 }
@@ -89,8 +92,8 @@ extension RouterViewModel {
         case transitionQueueUpdated(routerId: String, newValue: String)
         
         // Analytics
-        case screenShow(screen: AnyDestination)
-        case screenDismiss(screen: AnyDestination)
+        case screenShow(screen: AnyDestination, rootRouterId: String?)
+        case screenDismiss(screen: AnyDestination, rootRouterId: String?)
         case alertShow(alert: AnyAlert)
         case alertDismiss(alert: AnyAlert)
         case modalShow(modal: AnyModal)
@@ -188,7 +191,11 @@ extension RouterViewModel {
                     "router_id": routerId,
                     "transition_queue": newValue
                 ]
-            case .screenShow(screen: let screen), .screenDismiss(screen: let screen):
+            case .screenShow(screen: let screen, rootRouterId: let rootId), .screenDismiss(screen: let screen, rootRouterId: let rootId):
+                var screen = screen
+                if let rootId, screen.id == RouterViewModel.rootId {
+                    screen.updateScreenId(newValue: rootId)
+                }
                 return screen.eventParameters
             case .alertShow(alert: let alert), .alertDismiss(alert: let alert):
                 return alert.eventParameters
@@ -380,7 +387,7 @@ extension RouterViewModel {
             }
         }
         
-        logger.trackEvent(event: Event.screenShow(screen: destination))
+        logger.trackEvent(event: Event.screenShow(screen: destination, rootRouterId: rootRouterIdFromDeveloper))
     }
     
     // Utility functino to trigger action with or without SwiftUI animation
@@ -573,9 +580,13 @@ extension RouterViewModel {
                 // Trigger screen onDismiss closures, if available
                 for screen in screensToDismiss.reversed() {
                     screen.onDismiss?()
-                    logger.trackEvent(event: Event.screenDismiss(screen: screen))
+                    logger.trackEvent(event: Event.screenDismiss(screen: screen, rootRouterId: rootRouterIdFromDeveloper))
                 }
                 
+                if let newScreenShowing = activeScreenStacks.allScreens.last {
+                    logger.trackEvent(event: Event.screenShow(screen: newScreenShowing, rootRouterId: rootRouterIdFromDeveloper))
+                }
+
                 // Stop loop
                 return
             }

@@ -1298,7 +1298,7 @@ struct RecursiveRoutingView: View {
 
                 try? await Task.sleep(for: .seconds(1))
                 
-                router.showModule(id: "onboarding", .trailing) { _ in
+                router.showModule(.trailing, id: "onboarding") { _ in
                     OnboardingView()
                 }
             }

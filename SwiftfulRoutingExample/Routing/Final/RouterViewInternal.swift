@@ -12,6 +12,7 @@ struct RouterViewInternal<Content: View>: View, Router {
     @EnvironmentObject var viewModel: RouterViewModel
     @EnvironmentObject var moduleViewModel: ModuleViewModel
     var routerId: String
+    var rootRouterId: String?
     var addNavigationStack: Bool = false
     var content: (AnyRouter) -> Content
 
@@ -77,7 +78,7 @@ struct RouterViewInternal<Content: View>: View, Router {
             content
                 .onFirstAppear {
                     let view = AnyDestination(id: routerId, segue: .fullScreenCover, location: .insert, onDismiss: nil, destination: { _ in self })
-                    viewModel.insertRootView(view: view)
+                    viewModel.insertRootView(rootRouterId: rootRouterId, view: view)
                 }
         })
         
@@ -101,17 +102,6 @@ struct RouterViewInternal<Content: View>: View, Router {
         )
         
         #if DEBUG
-        // Print screen stack if logging is enabled
-        .ifSatisfiesCondition(routerId == RouterViewModel.rootId, transform: { content in
-            content
-                .onChange(of: viewModel.activeScreenStacks) { newValue in
-                    viewModel.printScreenStack(screenStack: newValue)
-                }
-                .onChange(of: viewModel.availableScreenQueue) { newValue in
-                    viewModel.printScreenQueue(screenQueue: newValue)
-                }
-        })
-        
         // logging on every router
         .onChange(of: viewModel.allModals[routerId] ?? []) { newValue in
             viewModel.printModalStack(routerId: routerId, modals: newValue)

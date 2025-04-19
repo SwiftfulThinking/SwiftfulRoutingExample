@@ -56,10 +56,12 @@ struct SwiftfulRoutingExampleApp: App {
             if isUITesting {
                 ContentView2()
             } else {
-                RouterView(addModuleSupport: true) { router in
-                    if lastModuleId == "onboarding" {
+                if lastModuleId == "onboarding" {
+                    RouterView(addModuleSupport: true) { router in
                         OnboardingView()
-                    } else {
+                    }
+                } else {
+                    RouterView(id: "home_screen", addModuleSupport: true) { router in
                         OverviewView()
                     }
                 }
@@ -83,7 +85,7 @@ struct OnboardingView: View {
             }
         }
         .onTapGesture {
-            router.showModule(.trailing) { _ in
+            router.showModule(.trailing, id: "home_screen") { _ in
                 OverviewView()
             }
         }
