@@ -1293,11 +1293,16 @@ struct RecursiveRoutingView: View {
     @ViewBuilder
     var moduleButtons: some View {
         Button("Switch to Onboarding Module") {
-            router.showModule(id: "onboarding", .trailing) { _ in
-                OnboardingView()
+            Task {
+                router.dismissAllScreens()
+
+                try? await Task.sleep(for: .seconds(1))
+                
+                router.showModule(id: "onboarding", .trailing) { _ in
+                    OnboardingView()
+                }
             }
         }
-//        .accessibilityIdentifier("Button_Push")
     }
 }
 
