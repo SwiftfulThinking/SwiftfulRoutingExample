@@ -44,6 +44,7 @@ struct AnyDestination: Identifiable, Hashable {
     ///   - segue: Push (NavigationLink), Sheet, or FullScreenCover
     ///   - location: Where to insert the new screen in the heirarchy (default = .insert)
     ///   - animates: If the segue should animate or not (default = true)
+    ///   - transitionBehavior: Determines the behavior of "transition" methods on the destination screen.
     ///   - onDismiss: Trigger closure when screen gets dismissed (note: dismiss != disappear)
     ///   - destination: The destination screen.
     init<T:View>(
@@ -115,6 +116,13 @@ struct AnyAlert: Identifiable {
     let subtitle: String?
     let buttons: AnyView
     
+    /// Display an alert.
+    /// - Parameters:
+    ///   - style: Type of alert.
+    ///   - location: Which screen to display alert on.
+    ///   - title: Title of alert.
+    ///   - subtitle: Subtitle of alert (optional)
+    ///   - buttons: Buttons within alert (hint: use Group with multiple Button inside).
     init<T:View>(
         style: AlertStyle = .alert,
         location: AlertLocation = .topScreen,
@@ -129,6 +137,12 @@ struct AnyAlert: Identifiable {
         self.buttons = AnyView(buttons())
     }
     
+    /// Display an alert with "OK" button.
+    /// - Parameters:
+    ///   - style: Type of alert.
+    ///   - location: Which screen to display alert on.
+    ///   - title: Title of alert.
+    ///   - subtitle: Subtitle of alert (optional)
     init(
         style: AlertStyle = .alert,
         location: AlertLocation = .topScreen,

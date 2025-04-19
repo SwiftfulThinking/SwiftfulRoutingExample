@@ -14,6 +14,27 @@ struct AnyTransitionDestination: Identifiable, Equatable {
     private(set) var onDismiss: (() -> Void)? = nil
     private(set) var destination: (AnyRouter) -> any View
     
+    /// Transition current screen.
+    /// - Parameters:
+    ///   - transition: Transition animation option.
+    ///   - id: Identifier for transition id.
+    ///   - allowsSwipeBack: Add a swipe-back gesture to the edge of the screen. Note: only works with .trailing or .leading transitions.
+    ///   - onDismiss: Closure that triggers when transition is dismissed.
+    ///   - destination: Destination screen.
+    init(
+        id: String,
+        transition: TransitionOption = .trailing,
+        allowsSwipeBack: Bool = false,
+        onDismiss: (() -> Void)? = nil,
+        destination: @escaping (AnyRouter) -> any View
+    ) {
+        self.id = id
+        self.transition = transition
+        self.allowsSwipeBack = allowsSwipeBack
+        self.onDismiss = onDismiss
+        self.destination = destination
+    }
+    
     static var root: AnyTransitionDestination {
         AnyTransitionDestination(id: "root", transition: .trailing, destination: { _ in
             EmptyView()

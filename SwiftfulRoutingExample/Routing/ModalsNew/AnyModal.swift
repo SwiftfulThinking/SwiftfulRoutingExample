@@ -39,6 +39,18 @@ struct AnyModal: Identifiable, Equatable {
     private(set) var onDismiss: (() -> Void)?
     private(set) var isRemoved: Bool = false
     
+    /// Show a modal.
+    /// - Parameters:
+    ///   - id: Identifier for modal.
+    ///   - transition: Transition to show and hide modal.
+    ///   - animation: Animation to show and hide modal.
+    ///   - alignment: Alignment within the screen.
+    ///   - backgroundColor: Background color behind the modal, if applicable.
+    ///   - backgroundEffect: Background effect behind the modal, if applicable.
+    ///   - dismissOnBackgroundTap: If there is a background color/effect, add tap gesture that dismisses the modal.
+    ///   - ignoreSafeArea: Ignore screen's safe area when displayed.
+    ///   - onDismiss: Closure that triggers when modal dismisses.
+    ///   - destination: The modal View.
     init<T:View>(
         id: String = UUID().uuidString,
         transition: AnyTransition = .identity,
