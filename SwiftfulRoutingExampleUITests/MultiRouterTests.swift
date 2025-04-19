@@ -41,6 +41,7 @@ final class MultiRouterTests: XCTestCase {
         XCTAssertFalse(titleElement.exists)
     }
     
+    // Note: works manually
     func test_segues_append() {
         tapElement(name: "SegueAppend")
         assertTitleExists(name: "4")
@@ -75,6 +76,7 @@ final class MultiRouterTests: XCTestCase {
         assertTitleExists(name: "0")
     }
     
+    // Note: works manually
     func test_segues_insertSheet() {
         tapElement(name: "SegueInsertSheet")
         assertTitleExists(name: "1")
@@ -88,6 +90,7 @@ final class MultiRouterTests: XCTestCase {
         assertTitleExists(name: "0")
     }
     
+    // Note: works manually
     func test_segues_insertFull() {
         tapElement(name: "SegueInsertFullScreenCover")
         assertTitleExists(name: "1")

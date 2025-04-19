@@ -239,7 +239,8 @@ struct RecursiveRoutingView: View {
                 destination: { router in
                     RecursiveRoutingView(
                         router: router,
-                        screenNumber: screenNumber
+                        screenNumber: screenNumber,
+                        viewState: viewState
                     )
                 }
             )
@@ -273,8 +274,10 @@ struct RecursiveRoutingView: View {
         }
         .accessibilityIdentifier("Button_Push")
 
-        Button("Push (no animation)") {
-            performSegue(segue: .push, animates: false)
+        if viewState == .segueExamples {
+            Button("Push (no animation)") {
+                performSegue(segue: .push, animates: false)
+            }
         }
         
         Button("Sheet") {
@@ -282,8 +285,10 @@ struct RecursiveRoutingView: View {
         }
         .accessibilityIdentifier("Button_Sheet")
 
-        Button("Sheet (no animation)") {
-            performSegue(segue: .sheet, animates: false)
+        if viewState == .segueExamples {
+            Button("Sheet (no animation)") {
+                performSegue(segue: .sheet, animates: false)
+            }
         }
 
         Button("FullScreenCover") {
@@ -291,11 +296,13 @@ struct RecursiveRoutingView: View {
         }
         .accessibilityIdentifier("Button_FullScreenCover")
         
-        Button("FullScreenCover (no animation)") {
-            performSegue(segue: .fullScreenCover, animates: false)
+        if viewState == .segueExamples {
+            Button("FullScreenCover (no animation)") {
+                performSegue(segue: .fullScreenCover, animates: false)
+            }
         }
         
-        if #available(iOS 18.0, *) {
+        if #available(iOS 18.0, *), viewState == .segueExamples {
             Button("Zoom (ie. push w/ navigationTransition)") {
                 let screenNumber = screenNumber + 1
                 let screen = AnyDestination(
@@ -307,7 +314,8 @@ struct RecursiveRoutingView: View {
                     destination: { router in
                         RecursiveRoutingView(
                             router: router,
-                            screenNumber: screenNumber
+                            screenNumber: screenNumber,
+                            viewState: viewState
                         )
                         .navigationTransition(.zoom(sourceID: "\(screenNumber)", in: namespace))
                     }
@@ -394,8 +402,10 @@ struct RecursiveRoutingView: View {
             }
             .accessibilityIdentifier("Button_DismissAll")
             
-            Button("Dismiss all screens (no animation)") {
-                router.dismissAllScreens(animates: false)
+            if viewState == .segueExamples {
+                Button("Dismiss all screens (no animation)") {
+                    router.dismissAllScreens(animates: false)
+                }
             }
         }
     }
@@ -509,7 +519,8 @@ struct RecursiveRoutingView: View {
                 destination: { router in
                     RecursiveRoutingView(
                         router: router,
-                        screenNumber: number
+                        screenNumber: number,
+                        viewState: viewState
                     )
                 }
             )
@@ -530,7 +541,8 @@ struct RecursiveRoutingView: View {
                 destination: { router in
                     RecursiveRoutingView(
                         router: router,
-                        screenNumber: number
+                        screenNumber: number,
+                        viewState: viewState
                     )
                 }
             )
@@ -551,7 +563,8 @@ struct RecursiveRoutingView: View {
                 destination: { router in
                     RecursiveRoutingView(
                         router: router,
-                        screenNumber: screen1Number
+                        screenNumber: screen1Number,
+                        viewState: viewState
                     )
                 }
             )
@@ -568,7 +581,8 @@ struct RecursiveRoutingView: View {
                 destination: { router in
                     RecursiveRoutingView(
                         router: router,
-                        screenNumber: screen2Number
+                        screenNumber: screen2Number,
+                        viewState: viewState
                     )
                 }
             )
@@ -585,7 +599,8 @@ struct RecursiveRoutingView: View {
                 destination: { router in
                     RecursiveRoutingView(
                         router: router,
-                        screenNumber: screen3Number
+                        screenNumber: screen3Number,
+                        viewState: viewState
                     )
                 }
             )
