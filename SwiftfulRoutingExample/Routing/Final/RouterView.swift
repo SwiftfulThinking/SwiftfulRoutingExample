@@ -6,6 +6,19 @@
 //
 import SwiftUI
 
+extension UserDefaults {
+    
+    @MainActor
+    static var lastModuleId: String {
+        get {
+            standard.string(forKey: "last_module_id") ?? RouterViewModel.rootId
+        }
+        set {
+            standard.set(newValue, forKey: "last_module_id")
+        }
+    }
+}
+
 @MainActor
 final class ModuleViewModel: ObservableObject {
     
@@ -32,6 +45,8 @@ extension ModuleViewModel {
             // Trigger the UI update
             // allTransitions[routerId] should never be nil since it's added in showScreen
             self.modules.append(module)
+            self.setLastModuleId()
+
             logger.trackEvent(event: Event.moduleShow(module: module))
         }
     }
@@ -43,6 +58,8 @@ extension ModuleViewModel {
         Task { @MainActor in
             try? await Task.sleep(nanoseconds: 1_000_000)
             self.modules.append(contentsOf: modules)
+            self.setLastModuleId()
+
             logger.trackEvent(event: Event.moduleShow(module: lastModule))
         }
     }
@@ -80,7 +97,15 @@ extension ModuleViewModel {
             
             // Trigger UI update
             self.modules.removeSubrange(removeModulesAtRange)
+            self.setLastModuleId()
         }
+    }
+    
+    private func setLastModuleId() {
+        let lastModuleId = modules.last?.id ?? RouterViewModel.rootId
+        
+        UserDefaults.lastModuleId = lastModuleId
+        logger.trackEvent(event: Event.setLastModuleId(moduleId: lastModuleId))
     }
     
     func dismissModules(moduleId: String) {
@@ -205,6 +230,7 @@ extension ModuleViewModel {
         case dismissModulesCount_empty(count: Int)
         case dismissAllModules_none
         case dismissAllModules_empty
+        case setLastModuleId(moduleId: String)
         
         // Info logging
         case moduleStackUpdated(newValue: String)
@@ -215,6 +241,7 @@ extension ModuleViewModel {
 
         var eventName: String {
             switch self {
+            case .setLastModuleId:                                  return "Routing_SetModuleId"
             case .dismissModule_notFound:                           return "Routing_DismissModule_NotFound"
             case .dismissModules_notFound:                          return "Routing_DismissModules_NotFound"
             case .dismissModulesTo_notFound:                        return "Routing_DismissModulesTo_NotFound"
@@ -232,7 +259,7 @@ extension ModuleViewModel {
         
         var parameters: [String : Any]? {
             switch self {
-            case .dismissModules_notFound(let moduleId), .dismissModulesTo_notFound(let moduleId), .dismissModulesTo_empty(let moduleId):
+            case .dismissModules_notFound(let moduleId), .dismissModulesTo_notFound(let moduleId), .dismissModulesTo_empty(let moduleId), .setLastModuleId(moduleId: let moduleId):
                 return [
                     "module_id": moduleId
                 ]
@@ -253,7 +280,7 @@ extension ModuleViewModel {
         
         var type: RoutingLogType {
             switch self {
-            case .moduleStackUpdated:
+            case .moduleStackUpdated, .setLastModuleId:
                 return .info
             case .moduleShow, .moduleDismiss:
                 return .analytic
@@ -269,7 +296,7 @@ struct RouterView<Content: View>: View {
     
     var addNavigationStack: Bool = true
     var addModuleSupport: Bool = false
-    var content: (AnyRouter) -> Content
+    @ViewBuilder var content: (AnyRouter) -> Content
 
     var body: some View {
         Group {

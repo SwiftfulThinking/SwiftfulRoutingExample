@@ -33,6 +33,8 @@ extension LogManager: RoutingLogger {
 @main
 struct SwiftfulRoutingExampleApp: App {
     
+    @State private var lastModuleId = UserDefaults.lastModuleId
+    
     init() {
         UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
         
@@ -55,8 +57,34 @@ struct SwiftfulRoutingExampleApp: App {
                 ContentView2()
             } else {
                 RouterView(addModuleSupport: true) { router in
-                    OverviewView()
+                    if lastModuleId == "onboarding" {
+                        OnboardingView()
+                    } else {
+                        OverviewView()
+                    }
                 }
+            }
+        }
+    }
+}
+
+struct OnboardingView: View {
+    
+    @Environment(\.router) var router
+    
+    var body: some View {
+        ZStack {
+            Color.orange.ignoresSafeArea()
+            
+            VStack {
+                Text("Onboarding Module")
+                
+                Text("Tap to enter")
+            }
+        }
+        .onTapGesture {
+            router.showModule(.trailing) { _ in
+                OverviewView()
             }
         }
     }

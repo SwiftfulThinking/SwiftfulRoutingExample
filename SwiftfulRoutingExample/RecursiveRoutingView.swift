@@ -129,6 +129,9 @@ struct RecursiveRoutingView: View {
                 Section("Segue Queue") {
                     queueButtons
                 }
+                Section("Modules") {
+                    moduleButtons
+                }
             case .testingSegues:
                 segueButtons
                 dismissButtons()
@@ -207,7 +210,8 @@ struct RecursiveRoutingView: View {
             destination: { router in
                 RecursiveRoutingView(
                     router: router,
-                    screenNumber: screenNumber
+                    screenNumber: screenNumber,
+                    viewState: viewState
                 )
                 .ifSatisfiesCondition(hideListBackground) { content in
                     content
@@ -1286,6 +1290,15 @@ struct RecursiveRoutingView: View {
         .accessibilityIdentifier("Button_TransitionQueueNext")
     }
 
+    @ViewBuilder
+    var moduleButtons: some View {
+        Button("Switch to Onboarding Module") {
+            router.showModule(id: "onboarding", .trailing) { _ in
+                OnboardingView()
+            }
+        }
+//        .accessibilityIdentifier("Button_Push")
+    }
 }
 
 #Preview {
