@@ -4,31 +4,9 @@
 //
 //  Created by Nick Sarno on 5/2/22.
 //
-
 import SwiftUI
-//import SwiftfulRouting
+import SwiftfulRouting
 import SwiftfulLogging
-
-extension RoutingLogType {
-    
-    var type: LogType {
-        switch self {
-        case .info:
-            return .info
-        case .analytic:
-            return .analytic
-        case .warning:
-            return .warning
-        case .severe:
-            return .severe
-        }
-    }
-}
-extension LogManager: RoutingLogger {
-    public func trackEvent(event: any RoutingLogEvent) {
-        trackEvent(eventName: event.eventName, parameters: event.parameters, type: event.type.type)
-    }
-}
 
 @main
 struct SwiftfulRoutingExampleApp: App {
@@ -36,15 +14,8 @@ struct SwiftfulRoutingExampleApp: App {
     @State private var lastModuleId = UserDefaults.lastModuleId
     
     init() {
-        UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
-        
-        // There's a bug on iOS 17 where sheet may not load with large title, even if modifiers are set, which causes some tests to fail
-        // https://stackoverflow.com/questions/77253122/swiftui-navigationstack-title-loads-inline-instead-of-large-when-sheet-is-pres
-        UINavigationBar.appearance().prefersLargeTitles = true
-        
-//        let logManager = LogManager(services: [ConsoleService(printParameters: true)])
-//        enableLogging(logger: logManager)
-        enableLogging(level: .analytic, printParameters: true)
+        setConfigureApplicationSettings()
+        configureLogging()
     }
     
     private var isUITesting: Bool {
@@ -61,12 +32,31 @@ struct SwiftfulRoutingExampleApp: App {
                         OnboardingView()
                     }
                 } else {
-                    RouterView(id: "home_screen", addModuleSupport: true) { router in
+                    RouterView(id: "home", addModuleSupport: true) { router in
                         OverviewView()
                     }
                 }
             }
         }
+    }
+    
+    private func setConfigureApplicationSettings() {
+        UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
+        
+        // There's a bug on iOS 17 where sheet may not load with large title, even if modifiers are set, which causes some tests to fail
+        // https://stackoverflow.com/questions/77253122/swiftui-navigationstack-title-loads-inline-instead-of-large-when-sheet-is-pres
+        UINavigationBar.appearance().prefersLargeTitles = true
+    }
+    
+    private func configureLogging() {
+        // Use internal logger:
+        // enableLogging(level: .analytic, printParameters: true)
+        
+        
+        // or use SwiftfulRouting:
+        let logManager = LogManager(services: [ConsoleService(printParameters: true)])
+        enableLogging(logger: logManager)
+
     }
 }
 

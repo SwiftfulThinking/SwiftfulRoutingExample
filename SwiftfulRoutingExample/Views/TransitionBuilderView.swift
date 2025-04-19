@@ -1,29 +1,26 @@
 //
-//  SegueBuilderView.swift
+//  TransitionBuilderView.swift
 //  SwiftfulRoutingExample
 //
-//  Created by Nick Sarno on 4/6/25.
+//  Created by Nick Sarno on 4/8/25.
 //
-
+import SwiftfulRouting
 import SwiftUI
 
-struct SegueBuilderView: View {
+struct TransitionBuilderView: View {
     
     @Environment(\.router) var router
     
-    @State private var segue: SegueOption = .push
-    @State private var animates: Bool = true
-    
+    @State private var transition: TransitionOption = .trailing
+
     var body: some View {
         VStack {
             List {
-                Picker("Option", selection: $segue) {
-                    ForEach(SegueOption.allCases, id: \.self) { option in
-                        Text(option.stringValue)
+                Picker("Option", selection: $transition) {
+                    ForEach(TransitionOption.allCases, id: \.self) { option in
+                        Text(option.rawValue)
                     }
                 }
-                
-                Toggle("Animate: \(animates.description)", isOn: $animates)
             }
             
             codeView
@@ -34,7 +31,7 @@ struct SegueBuilderView: View {
             }
             .padding(.horizontal, 24)
         }
-        .navigationTitle("Segue Builder")
+        .navigationTitle("Modal Builder")
         .padding(.bottom, 8)
     }
     
@@ -47,17 +44,16 @@ struct SegueBuilderView: View {
                 .font(.headline)
         }
         .onTapGesture {
-            router.dismissLastScreen(animates: animates)
+            router.dismissTransition()
         }
     }
     
     private var codeString: String {
-"""
-router.showScreen(
-  segue: \(segue.codeString),
-  animates: \(animates.description),
+return """
+router.showTransition(
+  .\(transition.rawValue),
   destination: { router in
-    NextScreen()
+    destinationView
   }
 )
 """
@@ -65,7 +61,7 @@ router.showScreen(
     
     private var codeView: some View {
         Text(codeString)
-            .font(.system(.body, design: .monospaced))
+            .font(.system(size: 10, design: .monospaced))
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(8)
             .background(Color(.systemGray6))
@@ -74,12 +70,14 @@ router.showScreen(
     
     private var actionButton: some View {
         Button(action: {
-            router.showScreen(segue, animates: animates, destination: { router in
-                destinationView
-            }
+            router.showTransition(
+                transition,
+                destination: { _ in
+                    destinationView
+                }
             )
         }, label: {
-            Text("Perform Segue")
+            Text("Trigger Modal")
                 .font(.headline)
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
@@ -115,6 +113,6 @@ router.showScreen(
 
 #Preview {
     RouterView { _ in
-        SegueBuilderView()
+        TransitionBuilderView()
     }
 }
