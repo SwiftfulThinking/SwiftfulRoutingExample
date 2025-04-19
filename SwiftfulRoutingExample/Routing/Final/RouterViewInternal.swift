@@ -143,7 +143,7 @@ struct RouterViewInternal<Content: View>: View, Router {
     }
     
     var activeModals: [AnyModal] {
-        viewModel.allModals[routerId]?.filter({ !$0.isRemoved }) ?? []
+        viewModel.allModals[routerId]?.active ?? []
     }
     
     var activeTransitions: [AnyTransitionDestination] {

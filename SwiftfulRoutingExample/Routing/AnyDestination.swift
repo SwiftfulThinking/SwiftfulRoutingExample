@@ -39,10 +39,13 @@ struct AnyDestination: Identifiable, Hashable {
     let onDismiss: (() -> Void)?
     var transitionBehavior: TransitionMemoryBehavior = .keepPrevious
     
-//    init<T:View>(id: String = UUID().uuidString, _ segue: SegueOption = .push, location: SegueLocation = .insert, onDismiss: (() -> Void)? = nil, destination: @escaping (AnyRouter) -> T) {
-//        self.init(id: id, segue: segue, location: location, onDismiss: onDismiss, destination: destination)
-//    }
-    
+    /// - Parameters:
+    ///   - id: Identifier for the screen
+    ///   - segue: Push (NavigationLink), Sheet, or FullScreenCover
+    ///   - location: Where to insert the new screen in the heirarchy (default = .insert)
+    ///   - animates: If the segue should animate or not (default = true)
+    ///   - onDismiss: Trigger closure when screen gets dismissed (note: dismiss != disappear)
+    ///   - destination: The destination screen.
     init<T:View>(
         id: String = UUID().uuidString,
         segue: SegueOption = .push,

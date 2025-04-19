@@ -101,6 +101,34 @@ struct AnyModal: Identifiable, Equatable {
     }
 }
 
+extension Array where Element == AnyModal {
+    
+    var active: Self {
+        filter({ !$0.isRemoved })
+    }
+    
+    var removed: Self {
+        filter({ $0.isRemoved })
+    }
+}
+
+
+/*
+ struct AnyModal: Identifiable, Equatable {
+     private(set) var id: String
+     private(set) var transition: AnyTransition
+     private(set) var animation: Animation
+     private(set) var alignment: Alignment
+     private(set) var backgroundColor: Color?
+     private(set) var backgroundEffect: BackgroundEffect?
+     private(set) var dismissOnBackgroundTap: Bool
+     private(set) var ignoreSafeArea: Bool
+     private(set) var destination: AnyView
+     private(set) var onDismiss: (() -> Void)?
+     private(set) var isRemoved: Bool = false
+
+ */
+
 /*
  struct AnyDestination: Identifiable, Hashable {
      let id: String

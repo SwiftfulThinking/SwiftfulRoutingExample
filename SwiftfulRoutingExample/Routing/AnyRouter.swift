@@ -27,139 +27,190 @@ struct AnyRouter: Sendable, Router {
         self.object = object
     }
     
+    /// Active screen stacks in this RouterView's heirarchy.
+    ///
+    /// Use activeScreens.allScreens for underlying screen array.
     @MainActor var activeScreens: [AnyDestinationStack] {
         object.activeScreens
     }
     
+    /// Available screens in this RouterView's screen queue.
+    ///
+    /// Use showNextScreen() to trigger the next screen.
     @MainActor var activeScreenQueue: [AnyDestination] {
         object.activeScreenQueue
     }
     
+    /// If there is at least 1 screen in activeScreenQueue.
     @MainActor var hasScreenInQueue: Bool {
         !object.activeScreenQueue.isEmpty
     }
     
+    /// The currently displayed alert on this screen.
     @MainActor var activeAlert: AnyAlert? {
         object.activeAlert
     }
     
+    /// If an alert is currently displayed on this screen.
     @MainActor var hasActiveAlert: Bool {
         activeAlert != nil
     }
     
+    /// Active modals displayed on this screen.
     @MainActor var activeModals: [AnyModal] {
         object.activeModals
     }
     
+    /// If a modal is currently displayed on this screen.
     @MainActor var hasActiveModal: Bool {
         !object.activeModals.isEmpty
     }
     
+    /// Active transition heirarchy on this screen.
     @MainActor var activeTransitions: [AnyTransitionDestination] {
         object.activeTransitions
     }
     
+    /// If there is an active transition on this screen.
     @MainActor var hasActiveTransition: Bool {
         !object.activeTransitions.isEmpty
     }
     
+    /// Available transition destinations in this screen's tranisition queue.
+    ///
+    /// Use showNextTransition() to trigger the next transition.
     @MainActor var activeTransitionQueue: [AnyTransitionDestination] {
         object.activeTransitionQueue
     }
     
+    /// If there is at least 1 transition in activeTransitionQueue.
     @MainActor var hasTransitionInQueue: Bool {
         !object.activeTransitionQueue.isEmpty
     }
     
-    @MainActor func showScreen(destination: AnyDestination) {
-        object.showScreens(destinations: [destination])
-    }
-    
-    @MainActor func showScreen(_ destination: AnyDestination) {
-        object.showScreens(destinations: [destination])
-    }
-    
-    /// Note: AnyDestination.location will be overridden to support this method.
-    @MainActor func showScreens(destinations: [AnyDestination]) {
-        object.showScreens(destinations: destinations)
-    }
-    
+    /// Segue to a new screen.
+    /// - Parameters:
+    ///   - segue: Push (NavigationLink), Sheet, or FullScreenCover
+    ///   - id: Identifier for the screen
+    ///   - location: Where to insert the new screen in the heirarchy (default = .insert)
+    ///   - onDismiss: Trigger closure when screen gets dismissed (note: dismiss != disappear)
+    ///   - animates: If the segue should animate or not (default = true)
+    ///   - destination: The destination screen.
     @MainActor func showScreen<T>(
         _ segue: SegueOption = .push,
         id: String = UUID().uuidString,
         location: SegueLocation = .insert,
-        onDismiss: (() -> Void)? = nil,
         animates: Bool = true,
+        onDismiss: (() -> Void)? = nil,
         destination: @escaping (AnyRouter) -> T
     ) where T : View {
         let destination = AnyDestination(id: id, segue: segue, location: location, animates: animates, onDismiss: onDismiss, destination: destination)
         object.showScreens(destinations: [destination])
     }
+
+    /// Add one screen to the screen heirarchy.
+    @MainActor func showScreen(destination: AnyDestination) {
+        object.showScreens(destinations: [destination])
+    }
     
+    /// Add one screen to the screen heirarchy.
+    @MainActor func showScreen(_ destination: AnyDestination) {
+        object.showScreens(destinations: [destination])
+    }
+    
+    /// Add multiple screens to the screen heirarchy. Immediately trigger screens in order, resulting with the last screen displayed to the user.
+    ///
+    /// Note: destination.location will be overridden to support this method.
+    @MainActor func showScreens(destinations: [AnyDestination]) {
+        object.showScreens(destinations: destinations)
+    }
+        
+    /// Dismiss this screen and all screens in front of it.
     @MainActor func dismissScreen(animates: Bool = true) {
         object.dismissScreen(animates: animates)
     }
     
+    /// Dismiss screen at id and all screens in front of it.
     @MainActor func dismissScreen(id: String, animates: Bool = true) {
         object.dismissScreen(id: id, animates: animates)
     }
     
+    /// Dismiss all screens in front of (but not including) screen at id.
     @MainActor func dismissScreens(upToScreenId: String, animates: Bool = true) {
         object.dismissScreens(upToScreenId: upToScreenId, animates: animates)
     }
     
+    /// Dismiss a specific number of screens.
     @MainActor func dismissScreens(count: Int, animates: Bool = true) {
         object.dismissScreens(count: count, animates: animates)
     }
     
+    /// Dismiss all .push segues on the NavigationStack for this screen.
     @MainActor func dismissPushStack(animates: Bool = true) {
         object.dismissPushStack(animates: animates)
     }
     
+    /// Dismiss the closest .sheet or .fullScreenCover to this screen.
     @MainActor func dismissEnvironment(animates: Bool = true) {
         object.dismissEnvironment(animates: animates)
     }
     
+    /// Dismiss the last screen in the heirarchy, regardless of call-site.
     @MainActor func dismissLastScreen(animates: Bool = true) {
         object.dismissLastScreen(animates: animates)
     }
     
+    /// Dismiss all .push segues on the last NavigationStack in the heirarchy, regardless of call-site.
     @MainActor func dismissLastPushStack(animates: Bool = true) {
         object.dismissLastPushStack(animates: animates)
     }
     
+    /// Dismiss the last .sheet or .fullScreenCover in the heirarchy, regardless of call-site.
     @MainActor func dismissLastEnvironment(animates: Bool = true) {
         object.dismissLastEnvironment(animates: animates)
     }
     
+    /// Dismiss all screens in the heirarchy.
     @MainActor func dismissAllScreens(animates: Bool = true) {
         object.dismissAllScreens(animates: animates)
     }
 
+    
+    /// Add 1 screen to this RouterView's screen queue.
+    ///
+    /// Use showNextScreen() to trigger the next screen.
     @MainActor func addScreenToQueue(destination: AnyDestination) {
         object.addScreensToQueue(destinations: [destination])
     }
     
+    /// Add multiple screens to this RouterView's screen queue.
+    ///
+    /// Use showNextScreen() to trigger the next screen.
     @MainActor func addScreensToQueue(destinations: [AnyDestination]) {
         object.addScreensToQueue(destinations: destinations)
     }
     
+    /// Remove 1 screen from this RouterView's screen queue.
     @MainActor func removeScreenFromQueue(id: String) {
         object.removeScreensFromQueue(ids: [id])
     }
     
+    /// Remove multiple screens from this RouterView's screen queue.
     @MainActor func removeScreensFromQueue(ids: [String]) {
         object.removeScreensFromQueue(ids: ids)
     }
     
+    /// Remove all screens from this RouterView's screen queue.
     @MainActor func removeAllScreensFromQueue() {
         object.removeAllScreensFromQueue()
     }
     
+    /// Segue to a the first screen in this RouterView's screen queue, if available.
     @MainActor func showNextScreen() {
         object.showNextScreen()
     }
     
+    /// Segue to a the first screen in this RouterView's screen queue, otherwise throw an error.
     @MainActor func tryShowNextScreen() throws {
         guard hasScreenInQueue else {
             throw AnyRouterError.noScreensInQueue
@@ -168,6 +219,7 @@ struct AnyRouter: Sendable, Router {
         object.showNextScreen()
     }
     
+    /// Segue to a the first screen in this RouterView's screen queue, if available, otherwise dismiss the screen.
     @MainActor func showNextScreenOrDismissScreen(animateDismiss: Bool = true) {
         do {
             try tryShowNextScreen()
@@ -176,6 +228,7 @@ struct AnyRouter: Sendable, Router {
         }
     }
     
+    /// Segue to a the first screen in this RouterView's screen queue, if available, otherwise dismiss the environment.
     @MainActor func showNextScreenOrDismissEnvironment(animateDismiss: Bool = true) throws {
         do {
             try tryShowNextScreen()
@@ -184,6 +237,7 @@ struct AnyRouter: Sendable, Router {
         }
     }
     
+    /// Segue to a the first screen in this RouterView's screen queue, if available, otherwise dismiss the .push stack.
     @MainActor func showNextScreenOrDismissPushStack(animateDismiss: Bool = true) throws {
         do {
             try tryShowNextScreen()
@@ -212,6 +266,10 @@ struct AnyRouter: Sendable, Router {
     }
     
     @MainActor public func showAlert(alert: AnyAlert) {
+        object.showAlert(alert: alert)
+    }
+    
+    @MainActor public func showAlert(_ alert: AnyAlert) {
         object.showAlert(alert: alert)
     }
     
@@ -273,6 +331,10 @@ struct AnyRouter: Sendable, Router {
         object.showModal(modal: modal)
     }
     
+    @MainActor public func showModal(_ modal: AnyModal) {
+        object.showModal(modal: modal)
+    }
+    
     @MainActor public func showModals(modals: [AnyModal]) {
         for modal in modals {
             object.showModal(modal: modal)
@@ -310,6 +372,10 @@ struct AnyRouter: Sendable, Router {
     }
     
     @MainActor public func showTransition(transition: AnyTransitionDestination) {
+        object.showTransition(transition: transition)
+    }
+    
+    @MainActor public func showTransition(_ transition: AnyTransitionDestination) {
         object.showTransition(transition: transition)
     }
     
@@ -405,6 +471,10 @@ struct AnyRouter: Sendable, Router {
     }
     
     @MainActor public func showModule(module: AnyTransitionDestination) {
+        object.showModule(module: module)
+    }
+    
+    @MainActor public func showModule(_ module: AnyTransitionDestination) {
         object.showModule(module: module)
     }
     
