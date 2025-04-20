@@ -1,10 +1,19 @@
 {
-  "originHash" : "2d538733ec674ef03bb398179ba9777ac7bbeb35d211abb6e2d0f0f0cf5400eb",
+  "originHash" : "4b5b6434d605c4771549333e6cc99170df2f503f73cf0fe7be67c33f273f18e7",
   "pins" : [
+    {
+      "identity" : "swiftfullogging",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SwiftfulThinking/SwiftfulLogging",
+      "state" : {
+        "revision" : "f3c9190003ff23b9dc74dc2e4cf3d95c47ef263b",
+        "version" : "1.1.2"
+      }
+    },
     {
       "identity" : "swiftfulrecursiveui",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SwiftfulThinking/SwiftfulRecursiveUI.git",
+      "location" : "https://github.com/SwiftfulThinking/SwiftfulRecursiveUI",
       "state" : {
         "revision" : "3d2d5ac6efe70874fb5ffb2f8e1d5ccd457f4366",
         "version" : "1.0.2"
@@ -13,10 +22,10 @@
     {
       "identity" : "swiftfulrouting",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SwiftfulThinking/SwiftfulRouting.git",
+      "location" : "https://github.com/SwiftfulThinking/SwiftfulRouting",
       "state" : {
-        "revision" : "bf0a8b4628b0e24d60f090b382c15b96329ab92c",
-        "version" : "5.3.6"
+        "branch" : "development",
+        "revision" : "b402d69dcdc5ac721679cf7b51e1dd527717a4e5"
       }
     }
   ],

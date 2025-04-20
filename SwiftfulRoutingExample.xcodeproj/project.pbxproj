@@ -7,28 +7,29 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		021CF2D22A9CDB4500BFB255 /* PopoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 021CF2D12A9CDB4500BFB255 /* PopoverView.swift */; };
+		024651CA2D7BFA7E00545A5F /* DismissTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024651C92D7BFA7E00545A5F /* DismissTests.swift */; };
+		024651CC2D7C23B000545A5F /* MultiRouterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024651CB2D7C23B000545A5F /* MultiRouterTests.swift */; };
+		024651CE2D7CEB8000545A5F /* SegueQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024651CD2D7CEB7F00545A5F /* SegueQueueTests.swift */; };
+		02661DA12D98F0550067BFA5 /* OverviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661DA02D98F0550067BFA5 /* OverviewView.swift */; };
+		02661DA32D9B9DCB0067BFA5 /* TransitionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661DA22D9B9DCB0067BFA5 /* TransitionTests.swift */; };
+		02661DA52D9BAC060067BFA5 /* TransitionQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661DA42D9BAC060067BFA5 /* TransitionQueueTests.swift */; };
+		02661DA72DA351A50067BFA5 /* SegueBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661DA62DA351A50067BFA5 /* SegueBuilderView.swift */; };
+		02661DA92DA4A3BD0067BFA5 /* AlertBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661DA82DA4A3BA0067BFA5 /* AlertBuilderView.swift */; };
+		02661DAB2DA4AD680067BFA5 /* ModalBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661DAA2DA4AD680067BFA5 /* ModalBuilderView.swift */; };
+		02661DAD2DA5F3030067BFA5 /* TransitionBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661DAC2DA5F3030067BFA5 /* TransitionBuilderView.swift */; };
+		02661DBA2DA74F920067BFA5 /* SwiftfulLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 02661DB92DA74F920067BFA5 /* SwiftfulLogging */; };
+		026776522D895408009476E7 /* ModalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026776512D895408009476E7 /* ModalTests.swift */; };
+		0268C8D32D82A2B40068896D /* SwiftfulRecursiveUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0268C8D22D82A2B40068896D /* SwiftfulRecursiveUI */; };
+		026B8FDE2DB40E32000F4C5C /* SwiftfulRouting in Frameworks */ = {isa = PBXBuildFile; productRef = 026B8FDD2DB40E32000F4C5C /* SwiftfulRouting */; };
+		026B8FE02DB40FB4000F4C5C /* View+EXT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026B8FDF2DB40FB2000F4C5C /* View+EXT.swift */; };
+		026B8FE22DB41021000F4C5C /* SwiftfulRouting+EXT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026B8FE12DB4101D000F4C5C /* SwiftfulRouting+EXT.swift */; };
+		026B8FE82DB4C04C000F4C5C /* NewAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026B8FE72DB4C04C000F4C5C /* NewAppView.swift */; };
 		028A896A281F9228004E3DA4 /* SwiftfulRoutingExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028A8969281F9228004E3DA4 /* SwiftfulRoutingExampleApp.swift */; };
-		028A896C281F9228004E3DA4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028A896B281F9228004E3DA4 /* ContentView.swift */; };
 		028A896E281F922B004E3DA4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 028A896D281F922B004E3DA4 /* Assets.xcassets */; };
 		028A8971281F922B004E3DA4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 028A8970281F922B004E3DA4 /* Preview Assets.xcassets */; };
-		028A8979281F9250004E3DA4 /* SwiftfulRouting in Frameworks */ = {isa = PBXBuildFile; productRef = 028A8978281F9250004E3DA4 /* SwiftfulRouting */; };
-		028A8981281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028A8980281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.swift */; };
-		02CFF0E12986B2D900E6ABCC /* ExampleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFF0E02986B2D900E6ABCC /* ExampleView.swift */; };
-		02CFF0E32986B66F00E6ABCC /* DataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFF0E22986B66F00E6ABCC /* DataService.swift */; };
-		02CFF0E52986B68300E6ABCC /* ExampleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFF0E42986B68300E6ABCC /* ExampleViewModel.swift */; };
-		02CFF0E82986B6F200E6ABCC /* SampleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFF0E72986B6F200E6ABCC /* SampleView.swift */; };
-		02CFF0EA2986BA1000E6ABCC /* SampleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFF0E92986BA1000E6ABCC /* SampleViewModel.swift */; };
-		02CFF0ED2986BAEE00E6ABCC /* MyNextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFF0EC2986BAEE00E6ABCC /* MyNextView.swift */; };
-		02CFF0F22986BDFC00E6ABCC /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFF0F12986BDFC00E6ABCC /* HomeView.swift */; };
-		02CFF0F42986BE2F00E6ABCC /* HomePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFF0F32986BE2F00E6ABCC /* HomePresenter.swift */; };
-		02CFF0F72986BEE400E6ABCC /* BasicView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFF0F62986BEE400E6ABCC /* BasicView.swift */; };
-		02CFF0F92986BEEE00E6ABCC /* BasicViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFF0F82986BEEE00E6ABCC /* BasicViewModel.swift */; };
-		02CFF0FD2986BFE200E6ABCC /* BasicViewModelDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFF0FC2986BFE200E6ABCC /* BasicViewModelDelegate.swift */; };
-		02CFF0FF2986C20B00E6ABCC /* HomeInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFF0FE2986C20B00E6ABCC /* HomeInteractor.swift */; };
-		02CFF1012986C29900E6ABCC /* HomeRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFF1002986C29900E6ABCC /* HomeRouter.swift */; };
-		02CFF1032986C8D000E6ABCC /* ProgramaticSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFF1022986C8D000E6ABCC /* ProgramaticSheetView.swift */; };
-		D1A7AEBA2C778380006AF666 /* ContentTransitionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1A7AEB92C778380006AF666 /* ContentTransitionView.swift */; };
+		02C673C72D7800AA001C1A62 /* SegueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C673C62D7800AA001C1A62 /* SegueTests.swift */; };
+		02C673CA2D7803D7001C1A62 /* RecursiveRoutingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C673C92D7803D7001C1A62 /* RecursiveRoutingView.swift */; };
+		02C673CC2D797784001C1A62 /* MultiSegueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C673CB2D797784001C1A62 /* MultiSegueTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,30 +43,29 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		021CF2D12A9CDB4500BFB255 /* PopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverView.swift; sourceTree = "<group>"; };
+		024651C92D7BFA7E00545A5F /* DismissTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DismissTests.swift; sourceTree = "<group>"; };
+		024651CB2D7C23B000545A5F /* MultiRouterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiRouterTests.swift; sourceTree = "<group>"; };
+		024651CD2D7CEB7F00545A5F /* SegueQueueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegueQueueTests.swift; sourceTree = "<group>"; };
+		02661DA02D98F0550067BFA5 /* OverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverviewView.swift; sourceTree = "<group>"; };
+		02661DA22D9B9DCB0067BFA5 /* TransitionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionTests.swift; sourceTree = "<group>"; };
+		02661DA42D9BAC060067BFA5 /* TransitionQueueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionQueueTests.swift; sourceTree = "<group>"; };
+		02661DA62DA351A50067BFA5 /* SegueBuilderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegueBuilderView.swift; sourceTree = "<group>"; };
+		02661DA82DA4A3BA0067BFA5 /* AlertBuilderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertBuilderView.swift; sourceTree = "<group>"; };
+		02661DAA2DA4AD680067BFA5 /* ModalBuilderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalBuilderView.swift; sourceTree = "<group>"; };
+		02661DAC2DA5F3030067BFA5 /* TransitionBuilderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionBuilderView.swift; sourceTree = "<group>"; };
+		026776512D895408009476E7 /* ModalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalTests.swift; sourceTree = "<group>"; };
+		026B8FDF2DB40FB2000F4C5C /* View+EXT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+EXT.swift"; sourceTree = "<group>"; };
+		026B8FE12DB4101D000F4C5C /* SwiftfulRouting+EXT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftfulRouting+EXT.swift"; sourceTree = "<group>"; };
+		026B8FE72DB4C04C000F4C5C /* NewAppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewAppView.swift; sourceTree = "<group>"; };
 		028A8966281F9228004E3DA4 /* SwiftfulRoutingExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftfulRoutingExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		028A8969281F9228004E3DA4 /* SwiftfulRoutingExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftfulRoutingExampleApp.swift; sourceTree = "<group>"; };
-		028A896B281F9228004E3DA4 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		028A896D281F922B004E3DA4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		028A8970281F922B004E3DA4 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		028A897E281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftfulRoutingExampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		028A8980281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftfulRoutingExampleUITests.swift; sourceTree = "<group>"; };
-		02CFF0E02986B2D900E6ABCC /* ExampleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleView.swift; sourceTree = "<group>"; };
-		02CFF0E22986B66F00E6ABCC /* DataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataService.swift; sourceTree = "<group>"; };
-		02CFF0E42986B68300E6ABCC /* ExampleViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleViewModel.swift; sourceTree = "<group>"; };
-		02CFF0E72986B6F200E6ABCC /* SampleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleView.swift; sourceTree = "<group>"; };
-		02CFF0E92986BA1000E6ABCC /* SampleViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleViewModel.swift; sourceTree = "<group>"; };
-		02CFF0EC2986BAEE00E6ABCC /* MyNextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyNextView.swift; sourceTree = "<group>"; };
-		02CFF0F12986BDFC00E6ABCC /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
-		02CFF0F32986BE2F00E6ABCC /* HomePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePresenter.swift; sourceTree = "<group>"; };
-		02CFF0F62986BEE400E6ABCC /* BasicView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicView.swift; sourceTree = "<group>"; };
-		02CFF0F82986BEEE00E6ABCC /* BasicViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicViewModel.swift; sourceTree = "<group>"; };
-		02CFF0FC2986BFE200E6ABCC /* BasicViewModelDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicViewModelDelegate.swift; sourceTree = "<group>"; };
-		02CFF0FE2986C20B00E6ABCC /* HomeInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeInteractor.swift; sourceTree = "<group>"; };
-		02CFF1002986C29900E6ABCC /* HomeRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeRouter.swift; sourceTree = "<group>"; };
-		02CFF1022986C8D000E6ABCC /* ProgramaticSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgramaticSheetView.swift; sourceTree = "<group>"; };
+		02C673C62D7800AA001C1A62 /* SegueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegueTests.swift; sourceTree = "<group>"; };
+		02C673C92D7803D7001C1A62 /* RecursiveRoutingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecursiveRoutingView.swift; sourceTree = "<group>"; };
+		02C673CB2D797784001C1A62 /* MultiSegueTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiSegueTests.swift; sourceTree = "<group>"; };
 		02CFF1042986F59800E6ABCC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		D1A7AEB92C778380006AF666 /* ContentTransitionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentTransitionView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,7 +73,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				028A8979281F9250004E3DA4 /* SwiftfulRouting in Frameworks */,
+				02661DBA2DA74F920067BFA5 /* SwiftfulLogging in Frameworks */,
+				026B8FDE2DB40E32000F4C5C /* SwiftfulRouting in Frameworks */,
+				0268C8D32D82A2B40068896D /* SwiftfulRecursiveUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,6 +89,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		026B8FE52DB410F6000F4C5C /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				02661DA02D98F0550067BFA5 /* OverviewView.swift */,
+				02C673C92D7803D7001C1A62 /* RecursiveRoutingView.swift */,
+				02661DA62DA351A50067BFA5 /* SegueBuilderView.swift */,
+				02661DA82DA4A3BA0067BFA5 /* AlertBuilderView.swift */,
+				02661DAA2DA4AD680067BFA5 /* ModalBuilderView.swift */,
+				02661DAC2DA5F3030067BFA5 /* TransitionBuilderView.swift */,
+				026B8FE72DB4C04C000F4C5C /* NewAppView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		028A895D281F9228004E3DA4 = {
 			isa = PBXGroup;
 			children = (
@@ -110,14 +126,8 @@
 			children = (
 				02CFF1042986F59800E6ABCC /* Info.plist */,
 				028A8969281F9228004E3DA4 /* SwiftfulRoutingExampleApp.swift */,
-				028A896B281F9228004E3DA4 /* ContentView.swift */,
-				D1A7AEB92C778380006AF666 /* ContentTransitionView.swift */,
-				021CF2D12A9CDB4500BFB255 /* PopoverView.swift */,
-				02CFF0DF2986B2A700E6ABCC /* MVVM (View Routing) */,
-				02CFF0E62986B6E100E6ABCC /* MVVM (ViewModel Routing) */,
-				02CFF0F52986BEBB00E6ABCC /* MVVM (ViewModel Routing + Delegate) */,
-				02CFF0F02986BD7300E6ABCC /* VIPER (Delegate Routing) */,
-				02CFF0EB2986BADE00E6ABCC /* Helpers */,
+				026B8FE52DB410F6000F4C5C /* Views */,
+				02CFF0EB2986BADE00E6ABCC /* Extensions */,
 				028A896D281F922B004E3DA4 /* Assets.xcassets */,
 				028A896F281F922B004E3DA4 /* Preview Content */,
 			);
@@ -135,58 +145,25 @@
 		028A897F281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests */ = {
 			isa = PBXGroup;
 			children = (
-				028A8980281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.swift */,
+				02C673C62D7800AA001C1A62 /* SegueTests.swift */,
+				02C673CB2D797784001C1A62 /* MultiSegueTests.swift */,
+				024651C92D7BFA7E00545A5F /* DismissTests.swift */,
+				024651CB2D7C23B000545A5F /* MultiRouterTests.swift */,
+				024651CD2D7CEB7F00545A5F /* SegueQueueTests.swift */,
+				026776512D895408009476E7 /* ModalTests.swift */,
+				02661DA22D9B9DCB0067BFA5 /* TransitionTests.swift */,
+				02661DA42D9BAC060067BFA5 /* TransitionQueueTests.swift */,
 			);
 			path = SwiftfulRoutingExampleUITests;
 			sourceTree = "<group>";
 		};
-		02CFF0DF2986B2A700E6ABCC /* MVVM (View Routing) */ = {
+		02CFF0EB2986BADE00E6ABCC /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				02CFF0E02986B2D900E6ABCC /* ExampleView.swift */,
-				02CFF0E42986B68300E6ABCC /* ExampleViewModel.swift */,
+				026B8FDF2DB40FB2000F4C5C /* View+EXT.swift */,
+				026B8FE12DB4101D000F4C5C /* SwiftfulRouting+EXT.swift */,
 			);
-			path = "MVVM (View Routing)";
-			sourceTree = "<group>";
-		};
-		02CFF0E62986B6E100E6ABCC /* MVVM (ViewModel Routing) */ = {
-			isa = PBXGroup;
-			children = (
-				02CFF0E72986B6F200E6ABCC /* SampleView.swift */,
-				02CFF0E92986BA1000E6ABCC /* SampleViewModel.swift */,
-			);
-			path = "MVVM (ViewModel Routing)";
-			sourceTree = "<group>";
-		};
-		02CFF0EB2986BADE00E6ABCC /* Helpers */ = {
-			isa = PBXGroup;
-			children = (
-				02CFF0EC2986BAEE00E6ABCC /* MyNextView.swift */,
-				02CFF0E22986B66F00E6ABCC /* DataService.swift */,
-				02CFF1022986C8D000E6ABCC /* ProgramaticSheetView.swift */,
-			);
-			path = Helpers;
-			sourceTree = "<group>";
-		};
-		02CFF0F02986BD7300E6ABCC /* VIPER (Delegate Routing) */ = {
-			isa = PBXGroup;
-			children = (
-				02CFF0F12986BDFC00E6ABCC /* HomeView.swift */,
-				02CFF0F32986BE2F00E6ABCC /* HomePresenter.swift */,
-				02CFF0FE2986C20B00E6ABCC /* HomeInteractor.swift */,
-				02CFF1002986C29900E6ABCC /* HomeRouter.swift */,
-			);
-			path = "VIPER (Delegate Routing)";
-			sourceTree = "<group>";
-		};
-		02CFF0F52986BEBB00E6ABCC /* MVVM (ViewModel Routing + Delegate) */ = {
-			isa = PBXGroup;
-			children = (
-				02CFF0F62986BEE400E6ABCC /* BasicView.swift */,
-				02CFF0F82986BEEE00E6ABCC /* BasicViewModel.swift */,
-				02CFF0FC2986BFE200E6ABCC /* BasicViewModelDelegate.swift */,
-			);
-			path = "MVVM (ViewModel Routing + Delegate)";
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -206,7 +183,9 @@
 			);
 			name = SwiftfulRoutingExample;
 			packageProductDependencies = (
-				028A8978281F9250004E3DA4 /* SwiftfulRouting */,
+				0268C8D22D82A2B40068896D /* SwiftfulRecursiveUI */,
+				02661DB92DA74F920067BFA5 /* SwiftfulLogging */,
+				026B8FDD2DB40E32000F4C5C /* SwiftfulRouting */,
 			);
 			productName = SwiftfulRoutingExample;
 			productReference = 028A8966281F9228004E3DA4 /* SwiftfulRoutingExample.app */;
@@ -259,7 +238,9 @@
 			);
 			mainGroup = 028A895D281F9228004E3DA4;
 			packageReferences = (
-				028A8977281F9250004E3DA4 /* XCRemoteSwiftPackageReference "SwiftfulRouting" */,
+				0268C8D12D82A2B40068896D /* XCRemoteSwiftPackageReference "SwiftfulRecursiveUI" */,
+				02661DB82DA74F920067BFA5 /* XCRemoteSwiftPackageReference "SwiftfulLogging" */,
+				026B8FDC2DB40E32000F4C5C /* XCRemoteSwiftPackageReference "SwiftfulRouting" */,
 			);
 			productRefGroup = 028A8967281F9228004E3DA4 /* Products */;
 			projectDirPath = "";
@@ -295,24 +276,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				02CFF0E52986B68300E6ABCC /* ExampleViewModel.swift in Sources */,
-				02CFF0E12986B2D900E6ABCC /* ExampleView.swift in Sources */,
-				02CFF1032986C8D000E6ABCC /* ProgramaticSheetView.swift in Sources */,
-				02CFF0FF2986C20B00E6ABCC /* HomeInteractor.swift in Sources */,
-				028A896C281F9228004E3DA4 /* ContentView.swift in Sources */,
-				02CFF0F72986BEE400E6ABCC /* BasicView.swift in Sources */,
-				02CFF0F22986BDFC00E6ABCC /* HomeView.swift in Sources */,
-				02CFF0ED2986BAEE00E6ABCC /* MyNextView.swift in Sources */,
-				02CFF0EA2986BA1000E6ABCC /* SampleViewModel.swift in Sources */,
-				02CFF1012986C29900E6ABCC /* HomeRouter.swift in Sources */,
-				02CFF0E32986B66F00E6ABCC /* DataService.swift in Sources */,
-				D1A7AEBA2C778380006AF666 /* ContentTransitionView.swift in Sources */,
-				02CFF0F92986BEEE00E6ABCC /* BasicViewModel.swift in Sources */,
-				02CFF0E82986B6F200E6ABCC /* SampleView.swift in Sources */,
-				02CFF0FD2986BFE200E6ABCC /* BasicViewModelDelegate.swift in Sources */,
+				02661DAD2DA5F3030067BFA5 /* TransitionBuilderView.swift in Sources */,
+				02661DA12D98F0550067BFA5 /* OverviewView.swift in Sources */,
+				02661DA92DA4A3BD0067BFA5 /* AlertBuilderView.swift in Sources */,
+				02661DA72DA351A50067BFA5 /* SegueBuilderView.swift in Sources */,
+				026B8FE02DB40FB4000F4C5C /* View+EXT.swift in Sources */,
+				02C673CA2D7803D7001C1A62 /* RecursiveRoutingView.swift in Sources */,
+				026B8FE22DB41021000F4C5C /* SwiftfulRouting+EXT.swift in Sources */,
 				028A896A281F9228004E3DA4 /* SwiftfulRoutingExampleApp.swift in Sources */,
-				02CFF0F42986BE2F00E6ABCC /* HomePresenter.swift in Sources */,
-				021CF2D22A9CDB4500BFB255 /* PopoverView.swift in Sources */,
+				02661DAB2DA4AD680067BFA5 /* ModalBuilderView.swift in Sources */,
+				026B8FE82DB4C04C000F4C5C /* NewAppView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -320,7 +293,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				028A8981281F92AA004E3DA4 /* SwiftfulRoutingExampleUITests.swift in Sources */,
+				024651CA2D7BFA7E00545A5F /* DismissTests.swift in Sources */,
+				024651CE2D7CEB8000545A5F /* SegueQueueTests.swift in Sources */,
+				02661DA52D9BAC060067BFA5 /* TransitionQueueTests.swift in Sources */,
+				026776522D895408009476E7 /* ModalTests.swift in Sources */,
+				024651CC2D7C23B000545A5F /* MultiRouterTests.swift in Sources */,
+				02C673CC2D797784001C1A62 /* MultiSegueTests.swift in Sources */,
+				02661DA32D9B9DCB0067BFA5 /* TransitionTests.swift in Sources */,
+				02C673C72D7800AA001C1A62 /* SegueTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -459,7 +439,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"SwiftfulRoutingExample/Preview Content\"";
-				DEVELOPMENT_TEAM = 89QY97R26H;
+				DEVELOPMENT_TEAM = 9JN8RSJMX3;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SwiftfulRoutingExample/Info.plist;
@@ -467,7 +447,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -476,7 +456,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.nicksarno.SwiftfulRoutingExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -489,7 +469,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"SwiftfulRoutingExample/Preview Content\"";
-				DEVELOPMENT_TEAM = 89QY97R26H;
+				DEVELOPMENT_TEAM = 9JN8RSJMX3;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SwiftfulRoutingExample/Info.plist;
@@ -497,7 +477,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -506,7 +486,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.nicksarno.SwiftfulRoutingExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -518,6 +498,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Z735PM5XVD;
 				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nicksarno.SwiftfulRoutingExampleUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -535,6 +516,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = Z735PM5XVD;
 				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nicksarno.SwiftfulRoutingExampleUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -578,20 +560,46 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		028A8977281F9250004E3DA4 /* XCRemoteSwiftPackageReference "SwiftfulRouting" */ = {
+		02661DB82DA74F920067BFA5 /* XCRemoteSwiftPackageReference "SwiftfulLogging" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SwiftfulThinking/SwiftfulRouting.git";
+			repositoryURL = "https://github.com/SwiftfulThinking/SwiftfulLogging";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.0;
+				minimumVersion = 1.1.2;
+			};
+		};
+		0268C8D12D82A2B40068896D /* XCRemoteSwiftPackageReference "SwiftfulRecursiveUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftfulThinking/SwiftfulRecursiveUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.2;
+			};
+		};
+		026B8FDC2DB40E32000F4C5C /* XCRemoteSwiftPackageReference "SwiftfulRouting" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftfulThinking/SwiftfulRouting";
+			requirement = {
+				branch = development;
+				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		028A8978281F9250004E3DA4 /* SwiftfulRouting */ = {
+		02661DB92DA74F920067BFA5 /* SwiftfulLogging */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 028A8977281F9250004E3DA4 /* XCRemoteSwiftPackageReference "SwiftfulRouting" */;
+			package = 02661DB82DA74F920067BFA5 /* XCRemoteSwiftPackageReference "SwiftfulLogging" */;
+			productName = SwiftfulLogging;
+		};
+		0268C8D22D82A2B40068896D /* SwiftfulRecursiveUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0268C8D12D82A2B40068896D /* XCRemoteSwiftPackageReference "SwiftfulRecursiveUI" */;
+			productName = SwiftfulRecursiveUI;
+		};
+		026B8FDD2DB40E32000F4C5C /* SwiftfulRouting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 026B8FDC2DB40E32000F4C5C /* XCRemoteSwiftPackageReference "SwiftfulRouting" */;
 			productName = SwiftfulRouting;
 		};
 /* End XCSwiftPackageProductDependency section */
