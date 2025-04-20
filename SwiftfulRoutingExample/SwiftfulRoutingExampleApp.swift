@@ -50,15 +50,17 @@ struct SwiftfulRoutingExampleApp: App {
     
     private func configureLogging() {
         // Use internal logger:
-        // enableLogging(level: .analytic, printParameters: true)
+        // SwiftfulRoutingLogger.enableLogging(level: .analytic, printParameters: true)
         
         
         // or use SwiftfulRouting:
         let logManager = LogManager(services: [ConsoleService(printParameters: true)])
-        enableLogging(logger: logManager)
-
+        SwiftfulRoutingLogger.enableLogging(logger: logManager)
     }
 }
+
+
+
 
 struct OnboardingView: View {
     

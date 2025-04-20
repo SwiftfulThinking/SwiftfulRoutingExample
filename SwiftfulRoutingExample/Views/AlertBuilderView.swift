@@ -173,7 +173,7 @@ router.showAlert(
     private func copyToClipboard() {
         UIPasteboard.general.string = codeString
         
-        router.showSimpleAlert(text: "Copied!")
+        router.showBasicAlert(text: "Copied!")
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             router.dismissAlert()

@@ -378,7 +378,7 @@ struct RecursiveRoutingView: View {
             .accessibilityIdentifier("Button_DismissId2")
 
             Button("Dismiss to screen 1") {
-                router.dismissScreens(upToScreenId: "1")
+                router.dismissScreens(upToId: "1")
             }
             .accessibilityIdentifier("Button_DismissTo1")
             
@@ -744,7 +744,7 @@ struct RecursiveRoutingView: View {
         }
         
         Button("Alert (simple)") {
-            router.showSimpleAlert(text: "Hello!", action: nil)
+            router.showBasicAlert(text: "Hello!", action: nil)
         }
         
         Button("Alert (textfield)") {
@@ -1028,7 +1028,7 @@ struct RecursiveRoutingView: View {
                 triggerModal2()
                 triggerModal3()
                 try? await Task.sleep(for: .seconds(2))
-                router.dismissModals(upToModalId: "modal_1")
+                router.dismissModals(upToId: "modal_1")
             }
         }
         .accessibilityIdentifier("Button_DismissModalsUpTo1")

@@ -23,6 +23,7 @@
 		026B8FDE2DB40E32000F4C5C /* SwiftfulRouting in Frameworks */ = {isa = PBXBuildFile; productRef = 026B8FDD2DB40E32000F4C5C /* SwiftfulRouting */; };
 		026B8FE02DB40FB4000F4C5C /* View+EXT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026B8FDF2DB40FB2000F4C5C /* View+EXT.swift */; };
 		026B8FE22DB41021000F4C5C /* SwiftfulRouting+EXT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026B8FE12DB4101D000F4C5C /* SwiftfulRouting+EXT.swift */; };
+		026B8FE82DB4C04C000F4C5C /* NewAppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026B8FE72DB4C04C000F4C5C /* NewAppView.swift */; };
 		028A896A281F9228004E3DA4 /* SwiftfulRoutingExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028A8969281F9228004E3DA4 /* SwiftfulRoutingExampleApp.swift */; };
 		028A896E281F922B004E3DA4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 028A896D281F922B004E3DA4 /* Assets.xcassets */; };
 		028A8971281F922B004E3DA4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 028A8970281F922B004E3DA4 /* Preview Assets.xcassets */; };
@@ -55,6 +56,7 @@
 		026776512D895408009476E7 /* ModalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalTests.swift; sourceTree = "<group>"; };
 		026B8FDF2DB40FB2000F4C5C /* View+EXT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+EXT.swift"; sourceTree = "<group>"; };
 		026B8FE12DB4101D000F4C5C /* SwiftfulRouting+EXT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftfulRouting+EXT.swift"; sourceTree = "<group>"; };
+		026B8FE72DB4C04C000F4C5C /* NewAppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewAppView.swift; sourceTree = "<group>"; };
 		028A8966281F9228004E3DA4 /* SwiftfulRoutingExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftfulRoutingExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		028A8969281F9228004E3DA4 /* SwiftfulRoutingExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftfulRoutingExampleApp.swift; sourceTree = "<group>"; };
 		028A896D281F922B004E3DA4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -96,6 +98,7 @@
 				02661DA82DA4A3BA0067BFA5 /* AlertBuilderView.swift */,
 				02661DAA2DA4AD680067BFA5 /* ModalBuilderView.swift */,
 				02661DAC2DA5F3030067BFA5 /* TransitionBuilderView.swift */,
+				026B8FE72DB4C04C000F4C5C /* NewAppView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -282,6 +285,7 @@
 				026B8FE22DB41021000F4C5C /* SwiftfulRouting+EXT.swift in Sources */,
 				028A896A281F9228004E3DA4 /* SwiftfulRoutingExampleApp.swift in Sources */,
 				02661DAB2DA4AD680067BFA5 /* ModalBuilderView.swift in Sources */,
+				026B8FE82DB4C04C000F4C5C /* NewAppView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -576,7 +580,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SwiftfulThinking/SwiftfulRouting";
 			requirement = {
-				branch = version_6;
+				branch = development;
 				kind = branch;
 			};
 		};
