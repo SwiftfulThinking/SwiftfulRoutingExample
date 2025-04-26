@@ -1,5 +1,5 @@
 {
-  "originHash" : "4b5b6434d605c4771549333e6cc99170df2f503f73cf0fe7be67c33f273f18e7",
+  "originHash" : "f1cb0a245a247c2d8e440cf6fe5492746304907e8f60c0ac21cdfc16a49f26d4",
   "pins" : [
     {
       "identity" : "swiftfullogging",
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SwiftfulThinking/SwiftfulRouting",
       "state" : {
-        "branch" : "development",
-        "revision" : "b402d69dcdc5ac721679cf7b51e1dd527717a4e5"
+        "revision" : "6cd7170ace874cc0b4f09acf8f2861090a823a56",
+        "version" : "6.1.0"
       }
     }
   ],

@@ -17,9 +17,7 @@
 		02661DA92DA4A3BD0067BFA5 /* AlertBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661DA82DA4A3BA0067BFA5 /* AlertBuilderView.swift */; };
 		02661DAB2DA4AD680067BFA5 /* ModalBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661DAA2DA4AD680067BFA5 /* ModalBuilderView.swift */; };
 		02661DAD2DA5F3030067BFA5 /* TransitionBuilderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02661DAC2DA5F3030067BFA5 /* TransitionBuilderView.swift */; };
-		02661DBA2DA74F920067BFA5 /* SwiftfulLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 02661DB92DA74F920067BFA5 /* SwiftfulLogging */; };
 		026776522D895408009476E7 /* ModalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026776512D895408009476E7 /* ModalTests.swift */; };
-		0268C8D32D82A2B40068896D /* SwiftfulRecursiveUI in Frameworks */ = {isa = PBXBuildFile; productRef = 0268C8D22D82A2B40068896D /* SwiftfulRecursiveUI */; };
 		026B8FDE2DB40E32000F4C5C /* SwiftfulRouting in Frameworks */ = {isa = PBXBuildFile; productRef = 026B8FDD2DB40E32000F4C5C /* SwiftfulRouting */; };
 		026B8FE02DB40FB4000F4C5C /* View+EXT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026B8FDF2DB40FB2000F4C5C /* View+EXT.swift */; };
 		026B8FE22DB41021000F4C5C /* SwiftfulRouting+EXT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 026B8FE12DB4101D000F4C5C /* SwiftfulRouting+EXT.swift */; };
@@ -27,6 +25,7 @@
 		028A896A281F9228004E3DA4 /* SwiftfulRoutingExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028A8969281F9228004E3DA4 /* SwiftfulRoutingExampleApp.swift */; };
 		028A896E281F922B004E3DA4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 028A896D281F922B004E3DA4 /* Assets.xcassets */; };
 		028A8971281F922B004E3DA4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 028A8970281F922B004E3DA4 /* Preview Assets.xcassets */; };
+		0294F65C2DBD60CE00575601 /* SwiftfulLogging in Frameworks */ = {isa = PBXBuildFile; productRef = 0294F65B2DBD60CE00575601 /* SwiftfulLogging */; };
 		02C673C72D7800AA001C1A62 /* SegueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C673C62D7800AA001C1A62 /* SegueTests.swift */; };
 		02C673CA2D7803D7001C1A62 /* RecursiveRoutingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C673C92D7803D7001C1A62 /* RecursiveRoutingView.swift */; };
 		02C673CC2D797784001C1A62 /* MultiSegueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02C673CB2D797784001C1A62 /* MultiSegueTests.swift */; };
@@ -73,9 +72,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				02661DBA2DA74F920067BFA5 /* SwiftfulLogging in Frameworks */,
+				0294F65C2DBD60CE00575601 /* SwiftfulLogging in Frameworks */,
 				026B8FDE2DB40E32000F4C5C /* SwiftfulRouting in Frameworks */,
-				0268C8D32D82A2B40068896D /* SwiftfulRecursiveUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -183,9 +181,8 @@
 			);
 			name = SwiftfulRoutingExample;
 			packageProductDependencies = (
-				0268C8D22D82A2B40068896D /* SwiftfulRecursiveUI */,
-				02661DB92DA74F920067BFA5 /* SwiftfulLogging */,
 				026B8FDD2DB40E32000F4C5C /* SwiftfulRouting */,
+				0294F65B2DBD60CE00575601 /* SwiftfulLogging */,
 			);
 			productName = SwiftfulRoutingExample;
 			productReference = 028A8966281F9228004E3DA4 /* SwiftfulRoutingExample.app */;
@@ -238,9 +235,8 @@
 			);
 			mainGroup = 028A895D281F9228004E3DA4;
 			packageReferences = (
-				0268C8D12D82A2B40068896D /* XCRemoteSwiftPackageReference "SwiftfulRecursiveUI" */,
-				02661DB82DA74F920067BFA5 /* XCRemoteSwiftPackageReference "SwiftfulLogging" */,
 				026B8FDC2DB40E32000F4C5C /* XCRemoteSwiftPackageReference "SwiftfulRouting" */,
+				0294F65A2DBD60CE00575601 /* XCRemoteSwiftPackageReference "SwiftfulLogging" */,
 			);
 			productRefGroup = 028A8967281F9228004E3DA4 /* Products */;
 			projectDirPath = "";
@@ -560,7 +556,15 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		02661DB82DA74F920067BFA5 /* XCRemoteSwiftPackageReference "SwiftfulLogging" */ = {
+		026B8FDC2DB40E32000F4C5C /* XCRemoteSwiftPackageReference "SwiftfulRouting" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftfulThinking/SwiftfulRouting";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.0.0;
+			};
+		};
+		0294F65A2DBD60CE00575601 /* XCRemoteSwiftPackageReference "SwiftfulLogging" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SwiftfulThinking/SwiftfulLogging";
 			requirement = {
@@ -568,39 +572,18 @@
 				minimumVersion = 1.1.2;
 			};
 		};
-		0268C8D12D82A2B40068896D /* XCRemoteSwiftPackageReference "SwiftfulRecursiveUI" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SwiftfulThinking/SwiftfulRecursiveUI";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.2;
-			};
-		};
-		026B8FDC2DB40E32000F4C5C /* XCRemoteSwiftPackageReference "SwiftfulRouting" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/SwiftfulThinking/SwiftfulRouting";
-			requirement = {
-				branch = development;
-				kind = branch;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		02661DB92DA74F920067BFA5 /* SwiftfulLogging */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 02661DB82DA74F920067BFA5 /* XCRemoteSwiftPackageReference "SwiftfulLogging" */;
-			productName = SwiftfulLogging;
-		};
-		0268C8D22D82A2B40068896D /* SwiftfulRecursiveUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 0268C8D12D82A2B40068896D /* XCRemoteSwiftPackageReference "SwiftfulRecursiveUI" */;
-			productName = SwiftfulRecursiveUI;
-		};
 		026B8FDD2DB40E32000F4C5C /* SwiftfulRouting */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 026B8FDC2DB40E32000F4C5C /* XCRemoteSwiftPackageReference "SwiftfulRouting" */;
 			productName = SwiftfulRouting;
+		};
+		0294F65B2DBD60CE00575601 /* SwiftfulLogging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0294F65A2DBD60CE00575601 /* XCRemoteSwiftPackageReference "SwiftfulLogging" */;
+			productName = SwiftfulLogging;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
