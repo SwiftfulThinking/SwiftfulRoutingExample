@@ -11,14 +11,21 @@ struct TransitionBuilderView: View {
     
     @Environment(\.router) var router
     
-    @State private var transition: TransitionOption = .trailing
+    @State private var selectedIndex: Int = 0
+
+    private let transitionOptions: [TransitionOption] = TransitionOption.allCases
+
+    private var transition: TransitionOption {
+        transitionOptions[selectedIndex]
+    }
 
     var body: some View {
         VStack {
             List {
-                Picker("Option", selection: $transition) {
-                    ForEach(TransitionOption.allCases, id: \.self) { option in
-                        Text(option.rawValue)
+                Picker("Option", selection: $selectedIndex) {
+                    ForEach(transitionOptions.indices, id: \.self) { index in
+                        Text(displayName(for: transitionOptions[index]))
+                            .tag(index)
                     }
                 }
             }
@@ -48,10 +55,25 @@ struct TransitionBuilderView: View {
         }
     }
     
+    private func displayName(for option: TransitionOption) -> String {
+        switch option {
+        case .trailing:
+            return "trailing"
+        case .leading:
+            return "leading"
+        case .top:
+            return "top"
+        case .bottom:
+            return "bottom"
+        case .identity:
+            return "identity"
+        }
+    }
+
     private var codeString: String {
 return """
 router.showTransition(
-  .\(transition.rawValue),
+  .\(displayName(for: transition)),
   destination: { router in
     destinationView
   }

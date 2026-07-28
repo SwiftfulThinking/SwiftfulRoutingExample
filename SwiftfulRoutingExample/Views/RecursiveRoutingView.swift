@@ -1064,28 +1064,28 @@ struct RecursiveRoutingView: View {
     @ViewBuilder
     var transitionButtons: some View {
         Button("trailing") {
-            triggerTransition(transition: .trailing, allowsSwipeBack: false)
+            triggerTransition(transition: .trailing(), allowsSwipeBack: false)
         }
         .accessibilityIdentifier("Button_TransitionTrailing")
 
         Button("trailing w/ swipe back") {
-            triggerTransition(transition: .trailing)
+            triggerTransition(transition: .trailing())
         }
         Button("leading") {
-            triggerTransition(transition: .leading, allowsSwipeBack: false)
+            triggerTransition(transition: .leading(), allowsSwipeBack: false)
         }
         .accessibilityIdentifier("Button_TransitionLeading")
 
         Button("leading w/ swipe back") {
-            triggerTransition(transition: .leading)
+            triggerTransition(transition: .leading())
         }
         Button("top") {
-            triggerTransition(transition: .top)
+            triggerTransition(transition: .top())
         }
         .accessibilityIdentifier("Button_TransitionTop")
 
         Button("bottom") {
-            triggerTransition(transition: .bottom)
+            triggerTransition(transition: .bottom())
         }
         Button("identity") {
             triggerTransition(transition: .identity)
@@ -1093,7 +1093,7 @@ struct RecursiveRoutingView: View {
         
         Button("Transitions 3x + dismiss 2x") {
             Task {
-                let transition = AnyTransitionDestination(id: "transition_1", transition: .trailing) { router in
+                let transition = AnyTransitionDestination(id: "transition_1", transition: .trailing()) { router in
                     Rectangle()
                         .fill(Color.green)
                         .ignoresSafeArea()
@@ -1105,7 +1105,7 @@ struct RecursiveRoutingView: View {
                 
 //                try? await Task.sleep(for: .seconds(1))
                 
-                let transition2 = AnyTransitionDestination(id: "transition_2", transition: .trailing) { router in
+                let transition2 = AnyTransitionDestination(id: "transition_2", transition: .trailing()) { router in
                     Rectangle()
                         .fill(Color.orange)
                         .ignoresSafeArea()
@@ -1117,7 +1117,7 @@ struct RecursiveRoutingView: View {
                 
 //                try? await Task.sleep(for: .seconds(1))
 
-                let transition3 = AnyTransitionDestination(id: "transition_3", transition: .trailing) { router in
+                let transition3 = AnyTransitionDestination(id: "transition_3", transition: .trailing()) { router in
                     Rectangle()
                         .fill(Color.red)
                         .ignoresSafeArea()
@@ -1147,7 +1147,7 @@ struct RecursiveRoutingView: View {
             let number1 = 700
             let transition1 = AnyTransitionDestination(
                 id: "\(number1)",
-                transition: .trailing,
+                transition: .trailing(),
                 destination: { router in
                     RecursiveRoutingView(
                         router: router,
@@ -1159,7 +1159,7 @@ struct RecursiveRoutingView: View {
             let number2 = number1 + 1
             let transition2 = AnyTransitionDestination(
                 id: "\(number2)",
-                transition: .trailing,
+                transition: .trailing(),
                 destination: { router in
                     RecursiveRoutingView(
                         router: router,
@@ -1209,7 +1209,7 @@ struct RecursiveRoutingView: View {
             let number = 100
             let screen = AnyTransitionDestination(
                 id: "\(number)",
-                transition: .trailing,
+                transition: .trailing(),
                 allowsSwipeBack: false,
                 onDismiss: {
                     dismissAction(number)
@@ -1231,7 +1231,7 @@ struct RecursiveRoutingView: View {
             let screen1Number = 300
             let screen1 = AnyTransitionDestination(
                 id: "\(screen1Number)",
-                transition: .trailing,
+                transition: .trailing(),
                 allowsSwipeBack: false,
                 onDismiss: {
                     dismissAction(screen1Number)
@@ -1248,7 +1248,7 @@ struct RecursiveRoutingView: View {
             let screen2Number = 301
             let screen2 = AnyTransitionDestination(
                 id: "\(screen2Number)",
-                transition: .trailing,
+                transition: .trailing(),
                 allowsSwipeBack: false,
                 onDismiss: {
                     dismissAction(screen2Number)
@@ -1266,7 +1266,7 @@ struct RecursiveRoutingView: View {
             let screen3Number = 302
             let screen3 = AnyTransitionDestination(
                 id: "\(screen3Number)",
-                transition: .trailing,
+                transition: .trailing(),
                 allowsSwipeBack: false,
                 onDismiss: {
                     dismissAction(screen3Number)
@@ -1313,7 +1313,7 @@ struct RecursiveRoutingView: View {
 
                 try? await Task.sleep(for: .seconds(1))
                 
-                router.showModule(.trailing, id: "onboarding") { _ in
+                router.showModule(.trailing(), id: "onboarding") { _ in
                     OnboardingView()
                 }
             }

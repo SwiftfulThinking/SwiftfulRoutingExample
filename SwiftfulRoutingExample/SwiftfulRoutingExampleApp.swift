@@ -77,7 +77,7 @@ struct OnboardingView: View {
             }
         }
         .onTapGesture {
-            router.showModule(.trailing, id: "home_screen") { _ in
+            router.showModule(.trailing(animation: .snappy), id: "home_screen") { _ in
                 OverviewView()
             }
         }
