@@ -20,13 +20,13 @@ final class ModalTests: XCTestCase {
         
     }
     
-    private func tapElement(name: String) {
-        let buttons = app.collectionViews.buttons.matching(identifier: "Button_\(name)")
-        
-        if let button = buttons.allElementsBoundByIndex.last {
-            button.tap()
-            sleep(1)
-        }
+    // Button identifiers are suffixed with the screen number they render on
+    // (ie. "Button_Modal1_0"). All modal tests run on the root screen (0).
+    private func tapElement(name: String, screen: Int = 0) {
+        let button = app.collectionViews.buttons["Button_\(name)_\(screen)"]
+        XCTAssertTrue(button.waitForExistence(timeout: 5), "Button_\(name)_\(screen) not found")
+        button.tap()
+        sleep(1)
     }
     
     private func assertModalExists(name: String) {

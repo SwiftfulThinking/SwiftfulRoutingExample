@@ -272,7 +272,7 @@ struct RecursiveRoutingView: View {
         Button("Push") {
             performSegue(segue: .push)
         }
-        .accessibilityIdentifier("Button_Push")
+        .accessibilityIdentifier("Button_Push_\(screenNumber)")
 
         if viewState == .segueExamples {
             Button("Push (no animation)") {
@@ -283,7 +283,7 @@ struct RecursiveRoutingView: View {
         Button("Sheet") {
             performSegue(segue: .sheet)
         }
-        .accessibilityIdentifier("Button_Sheet")
+        .accessibilityIdentifier("Button_Sheet_\(screenNumber)")
 
         if viewState == .segueExamples {
             Button("Sheet (no animation)") {
@@ -294,7 +294,7 @@ struct RecursiveRoutingView: View {
         Button("FullScreenCover") {
             performSegue(segue: .fullScreenCover)
         }
-        .accessibilityIdentifier("Button_FullScreenCover")
+        .accessibilityIdentifier("Button_FullScreenCover_\(screenNumber)")
         
         if viewState == .segueExamples {
             Button("FullScreenCover (no animation)") {
@@ -332,32 +332,32 @@ struct RecursiveRoutingView: View {
         Button("Push 3x") {
             performMultiSegue(segues: [.push, .push, .push])
         }
-        .accessibilityIdentifier("Button_Push3x")
+        .accessibilityIdentifier("Button_Push3x_\(screenNumber)")
         
         Button("Sheet 3x") {
             performMultiSegue(segues: [.sheet, .sheet, .sheet])
         }
-        .accessibilityIdentifier("Button_Sheet3x")
+        .accessibilityIdentifier("Button_Sheet3x_\(screenNumber)")
 
         Button("Sheet 3x (no animation)") {
             performMultiSegue(segues: [.sheet, .sheet, .sheet], animates: false)
         }
-        .accessibilityIdentifier("Button_Sheet3x")
+        .accessibilityIdentifier("Button_Sheet3xNoAnimation_\(screenNumber)")
 
         Button("Full 3x") {
             performMultiSegue(segues: [.fullScreenCover, .fullScreenCover, .fullScreenCover])
         }
-        .accessibilityIdentifier("Button_Full3x")
+        .accessibilityIdentifier("Button_Full3x_\(screenNumber)")
 
         Button("Push, Sheet, Full") {
             performMultiSegue(segues: [.push, .sheet, .fullScreenCover])
         }
-        .accessibilityIdentifier("Button_PushSheetFull")
+        .accessibilityIdentifier("Button_PushSheetFull_\(screenNumber)")
 
         Button("Full, Sheet, Push") {
             performMultiSegue(segues: [.fullScreenCover, .sheet, .push])
         }
-        .accessibilityIdentifier("Button_FullSheetPush")
+        .accessibilityIdentifier("Button_FullSheetPush_\(screenNumber)")
     }
     
     @ViewBuilder
@@ -365,7 +365,7 @@ struct RecursiveRoutingView: View {
         Button("Dismiss") {
             router.dismissScreen()
         }
-        .accessibilityIdentifier("Button_Dismiss")
+        .accessibilityIdentifier("Button_Dismiss_\(screenNumber)")
 
         if showAll {
             Button("Dismiss (no animation)") {
@@ -375,32 +375,32 @@ struct RecursiveRoutingView: View {
             Button("Dismiss screen 2") {
                 router.dismissScreen(id: "2")
             }
-            .accessibilityIdentifier("Button_DismissId2")
+            .accessibilityIdentifier("Button_DismissId2_\(screenNumber)")
 
             Button("Dismiss to screen 1") {
                 router.dismissScreens(upToId: "1")
             }
-            .accessibilityIdentifier("Button_DismissTo1")
+            .accessibilityIdentifier("Button_DismissTo1_\(screenNumber)")
             
             Button("Dismiss 2 screens") {
                 router.dismissScreens(count: 2)
             }
-            .accessibilityIdentifier("Button_DismissCount2")
+            .accessibilityIdentifier("Button_DismissCount2_\(screenNumber)")
 
             Button("Dismiss push stack") {
                 router.dismissPushStack()
             }
-            .accessibilityIdentifier("Button_DismissStack")
+            .accessibilityIdentifier("Button_DismissStack_\(screenNumber)")
 
             Button("Dismiss environment") {
                 router.dismissEnvironment()
             }
-            .accessibilityIdentifier("Button_DismissEnvironment")
+            .accessibilityIdentifier("Button_DismissEnvironment_\(screenNumber)")
 
             Button("Dismiss all screens") {
                 router.dismissAllScreens()
             }
-            .accessibilityIdentifier("Button_DismissAll")
+            .accessibilityIdentifier("Button_DismissAll_\(screenNumber)")
             
             if viewState == .segueExamples {
                 Button("Dismiss all screens (no animation)") {
@@ -425,7 +425,7 @@ struct RecursiveRoutingView: View {
                 performSegue(segue: .push, location: .append, screenNumberOverride: 3)
             }
         }
-        .accessibilityIdentifier("Button_SegueAppend")
+        .accessibilityIdentifier("Button_SegueAppend_\(screenNumber)")
 
         // Inserting screens from a previous router
         Button("Segue, then insert push") {
@@ -437,7 +437,7 @@ struct RecursiveRoutingView: View {
                 try? await Task.sleep(for: .seconds(1.1))
             }
         }
-        .accessibilityIdentifier("Button_SegueInsertPush")
+        .accessibilityIdentifier("Button_SegueInsertPush_\(screenNumber)")
         
         Button("Segue, then insert sheet") {
             performSegue(segue: .sheet, location: .insert)
@@ -448,7 +448,7 @@ struct RecursiveRoutingView: View {
                 try? await Task.sleep(for: .seconds(1.1))
             }
         }
-        .accessibilityIdentifier("Button_SegueInsertSheet")
+        .accessibilityIdentifier("Button_SegueInsertSheet_\(screenNumber)")
 
         
         Button("Segue, then insert full") {
@@ -460,18 +460,18 @@ struct RecursiveRoutingView: View {
                 try? await Task.sleep(for: .seconds(1.1))
             }
         }
-        .accessibilityIdentifier("Button_SegueInsertFullScreenCover")
+        .accessibilityIdentifier("Button_SegueInsertFullScreenCover_\(screenNumber)")
 
         Button("Insert after 1") {
             performMultiSegue(segues: [.sheet, .push, .push])
-            
+
             Task {
                 try? await Task.sleep(for: .seconds(1.1))
                 performSegue(segue: .push, location: .insertAfter(id: "1"), screenNumberOverride: 3)
                 try? await Task.sleep(for: .seconds(1.1))
             }
         }
-        .accessibilityIdentifier("Button_SegueInsertFullScreenCover")
+        .accessibilityIdentifier("Button_SegueInsertAfter1_\(screenNumber)")
         
         Button("Test dismiss last screen") {
             performMultiSegue(segues: [.push, .sheet, .fullScreenCover, .push])
@@ -481,7 +481,7 @@ struct RecursiveRoutingView: View {
                 router.dismissLastScreen()
             }
         }
-        .accessibilityIdentifier("Button_DismissLastScreen")
+        .accessibilityIdentifier("Button_DismissLastScreen_\(screenNumber)")
         
         Button("Test dismiss last environment") {
             performMultiSegue(segues: [.push, .sheet, .fullScreenCover, .push])
@@ -491,7 +491,7 @@ struct RecursiveRoutingView: View {
                 router.dismissLastEnvironment()
             }
         }
-        .accessibilityIdentifier("Button_DismissLastEnvironment")
+        .accessibilityIdentifier("Button_DismissLastEnvironment_\(screenNumber)")
 
         Button("Test dismiss last push stack") {
             performMultiSegue(segues: [.push, .sheet, .fullScreenCover, .push, .push])
@@ -501,7 +501,7 @@ struct RecursiveRoutingView: View {
                 router.dismissLastPushStack()
             }
         }
-        .accessibilityIdentifier("Button_DismissLastPushStack")
+        .accessibilityIdentifier("Button_DismissLastPushStack_\(screenNumber)")
     }
 
     @ViewBuilder
@@ -526,7 +526,7 @@ struct RecursiveRoutingView: View {
             )
             router.addScreenToQueue(destination: screen)
         }
-        .accessibilityIdentifier("Button_QueueAppend")
+        .accessibilityIdentifier("Button_QueueAppend_\(screenNumber)")
         
         Button("Insert 1 push to queue") {
             let number = 200
@@ -548,7 +548,7 @@ struct RecursiveRoutingView: View {
             )
             router.addScreenToQueue(destination: screen)
         }
-        .accessibilityIdentifier("Button_QueueInsert")
+        .accessibilityIdentifier("Button_QueueInsert_\(screenNumber)")
 
         Button("Append 3 push to queue") {
             let screen1Number = 300
@@ -606,27 +606,27 @@ struct RecursiveRoutingView: View {
             )
             router.addScreensToQueue(destinations: [screen1, screen2, screen3])
         }
-        .accessibilityIdentifier("Button_QueueAppend3")
+        .accessibilityIdentifier("Button_QueueAppend3_\(screenNumber)")
 
         Button("Remove screen 301 from queue") {
             router.removeScreenFromQueue(id: "301")
         }
-        .accessibilityIdentifier("Button_QueueRemove1")
+        .accessibilityIdentifier("Button_QueueRemove1_\(screenNumber)")
         
         Button("Remove screen 300 and 301 from queue") {
             router.removeScreensFromQueue(ids: ["300", "301"])
         }
-        .accessibilityIdentifier("Button_QueueRemove2")
+        .accessibilityIdentifier("Button_QueueRemove2_\(screenNumber)")
 
         Button("Clear screen queue") {
             router.removeAllScreensFromQueue()
         }
-        .accessibilityIdentifier("Button_QueueClear")
+        .accessibilityIdentifier("Button_QueueClear_\(screenNumber)")
 
         Button("Try to show next screen") {
             router.showNextScreen()
         }
-        .accessibilityIdentifier("Button_QueueNext")
+        .accessibilityIdentifier("Button_QueueNext_\(screenNumber)")
     }
     
     @ViewBuilder
@@ -851,17 +851,17 @@ struct RecursiveRoutingView: View {
         Button("Modal: opacity, center, background") {
             triggerModal1()
         }
-        .accessibilityIdentifier("Button_Modal1")
+        .accessibilityIdentifier("Button_Modal1_\(screenNumber)")
         
         Button("Modal: scale, center, no background") {
             triggerModal2()
         }
-        .accessibilityIdentifier("Button_Modal2")
+        .accessibilityIdentifier("Button_Modal2_\(screenNumber)")
 
         Button("Modal: bottom (ex. 1)") {
             triggerModal3()
         }
-        .accessibilityIdentifier("Button_Modal3")
+        .accessibilityIdentifier("Button_Modal3_\(screenNumber)")
 
         if viewState != .testingModals {
             Button("Modal: bottom (ex. 2) (bg color + blur)") {
@@ -981,7 +981,7 @@ struct RecursiveRoutingView: View {
             // Note: the background of the 2nd modal should be above the background of 1st modal
             router.showModals(modals: [modal1, modal2])
         }
-        .accessibilityIdentifier("Button_2Modals")
+        .accessibilityIdentifier("Button_2Modals_\(screenNumber)")
 
     }
     
@@ -990,7 +990,7 @@ struct RecursiveRoutingView: View {
         Button("Dismiss") {
             router.dismissModal()
         }
-        .accessibilityIdentifier("Button_DismissModal")
+        .accessibilityIdentifier("Button_DismissModal_\(screenNumber)")
 
         Button("Dismiss modal_1") {
             Task {
@@ -999,7 +999,7 @@ struct RecursiveRoutingView: View {
                 router.dismissModal(id: "modal_1")
             }
         }
-        .accessibilityIdentifier("Button_DismissModalId1")
+        .accessibilityIdentifier("Button_DismissModalId1_\(screenNumber)")
 
         Button("Dismiss modal_1 (2)") {
             Task {
@@ -1009,7 +1009,7 @@ struct RecursiveRoutingView: View {
                 router.dismissModal(id: "modal_1")
             }
         }
-        .accessibilityIdentifier("Button_DismissModalId1_under")
+        .accessibilityIdentifier("Button_DismissModalId1_under_\(screenNumber)")
 
         Button("Dismiss to 2 modals") {
             Task {
@@ -1020,7 +1020,7 @@ struct RecursiveRoutingView: View {
                 router.dismissModals(count: 2)
             }
         }
-        .accessibilityIdentifier("Button_Dismiss2Modals")
+        .accessibilityIdentifier("Button_Dismiss2Modals_\(screenNumber)")
         
         Button("Dismiss up to modal_1") {
             Task {
@@ -1031,7 +1031,7 @@ struct RecursiveRoutingView: View {
                 router.dismissModals(upToId: "modal_1")
             }
         }
-        .accessibilityIdentifier("Button_DismissModalsUpTo1")
+        .accessibilityIdentifier("Button_DismissModalsUpTo1_\(screenNumber)")
 
         Button("Dismiss all modals") {
             Task {
@@ -1042,7 +1042,7 @@ struct RecursiveRoutingView: View {
                 router.dismissAllModals()
             }
         }
-        .accessibilityIdentifier("Button_DismissAllModals")
+        .accessibilityIdentifier("Button_DismissAllModals_\(screenNumber)")
     }
     
     private func triggerTransition(transition: TransitionOption, allowsSwipeBack: Bool = true) {
@@ -1066,7 +1066,7 @@ struct RecursiveRoutingView: View {
         Button("trailing") {
             triggerTransition(transition: .trailing(), allowsSwipeBack: false)
         }
-        .accessibilityIdentifier("Button_TransitionTrailing")
+        .accessibilityIdentifier("Button_TransitionTrailing_\(screenNumber)")
 
         Button("trailing w/ swipe back") {
             triggerTransition(transition: .trailing())
@@ -1074,7 +1074,7 @@ struct RecursiveRoutingView: View {
         Button("leading") {
             triggerTransition(transition: .leading(), allowsSwipeBack: false)
         }
-        .accessibilityIdentifier("Button_TransitionLeading")
+        .accessibilityIdentifier("Button_TransitionLeading_\(screenNumber)")
 
         Button("leading w/ swipe back") {
             triggerTransition(transition: .leading())
@@ -1082,7 +1082,7 @@ struct RecursiveRoutingView: View {
         Button("top") {
             triggerTransition(transition: .top())
         }
-        .accessibilityIdentifier("Button_TransitionTop")
+        .accessibilityIdentifier("Button_TransitionTop_\(screenNumber)")
 
         Button("bottom") {
             triggerTransition(transition: .bottom())
@@ -1140,7 +1140,7 @@ struct RecursiveRoutingView: View {
                 router.dismissTransition()
             }
         }
-//        .accessibilityIdentifier("Button_DismissModal")
+//        .accessibilityIdentifier("Button_DismissModal_\(screenNumber)")
 //
         
         Button("2 Transitions") {
@@ -1172,7 +1172,7 @@ struct RecursiveRoutingView: View {
             // Note: the background of the 2nd modal should be above the background of 1st modal
             router.showTransitions(transitions: [transition1, transition2])
         }
-        .accessibilityIdentifier("Button_2Transitions")
+        .accessibilityIdentifier("Button_2Transitions_\(screenNumber)")
     }
     
     @ViewBuilder
@@ -1180,27 +1180,27 @@ struct RecursiveRoutingView: View {
         Button("Dismiss transition") {
             router.dismissTransition()
         }
-        .accessibilityIdentifier("Button_DismissTransition")
+        .accessibilityIdentifier("Button_DismissTransition_\(screenNumber)")
 
         Button("Dismiss transition 1") {
             router.dismissTransition(id: "1")
         }
-        .accessibilityIdentifier("Button_DismissTransitionId1")
+        .accessibilityIdentifier("Button_DismissTransitionId1_\(screenNumber)")
 
         Button("Dismiss up to transition 1") {
             router.dismissTransitions(upToId: "1")
         }
-        .accessibilityIdentifier("Button_DismissupToTransition1")
+        .accessibilityIdentifier("Button_DismissupToTransition1_\(screenNumber)")
 
         Button("Dismiss to 2 transitions") {
             router.dismissTransitions(count: 2)
         }
-        .accessibilityIdentifier("Button_Dismiss2Transitions")
+        .accessibilityIdentifier("Button_Dismiss2Transitions_\(screenNumber)")
 
         Button("Dismiss all transitions") {
             router.dismissAllTransitions()
         }
-        .accessibilityIdentifier("Button_DismissAllTransitions")
+        .accessibilityIdentifier("Button_DismissAllTransitions_\(screenNumber)")
     }
 
     @ViewBuilder
@@ -1225,7 +1225,7 @@ struct RecursiveRoutingView: View {
             
             router.addTransitionToQueue(transition: screen)
         }
-        .accessibilityIdentifier("Button_TransitionQueueAppend")
+        .accessibilityIdentifier("Button_TransitionQueueAppend_\(screenNumber)")
 
         Button("Append 3 push to queue") {
             let screen1Number = 300
@@ -1282,27 +1282,27 @@ struct RecursiveRoutingView: View {
             
             router.addTransitionsToQueue(transitions: [screen1, screen2, screen3])
         }
-        .accessibilityIdentifier("Button_TransitionQueueAppend3")
+        .accessibilityIdentifier("Button_TransitionQueueAppend3_\(screenNumber)")
 //
         Button("Remove transition 301 from queue") {
             router.removeTransitionFromQueue(id: "301")
         }
-        .accessibilityIdentifier("Button_TransitionQueueRemove1")
+        .accessibilityIdentifier("Button_TransitionQueueRemove1_\(screenNumber)")
         
         Button("Remove transitions 300 and 301 from queue") {
             router.removeTransitionsFromQueue(ids: ["300", "301"])
         }
-        .accessibilityIdentifier("Button_TransitionQueueRemove2")
+        .accessibilityIdentifier("Button_TransitionQueueRemove2_\(screenNumber)")
 
         Button("Clear screen queue") {
             router.removeAllTransitionsFromQueue()
         }
-        .accessibilityIdentifier("Button_TransitionQueueClear")
+        .accessibilityIdentifier("Button_TransitionQueueClear_\(screenNumber)")
 
         Button("Try to show next transition") {
             router.showNextTransition()
         }
-        .accessibilityIdentifier("Button_TransitionQueueNext")
+        .accessibilityIdentifier("Button_TransitionQueueNext_\(screenNumber)")
     }
 
     @ViewBuilder

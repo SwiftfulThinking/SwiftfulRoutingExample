@@ -21,19 +21,20 @@ final class SegueTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
     
-    private func tapElements(names: [String]) {
-        for name in names {
-            let buttons = app.collectionViews.buttons.matching(identifier: "Button_\(name)")
-//            let buttons = app.buttons.matching(identifier: "Button_\(name)")
-            
-            let lookForFirstElement = name == "FullScreenCover"
+    // Button identifiers are suffixed with the screen number they render on
+    // (ie. "Button_Push_0"), so every query resolves to exactly one element
+    // regardless of how many screens are stacked.
+    private func tapButton(name: String, screen: Int) {
+        let button = app.collectionViews.buttons["Button_\(name)_\(screen)"]
+        XCTAssertTrue(button.waitForExistence(timeout: 5), "Button_\(name)_\(screen) not found")
+        button.tap()
+        sleep(1)
+    }
 
-            if let button = lookForFirstElement ?
-                buttons.allElementsBoundByIndex.first :
-                buttons.allElementsBoundByIndex.last {
-                button.tap()
-                sleep(1)
-            }
+    private func tapElements(names: [String]) {
+        for (index, name) in names.enumerated() {
+            // The first segue is tapped on screen 0, the next on screen 1, etc.
+            tapButton(name: name, screen: index)
         }
     }
     
@@ -53,18 +54,10 @@ final class SegueTests: XCTestCase {
     }
         
     private func tapDismiss(names: [String]) {
-        for (index, name) in names.enumerated().reversed() {
-            let buttons = app.collectionViews.buttons.matching(identifier: "Button_Dismiss")
-//            let buttons = app.buttons.matching(identifier: "Button_Dismiss")
-            let lookForFirstElement = name == "FullScreenCover"
-
-            if let button = lookForFirstElement ?
-                buttons.allElementsBoundByIndex.first :
-                buttons.allElementsBoundByIndex.last {
-                button.tap()
-                sleep(1)
-                assertLastDismissExists(number: index + 1)
-            }
+        for (index, _) in names.enumerated().reversed() {
+            // Dismiss from the top screen down: screen (index + 1) is on top.
+            tapButton(name: "Dismiss", screen: index + 1)
+            assertLastDismissExists(number: index + 1)
         }
     }
         
